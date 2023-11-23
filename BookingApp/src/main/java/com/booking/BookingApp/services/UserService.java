@@ -1,9 +1,9 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.User;
-import com.booking.BookingApp.models.dtos.UserGetDTO;
-import com.booking.BookingApp.models.dtos.UserPostDTO;
-import com.booking.BookingApp.models.dtos.UserPutDTO;
+import com.booking.BookingApp.models.dtos.users.UserGetDTO;
+import com.booking.BookingApp.models.dtos.users.UserPostDTO;
+import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,17 +1,12 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.Reservation;
-import com.booking.BookingApp.models.User;
-import com.booking.BookingApp.models.dtos.UserGetDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
-import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.repositories.IReservationRepository;
-import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;

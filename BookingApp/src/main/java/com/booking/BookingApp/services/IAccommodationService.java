@@ -1,8 +1,8 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.Accommodation;
-import com.booking.BookingApp.models.User;
-import com.booking.BookingApp.models.dtos.*;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 
 import java.util.List;
 import java.util.Optional;

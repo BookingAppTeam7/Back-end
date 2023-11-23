@@ -1,14 +1,9 @@
 package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.Reservation;
-import com.booking.BookingApp.models.User;
-import com.booking.BookingApp.models.dtos.UserGetDTO;
-import com.booking.BookingApp.models.dtos.UserPostDTO;
-import com.booking.BookingApp.models.dtos.UserPutDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 import com.booking.BookingApp.services.IReservationService;
-import com.booking.BookingApp.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

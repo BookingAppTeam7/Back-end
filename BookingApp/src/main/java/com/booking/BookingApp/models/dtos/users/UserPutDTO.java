@@ -1,37 +1,29 @@
-package com.booking.BookingApp.models.dtos;
+package com.booking.BookingApp.models.dtos.users;
 
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 
-public class UserGetDTO {  //user without password
-    public Long id;
+public class UserPutDTO { //User without id
+
     public String firstName;
     public String lastName;
     public String username;
+    public String password;
     public RoleEnum role;
 
     public String address;
     public String phoneNumber;
-
     public StatusEnum status;
 
-    public UserGetDTO(Long id, String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
-        this.id = id;
+    public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
+        this.password = password;
         this.role = role;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status=status;
-    }
-
-    public UserGetDTO() {
-
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getFirstName() {
@@ -46,6 +38,9 @@ public class UserGetDTO {  //user without password
         return username;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
     public RoleEnum getRole() {
         return role;
@@ -57,10 +52,6 @@ public class UserGetDTO {  //user without password
 
     public String getPhoneNumber() {
         return phoneNumber;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setFirstName(String firstName) {
@@ -75,6 +66,9 @@ public class UserGetDTO {  //user without password
         this.username = username;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public void setRole(RoleEnum role) {
         this.role = role;

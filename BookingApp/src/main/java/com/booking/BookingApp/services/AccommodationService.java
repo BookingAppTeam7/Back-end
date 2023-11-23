@@ -1,8 +1,8 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.Accommodation;
-import com.booking.BookingApp.models.dtos.AccommodationPostDTO;
-import com.booking.BookingApp.models.dtos.AccommodationPutDTO;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

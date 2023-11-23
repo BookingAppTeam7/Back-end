@@ -1,4 +1,4 @@
-package com.booking.BookingApp.models.dtos;
+package com.booking.BookingApp.models.dtos.users;
 
 import com.booking.BookingApp.models.enums.RoleEnum;
 

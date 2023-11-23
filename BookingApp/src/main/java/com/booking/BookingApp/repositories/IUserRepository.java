@@ -1,7 +1,6 @@
 package com.booking.BookingApp.repositories;
 
 import com.booking.BookingApp.models.User;
-import com.booking.BookingApp.models.dtos.UserGetDTO;
 
 import java.util.List;
 import java.util.Optional;

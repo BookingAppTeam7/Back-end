@@ -1,10 +1,6 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.Reservation;
-import com.booking.BookingApp.models.User;
-import com.booking.BookingApp.models.dtos.UserGetDTO;
-import com.booking.BookingApp.models.dtos.UserPostDTO;
-import com.booking.BookingApp.models.dtos.UserPutDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 
