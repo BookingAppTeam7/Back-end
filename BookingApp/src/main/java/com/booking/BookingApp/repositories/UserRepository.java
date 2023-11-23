@@ -50,9 +50,7 @@ public class UserRepository implements IUserRepository{
 
             return user;
         }
-        else{
-            throw new RuntimeException("Korisnik s ID-om " + updatedUser.id + " nije pronađen.");
-        }
+        return null;
     }
 
     @Override

@@ -44,6 +44,7 @@ public class UserController {
     @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable Long id) throws Exception {
         User result=userService.update(user,id);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK);
 
     }
