@@ -26,12 +26,7 @@ public class UserRepository implements IUserRepository{
 
     @Override
     public Optional<User> findById(Long id) {
-        Optional<User> res=users.stream().filter(user -> user.getId() == id).findFirst();
-        if(res.isPresent()) {
-
-            return res;
-        }
-        return null;
+        return users.stream().filter(user -> user.getId() == id).findFirst();
     }
 
     @Override
