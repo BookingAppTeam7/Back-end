@@ -1,24 +1,17 @@
-package com.booking.BookingApp.models.reservations;
+package com.booking.BookingApp.models.dtos.accommodations;
+
+import com.booking.BookingApp.models.reservations.Review;
 
 import java.util.List;
 
-public class Feedback {
-    public Long id;
+public class FeedbackPostDTO { //Feedback model without id
     public Long accommodationId;
     List<Review> reviews;
 
-    public Feedback(Long id, Long accommodationId, List<Review> reviews) {
-        this.id = id;
+    public FeedbackPostDTO(Long id, Long accommodationId, List<Review> reviews) {
+
         this.accommodationId = accommodationId;
         this.reviews = reviews;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        id = id;
     }
 
     public Long getAccommodationId() {
