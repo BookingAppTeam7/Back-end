@@ -9,7 +9,7 @@ import com.booking.BookingApp.models.reservations.PriceCard;
 import java.util.List;
 
 
-public class AccommodationPostDTO {
+public class AccommodationPostDTO { //Accommodation model without id and accommodation status
     public String name;
     public String description;
     public String location;

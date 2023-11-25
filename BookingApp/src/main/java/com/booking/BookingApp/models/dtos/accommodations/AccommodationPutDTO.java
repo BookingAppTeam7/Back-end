@@ -8,7 +8,7 @@ import com.booking.BookingApp.models.reservations.PriceCard;
 
 import java.util.List;
 
-public class AccommodationPutDTO { //Accommodation without id
+public class AccommodationPutDTO { //Accommodation model without id
     public String name;
     public String description;
     public String location;

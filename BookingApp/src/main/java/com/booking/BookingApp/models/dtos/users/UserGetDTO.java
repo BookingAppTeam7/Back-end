@@ -3,7 +3,7 @@ package com.booking.BookingApp.models.dtos.users;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 
-public class UserGetDTO {  //user without password
+public class UserGetDTO {  //User model without password
     public Long id;
     public String firstName;
     public String lastName;

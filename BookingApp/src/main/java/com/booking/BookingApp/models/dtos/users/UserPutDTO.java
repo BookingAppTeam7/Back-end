@@ -3,7 +3,7 @@ package com.booking.BookingApp.models.dtos.users;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 
-public class UserPutDTO { //User without id
+public class UserPutDTO { //User model without id
 
     public String firstName;
     public String lastName;
