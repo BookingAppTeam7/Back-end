@@ -1,4 +1,4 @@
-package com.booking.BookingApp.models;
+package com.booking.BookingApp.models.reservations;
 
 import java.util.Date;
 

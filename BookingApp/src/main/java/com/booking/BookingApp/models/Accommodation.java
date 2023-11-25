@@ -1,6 +1,9 @@
 package com.booking.BookingApp.models;
 
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
+import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.reservations.PriceCard;
 
 import java.util.List;
 
@@ -14,9 +17,15 @@ public class Accommodation {
     public int maxGuests;
     public TypeEnum type;
     public List<String> assets;
-    public int price;
+    public List<PriceCard> prices;
+    public List<TimeSlot> availability;
+    public Long ownerId;
+    public AccommodationStatusEnum status;
+    public int cancellationDeadline;
+    public ReservationConfirmationEnum reservationConfirmation;
+    public Long feedbackId;
 
-    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets,int price) {
+    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, Long feedbackId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -25,10 +34,13 @@ public class Accommodation {
         this.maxGuests = maxGuests;
         this.type = type;
         this.assets = assets;
-        this.price=price;
-    }
-    public Accommodation(){
-
+        this.prices = prices;
+        this.availability = availability;
+        this.ownerId = ownerId;
+        this.status = status;
+        this.cancellationDeadline = cancellationDeadline;
+        this.reservationConfirmation = reservationConfirmation;
+        this.feedbackId = feedbackId;
     }
 
     public Long getId() {
@@ -95,11 +107,59 @@ public class Accommodation {
         this.assets = assets;
     }
 
-    public int getPrice() {
-        return price;
+    public List<PriceCard> getPrices() {
+        return prices;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setPrices(List<PriceCard> prices) {
+        this.prices = prices;
+    }
+
+    public List<TimeSlot> getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(List<TimeSlot> availability) {
+        this.availability = availability;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public AccommodationStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccommodationStatusEnum status) {
+        this.status = status;
+    }
+
+    public int getCancellationDeadline() {
+        return cancellationDeadline;
+    }
+
+    public void setCancellationDeadline(int cancellationDeadline) {
+        this.cancellationDeadline = cancellationDeadline;
+    }
+
+    public ReservationConfirmationEnum getReservationConfirmation() {
+        return reservationConfirmation;
+    }
+
+    public void setReservationConfirmation(ReservationConfirmationEnum reservationConfirmation) {
+        this.reservationConfirmation = reservationConfirmation;
+    }
+
+    public Long getFeedbackId() {
+        return feedbackId;
+    }
+
+    public void setFeedbackId(Long feedbackId) {
+        this.feedbackId = feedbackId;
     }
 }

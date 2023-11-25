@@ -1,7 +1,8 @@
 package com.booking.BookingApp.repositories;
 
 import com.booking.BookingApp.models.Accommodation;
-import com.booking.BookingApp.models.User;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
+import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -52,7 +53,10 @@ public class AccommodationRepository implements IAccommodationRepository{
             accommodation.setMaxGuests(updatedAccommodation.maxGuests);
             accommodation.setType(updatedAccommodation.type);
             accommodation.setAssets(updatedAccommodation.assets);
-            accommodation.setPrice(updatedAccommodation.price);
+            accommodation.setOwnerId(updatedAccommodation.ownerId);
+            accommodation.setStatus(AccommodationStatusEnum.PENDING);
+            accommodation.setCancellationDeadline(updatedAccommodation.cancellationDeadline);
+            accommodation.setReservationConfirmation(ReservationConfirmationEnum.MANUAL);
 
             return accommodation;
         }else{

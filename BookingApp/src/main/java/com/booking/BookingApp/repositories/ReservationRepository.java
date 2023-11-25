@@ -1,13 +1,11 @@
 package com.booking.BookingApp.repositories;
 
-import com.booking.BookingApp.models.Reservation;
-import com.booking.BookingApp.models.User;
+import com.booking.BookingApp.models.reservations.Reservation;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class ReservationRepository implements IReservationRepository{

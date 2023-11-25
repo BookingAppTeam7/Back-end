@@ -1,6 +1,6 @@
 package com.booking.BookingApp.repositories;
 
-import com.booking.BookingApp.models.User;
+import com.booking.BookingApp.models.users.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
