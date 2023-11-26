@@ -47,6 +47,7 @@ public class UserRepository implements IUserRepository{
             user.setAddress(updatedUser.getAddress());
             user.setPhoneNumber(updatedUser.getPhoneNumber());
             user.setStatus(updatedUser.getStatus());
+            user.setNotificationSettings(updatedUser.getNotificationSettings());
 
             return user;
         }
