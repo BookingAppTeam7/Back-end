@@ -1,7 +1,10 @@
 package com.booking.BookingApp.models.dtos.users;
 
+import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
+
+import java.util.Map;
 
 public class UserPutDTO { //User model without id
 
@@ -14,8 +17,9 @@ public class UserPutDTO { //User model without id
     public String address;
     public String phoneNumber;
     public StatusEnum status;
+    public Map<NotificationTypeEnum,Boolean> notificationSettings;
 
-    public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
+    public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status,Map<NotificationTypeEnum,Boolean> notificationSettings) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -24,6 +28,7 @@ public class UserPutDTO { //User model without id
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status=status;
+        this.notificationSettings=notificationSettings;
     }
 
     public String getFirstName() {
@@ -88,5 +93,13 @@ public class UserPutDTO { //User model without id
 
     public void setStatus(StatusEnum status) {
         this.status = status;
+    }
+
+    public Map<NotificationTypeEnum, Boolean> getNotificationSettings() {
+        return notificationSettings;
+    }
+
+    public void setNotificationSettings(Map<NotificationTypeEnum, Boolean> notificationSettings) {
+        this.notificationSettings = notificationSettings;
     }
 }

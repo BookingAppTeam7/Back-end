@@ -3,7 +3,6 @@ package com.booking.BookingApp.models.accommodations;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.TypeEnum;
-import com.booking.BookingApp.models.reservations.PriceCard;
 
 import java.util.List;
 
@@ -23,9 +22,9 @@ public class Accommodation {
     public AccommodationStatusEnum status;
     public int cancellationDeadline;
     public ReservationConfirmationEnum reservationConfirmation;
-    public Long feedbackId;
+    public List<Review> reviews;
 
-    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, Long feedbackId) {
+    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,7 +39,7 @@ public class Accommodation {
         this.status = status;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
-        this.feedbackId = feedbackId;
+        this.reviews=reviews;
     }
 
     public Long getId() {
@@ -155,11 +154,11 @@ public class Accommodation {
         this.reservationConfirmation = reservationConfirmation;
     }
 
-    public Long getFeedbackId() {
-        return feedbackId;
+    public List<Review> getReviews() {
+        return reviews;
     }
 
-    public void setFeedbackId(Long feedbackId) {
-        this.feedbackId = feedbackId;
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

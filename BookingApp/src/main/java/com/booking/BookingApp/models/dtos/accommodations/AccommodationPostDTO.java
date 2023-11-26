@@ -1,14 +1,15 @@
 package com.booking.BookingApp.models.dtos.accommodations;
 
+import com.booking.BookingApp.models.accommodations.PriceCard;
+import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.TypeEnum;
-import com.booking.BookingApp.models.reservations.PriceCard;
 
 import java.util.List;
 
-
-public class AccommodationPostDTO { //Accommodation model without id and accommodation status
+public class AccommodationPostDTO { //Accommodation model without id,status and reviews
     public String name;
     public String description;
     public String location;
@@ -21,9 +22,8 @@ public class AccommodationPostDTO { //Accommodation model without id and accommo
     public Long ownerId;
     public int cancellationDeadline;
     public ReservationConfirmationEnum reservationConfirmation;
-    public Long feedbackId;
 
-    public AccommodationPostDTO(String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,Long feedbackId) {
+    public AccommodationPostDTO(String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -36,7 +36,6 @@ public class AccommodationPostDTO { //Accommodation model without id and accommo
         this.ownerId = ownerId;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
-        this.feedbackId=feedbackId;
     }
 
     public String getName() {
@@ -133,13 +132,5 @@ public class AccommodationPostDTO { //Accommodation model without id and accommo
 
     public void setReservationConfirmation(ReservationConfirmationEnum reservationConfirmation) {
         this.reservationConfirmation = reservationConfirmation;
-    }
-
-    public Long getFeedbackId() {
-        return feedbackId;
-    }
-
-    public void setFeedbackId(Long feedbackId) {
-        this.feedbackId = feedbackId;
     }
 }

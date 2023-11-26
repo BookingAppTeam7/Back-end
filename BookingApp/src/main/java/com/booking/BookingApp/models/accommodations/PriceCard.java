@@ -1,4 +1,4 @@
-package com.booking.BookingApp.models.reservations;
+package com.booking.BookingApp.models.accommodations;
 
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
 
@@ -7,7 +7,7 @@ import java.util.Date;
 public class PriceCard {
 
     public Long id;
-    public Long accommodationId;
+    //public Long accommodationId;
 
     public Date startDate;
 
@@ -16,9 +16,8 @@ public class PriceCard {
     public double price;
     public PriceTypeEnum type;
 
-    public PriceCard(Long id, Long accommodationId, Date startDate, Date endDate, double price, PriceTypeEnum type) {
+    public PriceCard(Long id, Date startDate, Date endDate, double price, PriceTypeEnum type) {
         this.id = id;
-        this.accommodationId = accommodationId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.price = price;
@@ -33,13 +32,6 @@ public class PriceCard {
         this.id = id;
     }
 
-    public Long getAccommodationId() {
-        return accommodationId;
-    }
-
-    public void setAccommodationId(Long accommodationId) {
-        this.accommodationId = accommodationId;
-    }
 
     public Date getStartDate() {
         return startDate;

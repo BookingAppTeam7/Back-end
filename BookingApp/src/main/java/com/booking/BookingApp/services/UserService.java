@@ -1,5 +1,6 @@
 package com.booking.BookingApp.services;
 
+import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPostDTO;
@@ -9,9 +10,7 @@ import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -44,13 +43,15 @@ public class UserService implements IUserService{
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        User createdUser=new User(newId,newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE);
+        Map<NotificationTypeEnum,Boolean>notificationSettings=new HashMap<>();
+
+        User createdUser=new User(newId,newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE,notificationSettings);
         return userRepository.save(createdUser);
     }
 
     @Override
     public User update(UserPutDTO updatedUser, Long id) throws Exception {
-        User result=new User(id,updatedUser.firstName, updatedUser.lastName,updatedUser.username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status);
+        User result=new User(id,updatedUser.firstName, updatedUser.lastName,updatedUser.username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status,updatedUser.notificationSettings);
         return userRepository.saveAndFlush(result);
     }
 
