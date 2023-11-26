@@ -1,8 +1,9 @@
 package com.booking.BookingApp.services;
 
-import com.booking.BookingApp.models.Accommodation;
+import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,13 @@ public class AccommodationService implements IAccommodationService{
     @Override
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
         Long newId=(Long) counter.incrementAndGet();
-        Accommodation createdAccommodation=new Accommodation(newId,newAccommodation.name, newAccommodation.description, newAccommodation.location,newAccommodation.minGuests,newAccommodation.maxGuests,newAccommodation.type,newAccommodation.assets,newAccommodation.price);
+        Accommodation createdAccommodation=new Accommodation(newId,newAccommodation.name, newAccommodation.description, newAccommodation.location,newAccommodation.minGuests,newAccommodation. maxGuests, newAccommodation.type, newAccommodation.assets, newAccommodation.prices, newAccommodation.availability,newAccommodation.ownerId,AccommodationStatusEnum.PENDING,newAccommodation.cancellationDeadline, newAccommodation.reservationConfirmation, newAccommodation.feedbackId);
         return accommodationRepository.save(createdAccommodation);
     }
 
     @Override
     public Accommodation update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        Accommodation result=new Accommodation(id, updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location, updatedAccommodation.minGuests, updatedAccommodation.maxGuests,updatedAccommodation.type,updatedAccommodation.assets,updatedAccommodation.price);
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices, updatedAccommodation.availability,updatedAccommodation.ownerId,updatedAccommodation.status,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.feedbackId);
         return accommodationRepository.saveAndFlush(result);
     }
 

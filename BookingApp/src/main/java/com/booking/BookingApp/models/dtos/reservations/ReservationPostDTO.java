@@ -2,8 +2,7 @@ package com.booking.BookingApp.models.dtos.reservations;
 
 import java.util.Date;
 
-public class ReservationPostDTO {
-
+public class ReservationPostDTO { //Reservation model without id and status (default --> PENDING)
 
     public  Long accommodationId;
     public Long userId;

@@ -2,7 +2,7 @@ package com.booking.BookingApp.models.dtos.users;
 
 import com.booking.BookingApp.models.enums.RoleEnum;
 
-public class UserPostDTO {  //User model without id and status(created user is default ACTIVE)
+public class UserPostDTO {  //User model without id and status (created user is default DEACTIVE)
     public String firstName;
     public String lastName;
     public String username;

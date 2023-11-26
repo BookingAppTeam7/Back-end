@@ -1,6 +1,7 @@
 package com.booking.BookingApp.services;
 
-import com.booking.BookingApp.models.Reservation;
+import com.booking.BookingApp.models.enums.ReservationStatusEnum;
+import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 import com.booking.BookingApp.repositories.IReservationRepository;
@@ -30,13 +31,13 @@ public class ReservationService implements IReservationService{
     @Override
     public Optional<Reservation> create(ReservationPostDTO newReservation) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        Reservation createdReservation=new Reservation(newId,newReservation.accommodationId,newReservation.userId,newReservation.startDate,newReservation.endDate);
+        Reservation createdReservation=new Reservation(newId,newReservation.accommodationId,newReservation.userId,newReservation.startDate,newReservation.endDate, ReservationStatusEnum.PENDING);
         return reservationRepository.save(createdReservation);
     }
 
     @Override
     public Reservation update(ReservationPutDTO updatedReservation, Long id) throws Exception {
-        Reservation result=new Reservation(id,updatedReservation.accommodationId,updatedReservation.userId,updatedReservation.startDate,updatedReservation.endDate);
+        Reservation result=new Reservation(id,updatedReservation.accommodationId,updatedReservation.userId,updatedReservation.startDate,updatedReservation.endDate,updatedReservation.status);
         return reservationRepository.saveAndFlush(result);
     }
 

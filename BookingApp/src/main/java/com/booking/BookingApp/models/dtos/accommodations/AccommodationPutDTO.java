@@ -1,10 +1,14 @@
 package com.booking.BookingApp.models.dtos.accommodations;
 
+import com.booking.BookingApp.models.accommodations.TimeSlot;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
+import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.reservations.PriceCard;
 
 import java.util.List;
 
-public class AccommodationPutDTO { //Accommodation without id
+public class AccommodationPutDTO { //Accommodation model without id
     public String name;
     public String description;
     public String location;
@@ -12,9 +16,15 @@ public class AccommodationPutDTO { //Accommodation without id
     public int maxGuests;
     public TypeEnum type;
     public List<String> assets;
-    public int price;
+    public List<PriceCard> prices;
+    public List<TimeSlot> availability;
+    public Long ownerId;
+    public int cancellationDeadline;
+    public ReservationConfirmationEnum reservationConfirmation;
+    public Long feedbackId;
+    public AccommodationStatusEnum status;
 
-    public AccommodationPutDTO(String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, int price) {
+    public AccommodationPutDTO(String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,Long feedbackId,AccommodationStatusEnum status) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -22,7 +32,13 @@ public class AccommodationPutDTO { //Accommodation without id
         this.maxGuests = maxGuests;
         this.type = type;
         this.assets = assets;
-        this.price = price;
+        this.prices = prices;
+        this.availability = availability;
+        this.ownerId = ownerId;
+        this.cancellationDeadline = cancellationDeadline;
+        this.reservationConfirmation = reservationConfirmation;
+        this.feedbackId=feedbackId;
+        this.status=status;
     }
 
     public String getName() {
@@ -81,11 +97,59 @@ public class AccommodationPutDTO { //Accommodation without id
         this.assets = assets;
     }
 
-    public int getPrice() {
-        return price;
+    public List<PriceCard> getPrices() {
+        return prices;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setPrices(List<PriceCard> prices) {
+        this.prices = prices;
+    }
+
+    public List<TimeSlot> getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(List<TimeSlot> availability) {
+        this.availability = availability;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public int getCancellationDeadline() {
+        return cancellationDeadline;
+    }
+
+    public void setCancellationDeadline(int cancellationDeadline) {
+        this.cancellationDeadline = cancellationDeadline;
+    }
+
+    public ReservationConfirmationEnum getReservationConfirmation() {
+        return reservationConfirmation;
+    }
+
+    public void setReservationConfirmation(ReservationConfirmationEnum reservationConfirmation) {
+        this.reservationConfirmation = reservationConfirmation;
+    }
+
+    public Long getFeedbackId() {
+        return feedbackId;
+    }
+
+    public void setFeedbackId(Long feedbackId) {
+        this.feedbackId = feedbackId;
+    }
+
+    public AccommodationStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccommodationStatusEnum status) {
+        this.status = status;
     }
 }

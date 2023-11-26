@@ -1,6 +1,6 @@
 package com.booking.BookingApp.contollers;
 
-import com.booking.BookingApp.models.Reservation;
+import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 import com.booking.BookingApp.services.IReservationService;

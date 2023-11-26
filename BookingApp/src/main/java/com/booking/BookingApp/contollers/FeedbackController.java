@@ -1,10 +1,9 @@
 package com.booking.BookingApp.contollers;
 
-import com.booking.BookingApp.models.users.User;
-import com.booking.BookingApp.models.dtos.users.UserGetDTO;
-import com.booking.BookingApp.models.dtos.users.UserPostDTO;
-import com.booking.BookingApp.models.dtos.users.UserPutDTO;
-import com.booking.BookingApp.services.IUserService;
+import com.booking.BookingApp.models.dtos.accommodations.FeedbackPostDTO;
+import com.booking.BookingApp.models.dtos.accommodations.FeedbackPutDTO;
+import com.booking.BookingApp.models.reservations.Feedback;
+import com.booking.BookingApp.services.IFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,42 +14,43 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/feedbacks")
+public class FeedbackController {
 
     @Autowired
-    private IUserService userService;
+    private IFeedbackService feedbackService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserGetDTO>> findAll(){
-        List<UserGetDTO> users=userService.findAll();
-        return new ResponseEntity<>(users,HttpStatus.OK);
+    public ResponseEntity<List<Feedback>> findAll(){
+        List<Feedback> result=feedbackService.findAll();
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserGetDTO> findById(@PathVariable Long id){
-        Optional<UserGetDTO> result=userService.findById(id);
+    public ResponseEntity<Feedback> findById(@PathVariable Long id){
+        Optional<Feedback> result=feedbackService.findById(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result.get(),HttpStatus.OK );
     }
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@RequestBody UserPostDTO newUser) throws Exception {
-        Optional<User> result=userService.create(newUser);
+    public ResponseEntity<Feedback> create(@RequestBody FeedbackPostDTO newFeedback) throws Exception {
+        Optional<Feedback> result=feedbackService.create(newFeedback);
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
 
     }
 
     @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable Long id) throws Exception {
-        User result=userService.update(user,id);
+    public ResponseEntity<Feedback> update(@RequestBody FeedbackPutDTO feedback, @PathVariable Long id) throws Exception {
+        Feedback result=feedbackService.update(feedback,id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK);
 
     }
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> delete(@PathVariable Long id){
-        userService.delete(id);
+    public ResponseEntity<Feedback> delete(@PathVariable Long id){
+        feedbackService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
