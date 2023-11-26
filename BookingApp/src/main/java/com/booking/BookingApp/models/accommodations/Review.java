@@ -1,4 +1,4 @@
-package com.booking.BookingApp.models.reservations;
+package com.booking.BookingApp.models.accommodations;
 
 import com.booking.BookingApp.models.enums.ReviewEnum;
 

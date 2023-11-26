@@ -1,9 +1,12 @@
 package com.booking.BookingApp.models.users;
 
+import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+
+import java.util.Map;
 
 
 public class User {
@@ -20,7 +23,9 @@ public class User {
 
     public StatusEnum status;
 
-    public User(Long id, String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
+    public Map<NotificationTypeEnum,Boolean> notificationSettings;
+
+    public User(Long id, String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status,Map<NotificationTypeEnum,Boolean> notificationSettings) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -30,6 +35,7 @@ public class User {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status=status;
+        this.notificationSettings=notificationSettings;
     }
 
     public User() {
@@ -106,5 +112,13 @@ public class User {
 
     public void setStatus(StatusEnum status) {
         this.status = status;
+    }
+
+    public Map<NotificationTypeEnum, Boolean> getNotificationSettings() {
+        return notificationSettings;
+    }
+
+    public void setNotificationSettings(Map<NotificationTypeEnum, Boolean> notificationSettings) {
+        this.notificationSettings = notificationSettings;
     }
 }
