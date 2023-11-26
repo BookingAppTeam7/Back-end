@@ -1,6 +1,6 @@
 package com.booking.BookingApp.repositories;
 
-import com.booking.BookingApp.models.Accommodation;
+import com.booking.BookingApp.models.accommodations.Accommodation;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.booking.BookingApp.repositories;
 
-import com.booking.BookingApp.models.Accommodation;
+import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import org.springframework.stereotype.Repository;

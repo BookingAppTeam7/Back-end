@@ -7,9 +7,9 @@ import java.util.Map;
 public class NotificationSettings {
     public Long id;
     public Long userId;
-    public Map<NotificationTypeEnum,String> settings;
+    public Map<NotificationTypeEnum,Boolean> settings;
 
-    public NotificationSettings(Long id, Long userId, Map<NotificationTypeEnum, String> settings) {
+    public NotificationSettings(Long id, Long userId, Map<NotificationTypeEnum, Boolean> settings) {
         this.id = id;
         this.userId = userId;
         this.settings = settings;
@@ -31,11 +31,11 @@ public class NotificationSettings {
         this.userId = userId;
     }
 
-    public Map<NotificationTypeEnum, String> getSettings() {
+    public Map<NotificationTypeEnum, Boolean> getSettings() {
         return settings;
     }
 
-    public void setSettings(Map<NotificationTypeEnum, String> settings) {
+    public void setSettings(Map<NotificationTypeEnum, Boolean> settings) {
         this.settings = settings;
     }
 }
