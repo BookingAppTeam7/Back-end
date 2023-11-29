@@ -24,7 +24,9 @@ public class Accommodation {
     public ReservationConfirmationEnum reservationConfirmation;
     public List<Review> reviews;
 
-    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews) {
+    public List<String> images;
+
+    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,6 +42,7 @@ public class Accommodation {
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
         this.reviews=reviews;
+        this.images=images;
     }
 
     public Long getId() {
@@ -160,5 +163,13 @@ public class Accommodation {
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

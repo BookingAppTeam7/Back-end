@@ -57,6 +57,7 @@ public class AccommodationRepository implements IAccommodationRepository{
             accommodation.setStatus(AccommodationStatusEnum.PENDING);
             accommodation.setCancellationDeadline(updatedAccommodation.cancellationDeadline);
             accommodation.setReservationConfirmation(ReservationConfirmationEnum.MANUAL);
+            accommodation.setImages(updatedAccommodation.images);
 
             return accommodation;
         }else{

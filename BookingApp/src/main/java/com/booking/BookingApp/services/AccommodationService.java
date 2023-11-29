@@ -36,13 +36,13 @@ public class AccommodationService implements IAccommodationService{
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
         Long newId=(Long) counter.incrementAndGet();
         List<Review> reviews=new ArrayList<>();
-        Accommodation createdAccommodation=new Accommodation(newId,newAccommodation.name, newAccommodation.description, newAccommodation.location,newAccommodation.minGuests,newAccommodation. maxGuests, newAccommodation.type, newAccommodation.assets, newAccommodation.prices, newAccommodation.availability,newAccommodation.ownerId,AccommodationStatusEnum.PENDING,newAccommodation.cancellationDeadline, newAccommodation.reservationConfirmation,reviews);
+        Accommodation createdAccommodation=new Accommodation(newId,newAccommodation.name, newAccommodation.description, newAccommodation.location,newAccommodation.minGuests,newAccommodation. maxGuests, newAccommodation.type, newAccommodation.assets, newAccommodation.prices, newAccommodation.availability,newAccommodation.ownerId,AccommodationStatusEnum.PENDING,newAccommodation.cancellationDeadline, newAccommodation.reservationConfirmation,reviews,newAccommodation.images);
         return accommodationRepository.save(createdAccommodation);
     }
 
     @Override
     public Accommodation update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices, updatedAccommodation.availability,updatedAccommodation.ownerId,updatedAccommodation.status,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews);
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices, updatedAccommodation.availability,updatedAccommodation.ownerId,updatedAccommodation.status,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images);
         return accommodationRepository.saveAndFlush(result);
     }
 

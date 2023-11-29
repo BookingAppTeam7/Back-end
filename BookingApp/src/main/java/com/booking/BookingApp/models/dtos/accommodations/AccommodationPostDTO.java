@@ -22,8 +22,9 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
     public Long ownerId;
     public int cancellationDeadline;
     public ReservationConfirmationEnum reservationConfirmation;
+    public List<String> images;
 
-    public AccommodationPostDTO(String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation) {
+    public AccommodationPostDTO(String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -36,6 +37,7 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.ownerId = ownerId;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
+        this.images=images;
     }
 
     public String getName() {
@@ -132,5 +134,13 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
 
     public void setReservationConfirmation(ReservationConfirmationEnum reservationConfirmation) {
         this.reservationConfirmation = reservationConfirmation;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }
