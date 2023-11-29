@@ -1,5 +1,6 @@
 package com.booking.BookingApp.models.dtos.reservations;
 
+import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 
 import java.util.Date;
@@ -8,18 +9,15 @@ public class ReservationPutDTO { //Reservation model without id
 
     public  Long accommodationId;
     public Long userId;
-    public Date startDate;
-
-    public Date endDate;
+    public TimeSlot timeSlot;
 
     public ReservationStatusEnum status;
 
-    public ReservationPutDTO(Long id, Long accommodationId, Long userId,Date startDate, Date endDate,ReservationStatusEnum status) {
+    public ReservationPutDTO(Long id, Long accommodationId, Long userId,TimeSlot timeSlot,ReservationStatusEnum status) {
 
         this.accommodationId = accommodationId;
         this.userId=userId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.timeSlot=timeSlot;
         this.status=status;
     }
 
@@ -35,27 +33,18 @@ public class ReservationPutDTO { //Reservation model without id
         return accommodationId;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
     }
-
-
 
     public void setAccommodationId(Long accommodationId) {
         this.accommodationId = accommodationId;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
 
     public ReservationStatusEnum getStatus() {
         return status;

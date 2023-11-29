@@ -7,19 +7,14 @@ import java.util.Date;
 public class PriceCard {
 
     public Long id;
-    //public Long accommodationId;
-
-    public Date startDate;
-
-    public Date endDate;
+    public TimeSlot timeSlot;
 
     public double price;
     public PriceTypeEnum type;
 
-    public PriceCard(Long id, Date startDate, Date endDate, double price, PriceTypeEnum type) {
+    public PriceCard(Long id, TimeSlot timeSlot, double price, PriceTypeEnum type) {
         this.id = id;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.timeSlot=timeSlot;
         this.price = price;
         this.type = type;
     }
@@ -33,20 +28,12 @@ public class PriceCard {
     }
 
 
-    public Date getStartDate() {
-        return startDate;
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
     }
 
     public double getPrice() {

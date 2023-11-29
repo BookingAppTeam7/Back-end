@@ -9,14 +9,16 @@ public class Review {
     public Long id;
     public Long userId;
     public ReviewEnum type;
-    public String content;
+    public String comment;
+    public int grade;
     public LocalDateTime dateTime;
 
-    public Review(Long id, Long userId, ReviewEnum type, String content, LocalDateTime dateTime) {
+    public Review(Long id, Long userId, ReviewEnum type, String comment,int grade, LocalDateTime dateTime) {
         this.id = id;
         this.userId = userId;
         this.type = type;
-        this.content = content;
+        this.comment = comment;
+        this.grade=grade;
         this.dateTime = dateTime;
     }
 
@@ -44,19 +46,27 @@ public class Review {
         this.type = type;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public int getGrade() {
+        return grade;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
     }
 }

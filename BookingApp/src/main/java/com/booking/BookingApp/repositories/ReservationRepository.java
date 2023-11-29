@@ -35,13 +35,13 @@ public class ReservationRepository implements IReservationRepository{
         if (optionalReservation.isPresent()) {
             Reservation reservation= optionalReservation.get();
             reservation.setAccommodationId(updatedReservation.getAccommodationId());
-            reservation.setStartDate(updatedReservation.getStartDate());
-            reservation.setEndDate(updatedReservation.getEndDate());
+            reservation.setTimeSlot(updatedReservation.getTimeSlot());
+            reservation.setUserId(updatedReservation.getUserId());
 
             return reservation;
         }
         else{
-            throw new RuntimeException("Korisnik s ID-om " + updatedReservation.id + " nije pronađen.");
+            throw new RuntimeException("Rezervacija s ID-om " + updatedReservation.id + " nije pronađen.");
         }
     }
 

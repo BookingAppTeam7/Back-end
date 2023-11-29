@@ -31,13 +31,13 @@ public class ReservationService implements IReservationService{
     @Override
     public Optional<Reservation> create(ReservationPostDTO newReservation) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        Reservation createdReservation=new Reservation(newId,newReservation.accommodationId,newReservation.userId,newReservation.startDate,newReservation.endDate, ReservationStatusEnum.PENDING);
+        Reservation createdReservation=new Reservation(newId,newReservation.accommodationId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING);
         return reservationRepository.save(createdReservation);
     }
 
     @Override
     public Reservation update(ReservationPutDTO updatedReservation, Long id) throws Exception {
-        Reservation result=new Reservation(id,updatedReservation.accommodationId,updatedReservation.userId,updatedReservation.startDate,updatedReservation.endDate,updatedReservation.status);
+        Reservation result=new Reservation(id,updatedReservation.accommodationId,updatedReservation.userId,updatedReservation.timeSlot,updatedReservation.status);
         return reservationRepository.saveAndFlush(result);
     }
 
