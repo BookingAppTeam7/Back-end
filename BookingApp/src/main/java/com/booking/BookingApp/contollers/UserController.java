@@ -21,6 +21,7 @@ public class UserController {
     @Autowired
     private IUserService userService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
     public ResponseEntity<List<UserGetDTO>> findAll(){
         List<UserGetDTO> users=userService.findAll();
         return new ResponseEntity<>(users,HttpStatus.OK);
@@ -35,6 +36,7 @@ public class UserController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
     public ResponseEntity<User> create(@RequestBody UserPostDTO newUser) throws Exception {
         Optional<User> result=userService.create(newUser);
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
