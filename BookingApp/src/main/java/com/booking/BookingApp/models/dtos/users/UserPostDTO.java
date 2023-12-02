@@ -7,16 +7,18 @@ public class UserPostDTO {  //User model without id and status (created user is 
     public String lastName;
     public String username;
     public String password;
+    public String passwordConfirmation;
     public RoleEnum role;
 
     public String address;
     public String phoneNumber;
 
-    public UserPostDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber) {
+    public UserPostDTO(String firstName, String lastName, String username, String password, String passwordConfirmation,RoleEnum role, String address, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
+        this.passwordConfirmation=passwordConfirmation;
         this.role = role;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -76,5 +78,13 @@ public class UserPostDTO {  //User model without id and status (created user is 
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getPasswordConfirmation() {
+        return passwordConfirmation;
+    }
+
+    public void setPasswordConfirmation(String passwordConfirmation) {
+        this.passwordConfirmation = passwordConfirmation;
     }
 }
