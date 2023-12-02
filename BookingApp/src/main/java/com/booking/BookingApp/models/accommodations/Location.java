@@ -1,0 +1,67 @@
+package com.booking.BookingApp.models.accommodations;
+
+public class Location {
+    public Long id;
+    public String address;
+    public String city;
+    public String country;
+    public double x;
+    public double y;
+
+    public Location(Long id, String address, String city, String country, double x, double y) {
+        this.id = id;
+        this.address = address;
+        this.city = city;
+        this.country = country;
+        this.x = x;
+        this.y = y;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+}

@@ -24,7 +24,6 @@ public class AccommodationService implements IAccommodationService{
     @Override
     public List<Accommodation> findAll() {
         return accommodationRepository.findAll();
-
     }
 
     @Override

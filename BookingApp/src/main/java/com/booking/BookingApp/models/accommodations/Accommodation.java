@@ -11,7 +11,7 @@ public class Accommodation {
     public Long id;
     public String name;
     public String description;
-    public String location;
+    public Location location;
     public int minGuests;
     public int maxGuests;
     public TypeEnum type;
@@ -26,7 +26,7 @@ public class Accommodation {
 
     public List<String> images;
 
-    public Accommodation(Long id, String name, String description, String location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
+    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -69,11 +69,11 @@ public class Accommodation {
         this.description = description;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
