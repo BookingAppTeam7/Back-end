@@ -11,10 +11,10 @@ import java.util.Map;
 public class Guest extends User{
     public List<Accommodation> favoriteAccomodations;
 
-    public Guest(Long id, String firstName, String lastName, String username, String password,
+    public Guest( String firstName, String lastName, String username, String password,
                  RoleEnum role, String address, String phoneNumber, StatusEnum status,
                  Map<NotificationTypeEnum, Boolean> notificationSettings, List<Accommodation> favoriteAccomodations) {
-        super(id, firstName, lastName, username, password, role, address, phoneNumber, status, notificationSettings);
+        super( firstName, lastName, username, password, role, address, phoneNumber, status);
         this.favoriteAccomodations = favoriteAccomodations;
     }
 

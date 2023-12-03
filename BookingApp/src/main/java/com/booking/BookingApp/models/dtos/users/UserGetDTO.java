@@ -4,7 +4,7 @@ import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 
 public class UserGetDTO {  //User model without password
-    public Long id;
+
     public String firstName;
     public String lastName;
     public String username;
@@ -15,8 +15,8 @@ public class UserGetDTO {  //User model without password
 
     public StatusEnum status;
 
-    public UserGetDTO(Long id, String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
-        this.id = id;
+    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
+       // this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -30,9 +30,7 @@ public class UserGetDTO {  //User model without password
 
     }
 
-    public Long getId() {
-        return id;
-    }
+
 
     public String getFirstName() {
         return firstName;
@@ -59,9 +57,7 @@ public class UserGetDTO {  //User model without password
         return phoneNumber;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;

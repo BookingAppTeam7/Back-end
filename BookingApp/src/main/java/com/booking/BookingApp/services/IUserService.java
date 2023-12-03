@@ -12,9 +12,9 @@ public interface IUserService {
 
     List<UserGetDTO> findAll();
 
-    Optional<UserGetDTO> findById(Long id);
+    Optional<UserGetDTO> findById(String username);
 
     Optional<User> create(UserPostDTO newUser) throws Exception;
-    User update(UserPutDTO updatedUser,Long  id) throws  Exception;
-    void delete(Long id);
+    User update(UserPutDTO updatedUser,String username) throws  Exception;
+    void delete(String username);
 }

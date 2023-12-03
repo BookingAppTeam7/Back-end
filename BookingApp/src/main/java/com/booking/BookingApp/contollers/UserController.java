@@ -27,9 +27,9 @@ public class UserController {
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 
-    @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserGetDTO> findById(@PathVariable Long id){
-        Optional<UserGetDTO> result=userService.findById(id);
+    @GetMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserGetDTO> findById(@PathVariable String username){
+        Optional<UserGetDTO> result=userService.findById(username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result.get(),HttpStatus.OK );
     }
@@ -43,16 +43,16 @@ public class UserController {
 
     }
 
-    @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable Long id) throws Exception {
-        User result=userService.update(user,id);
+    @PutMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable String username) throws Exception {
+        User result=userService.update(user,username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK);
 
     }
-    @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> delete(@PathVariable Long id){
-        userService.delete(id);
+    @DeleteMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> delete(@PathVariable String username){
+        userService.delete(username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

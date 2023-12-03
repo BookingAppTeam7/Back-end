@@ -25,16 +25,16 @@ public class UserService implements IUserService{
         List<UserGetDTO>resultDTO=new ArrayList<>();
 
         for(User u:result){
-            resultDTO.add(new UserGetDTO(u.getId(),u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus()));
+            resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus()));
         }
         return resultDTO;
     }
 
     @Override
-    public Optional<UserGetDTO> findById(Long id) {
-        Optional<User> u=userRepository.findById(id);
+    public Optional<UserGetDTO> findById(String username) {
+        Optional<User> u=userRepository.findById(username);
         if(u.isPresent()) {
-            UserGetDTO userDTO = new UserGetDTO(u.get().getId(), u.get().getFirstName(), u.get().getLastName(), u.get().getUsername(), u.get().getRole(), u.get().getAddress(), u.get().getPhoneNumber(), u.get().getStatus());
+            UserGetDTO userDTO = new UserGetDTO(u.get().getFirstName(), u.get().getLastName(), u.get().getUsername(), u.get().getRole(), u.get().getAddress(), u.get().getPhoneNumber(), u.get().getStatus());
             return Optional.of(userDTO);
         }
         return null;
@@ -45,18 +45,18 @@ public class UserService implements IUserService{
         Long newId= (Long) counter.incrementAndGet();
         Map<NotificationTypeEnum,Boolean>notificationSettings=null;
 
-        User createdUser=new User(newId,newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE,notificationSettings);
-        return userRepository.save(createdUser);
+        User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE);
+        return Optional.of(userRepository.save(createdUser));
     }
 
     @Override
-    public User update(UserPutDTO updatedUser, Long id) throws Exception {
-        User result=new User(id,updatedUser.firstName, updatedUser.lastName,updatedUser.username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status,updatedUser.notificationSettings);
+    public User update(UserPutDTO updatedUser, String username) throws Exception {
+        User result=new User(updatedUser.firstName, updatedUser.lastName,updatedUser.username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status);
         return userRepository.saveAndFlush(result);
     }
 
     @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
+    public void delete(String username) {
+        userRepository.deleteById(username);
     }
 }

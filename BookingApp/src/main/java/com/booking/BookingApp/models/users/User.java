@@ -5,15 +5,18 @@ import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.Map;
-
-
+@Table(name="users")
+@Entity
 public class User {
+    //@Id
+    //public Long id;
 
-    public Long id;
     public String firstName;
     public String lastName;
+    @Id
     public String username;
     public String password;
     public RoleEnum role;
@@ -23,10 +26,10 @@ public class User {
 
     public StatusEnum status;
 
-    public Map<NotificationTypeEnum,Boolean> notificationSettings;
+   // public Map<NotificationTypeEnum,Boolean> notificationSettings;
 
-    public User(Long id, String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status,Map<NotificationTypeEnum,Boolean> notificationSettings) {
-        this.id = id;
+    public User( String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
+        //this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -35,16 +38,16 @@ public class User {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status=status;
-        this.notificationSettings=notificationSettings;
+        //this.notificationSettings=notificationSettings;
     }
 
     public User() {
 
     }
 
-    public Long getId() {
-        return id;
-    }
+   // public Long getId() {
+       // return id;
+    //}
 
     public String getFirstName() {
         return firstName;
@@ -74,9 +77,9 @@ public class User {
         return phoneNumber;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    //public void setId(Long id) {
+        //this.id = id;
+   // }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -114,11 +117,11 @@ public class User {
         this.status = status;
     }
 
-    public Map<NotificationTypeEnum, Boolean> getNotificationSettings() {
-        return notificationSettings;
-    }
+   // public Map<NotificationTypeEnum, Boolean> getNotificationSettings() {
+    //    return notificationSettings;
+   // }
 
-    public void setNotificationSettings(Map<NotificationTypeEnum, Boolean> notificationSettings) {
-        this.notificationSettings = notificationSettings;
-    }
+   // public void setNotificationSettings(Map<NotificationTypeEnum, Boolean> notificationSettings) {
+  //      this.notificationSettings = notificationSettings;
+  //  }
 }
