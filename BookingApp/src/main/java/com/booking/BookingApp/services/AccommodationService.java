@@ -6,6 +6,7 @@ import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
+import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public List<Accommodation> findAll() {
-        return accommodationRepository.findAll(); ///ovde mozda korigovati
+        return accommodationRepository.findAll(); ///ovde mozda korigovati da vraca u availabilitiju samo tip AVAILABILITY
     }
 
     @Override
@@ -35,7 +36,26 @@ public class AccommodationService implements IAccommodationService{
 
             List<Review> reviews = new ArrayList<>();
 
-            Accommodation createdAccommodation = new Accommodation(
+            //treba korigovati datume od cenovnika i dostupnosti i postaviti u newAccommodation.prices i newAccommodation.availability
+
+            //ako su timeslotovi od cenovnika isti,treba napraviti jedan cenovnik koji ce imati poslednju unetu cenu za taj time slot
+            //ako datum cenovnika B upaada u datum cenovnika A:
+                // a_startDate - b_startDate cena iz cenovnika a
+                //b_startDate - b_endDate cena iz cenovnika b
+                //b_endDate - a_endDate cena iz cenovnika a
+
+            //ako je datum cenovnika B zauzeo deo cenovnika A  //prvo B pa onda A  (b_startDate<a_startDate i b_endDate<a_endDate i b_endDate>a_startDate)
+                //b_startDate - b_endDate cena iz cenovnika b
+                //b_endDate - a_endDate cena iz cenovnika A
+                /// ILI
+                ////prvo A pa onda B  (a_startDate<b_startDate i b_startDate<a_endDate i b_endDate>a_endDate)
+                // a_startDate-b_startDate - cena iz cenovnika a
+                //b_startDate - b_endDate - cena iz cenovnika b
+
+            //ako nema preklapanja to je novi cenovnik i  ne treba mu korigovati datume
+
+
+        Accommodation createdAccommodation = new Accommodation(
                     newAccommodation.getName(),
                     newAccommodation.getDescription(),
                     new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY()),
@@ -44,23 +64,21 @@ public class AccommodationService implements IAccommodationService{
                     newAccommodation.getType(),
                     newAccommodation.getAssets(),
                     newAccommodation.getPrices(),
-                    newAccommodation.getAvailability(),
                     newAccommodation.getOwnerId(),
                     newAccommodation.getCancellationDeadline(),
-                    newAccommodation.getReservationConfirmation(),
+                    ReservationConfirmationEnum.MANUAL,
                     reviews,
                     newAccommodation.getImages(),
                     AccommodationStatusEnum.PENDING
             );
 
-        System.out.println("Values: " + createdAccommodation.name);
             return Optional.of(accommodationRepository.save(createdAccommodation));
 
     }
 
     @Override
     public Accommodation update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices, updatedAccommodation.availability,updatedAccommodation.ownerId,updatedAccommodation.status,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images);
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices,updatedAccommodation.ownerId,updatedAccommodation.status,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images);
         return accommodationRepository.saveAndFlush(result);
     }
 

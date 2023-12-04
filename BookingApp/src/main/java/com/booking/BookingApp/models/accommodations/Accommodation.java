@@ -26,13 +26,10 @@ public class Accommodation {
     @Enumerated(EnumType.STRING)
 
     public TypeEnum type;
-
     @ElementCollection
     public List<String> assets;
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     public List<PriceCard> prices;
-    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
-    public List<TimeSlot> availability;
     public Long ownerId;
     @Enumerated(EnumType.STRING)
     public AccommodationStatusEnum status;
@@ -44,7 +41,8 @@ public class Accommodation {
     @ElementCollection
     public List<String> images;
 
-    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
+    //constructor with id (update)
+    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -54,7 +52,15 @@ public class Accommodation {
         this.type = type;
         this.assets = assets;
         this.prices = prices;
-        this.availability = availability;
+
+        if (prices != null) {
+            for (PriceCard priceCard : prices) {
+                priceCard.setAccommodation(this);
+                priceCard.timeSlot.setAccommodation(this);
+                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
+            }
+        }
+
         this.ownerId = ownerId;
         this.status = status;
         this.cancellationDeadline = cancellationDeadline;
@@ -66,8 +72,9 @@ public class Accommodation {
     public Accommodation() {
 
     }
+    //constructor without id (create)
 
-    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status) {
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -76,19 +83,12 @@ public class Accommodation {
         this.type = type;
         this.assets = assets;
         this.prices = (prices != null) ? prices : new ArrayList<>();
-        this.availability = (availability != null) ? availability : new ArrayList<>();
 
         if (prices != null) {
             for (PriceCard priceCard : prices) {
                 priceCard.setAccommodation(this);
                 priceCard.timeSlot.setAccommodation(this);
                 priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
-            }
-        }
-        if (availability != null) {
-            for (TimeSlot timeSlot : availability) {
-                timeSlot.setAccommodation(this);
-                timeSlot.setType(TimeSlotType.AVAILABILITY);
             }
         }
         this.ownerId = ownerId;
@@ -169,14 +169,6 @@ public class Accommodation {
 
     public void setPrices(List<PriceCard> prices) {
         this.prices = prices;
-    }
-
-    public List<TimeSlot> getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(List<TimeSlot> availability) {
-        this.availability = availability;
     }
 
     public Long getOwnerId() {

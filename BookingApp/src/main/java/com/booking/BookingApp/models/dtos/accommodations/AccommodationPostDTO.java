@@ -19,13 +19,11 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
     public TypeEnum type;
     public List<String> assets;
     public List<PriceCard> prices;
-    public List<TimeSlot> availability;
     public Long ownerId;
     public int cancellationDeadline;
-    public ReservationConfirmationEnum reservationConfirmation;
     public List<String> images;
 
-    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<String> images) {
+    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, Long ownerId, int cancellationDeadline,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -34,10 +32,8 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.type = type;
         this.assets = assets;
         this.prices = prices;
-        this.availability = availability;
         this.ownerId = ownerId;
         this.cancellationDeadline = cancellationDeadline;
-        this.reservationConfirmation = reservationConfirmation;
         this.images=images;
     }
 
@@ -105,14 +101,6 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.prices = prices;
     }
 
-    public List<TimeSlot> getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(List<TimeSlot> availability) {
-        this.availability = availability;
-    }
-
     public Long getOwnerId() {
         return ownerId;
     }
@@ -127,14 +115,6 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
 
     public void setCancellationDeadline(int cancellationDeadline) {
         this.cancellationDeadline = cancellationDeadline;
-    }
-
-    public ReservationConfirmationEnum getReservationConfirmation() {
-        return reservationConfirmation;
-    }
-
-    public void setReservationConfirmation(ReservationConfirmationEnum reservationConfirmation) {
-        this.reservationConfirmation = reservationConfirmation;
     }
 
     public List<String> getImages() {
