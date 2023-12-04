@@ -1,6 +1,15 @@
 package com.booking.BookingApp.models.accommodations;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+
 public class Location {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     public String address;
     public String city;
@@ -15,6 +24,18 @@ public class Location {
         this.country = country;
         this.x = x;
         this.y = y;
+    }
+
+    public Location() {
+
+    }
+
+    public Location(String address, String city, String country, double x, double y) {
+        this.address=address;
+        this.city=city;
+        this.country=country;
+        this.x=x;
+        this.y=y;
     }
 
     public Long getId() {

@@ -2,28 +2,46 @@ package com.booking.BookingApp.models.accommodations;
 
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
+import com.booking.BookingApp.models.enums.TimeSlotType;
 import com.booking.BookingApp.models.enums.TypeEnum;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
+@Entity
+@Table(name="accommodations")
 public class Accommodation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     public String name;
     public String description;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
     public Location location;
     public int minGuests;
     public int maxGuests;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+
     public TypeEnum type;
+
+    @ElementCollection
     public List<String> assets;
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     public List<PriceCard> prices;
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     public List<TimeSlot> availability;
     public Long ownerId;
+    @Enumerated(EnumType.STRING)
     public AccommodationStatusEnum status;
     public int cancellationDeadline;
+    @Enumerated(EnumType.STRING)
     public ReservationConfirmationEnum reservationConfirmation;
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     public List<Review> reviews;
-
+    @ElementCollection
     public List<String> images;
 
     public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
@@ -43,6 +61,42 @@ public class Accommodation {
         this.reservationConfirmation = reservationConfirmation;
         this.reviews=reviews;
         this.images=images;
+    }
+
+    public Accommodation() {
+
+    }
+
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.minGuests = minGuests;
+        this.maxGuests = maxGuests;
+        this.type = type;
+        this.assets = assets;
+        this.prices = (prices != null) ? prices : new ArrayList<>();
+        this.availability = (availability != null) ? availability : new ArrayList<>();
+
+        if (prices != null) {
+            for (PriceCard priceCard : prices) {
+                priceCard.setAccommodation(this);
+                priceCard.timeSlot.setAccommodation(this);
+                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
+            }
+        }
+        if (availability != null) {
+            for (TimeSlot timeSlot : availability) {
+                timeSlot.setAccommodation(this);
+                timeSlot.setType(TimeSlotType.AVAILABILITY);
+            }
+        }
+        this.ownerId = ownerId;
+        this.status = status;
+        this.cancellationDeadline = cancellationDeadline;
+        this.reservationConfirmation = reservationConfirmation;
+        this.reviews = reviews;
+        this.images = images;
     }
 
     public Long getId() {

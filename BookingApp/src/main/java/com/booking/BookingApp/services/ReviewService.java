@@ -30,10 +30,15 @@ public class ReviewService implements IReviewService{
 
     @Override
     public Optional<Review> create(ReviewPostDTO newReview) throws Exception {
-        Long newId=(Long) counter.incrementAndGet();
-        Review createdReview=new Review(newId,newReview.userId,newReview.type,newReview.comment, newReview.grade, LocalDateTime.now());
-        return reviewRepository.save(createdReview);
+        return Optional.empty();
     }
+
+//    @Override
+//    public Optional<Review> create(ReviewPostDTO newReview) throws Exception {
+//        Long newId=(Long) counter.incrementAndGet();
+//        Review createdReview=new Review(newId,newReview.userId,newReview.type,newReview.comment, newReview.grade, LocalDateTime.now());
+//        return reviewRepository.save(createdReview);
+//    }
 
     @Override
     public Review update(ReviewPutDTO updatedReview, Long id, Long userId, ReviewEnum type) throws Exception {

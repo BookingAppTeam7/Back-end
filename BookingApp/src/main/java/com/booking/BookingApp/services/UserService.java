@@ -42,9 +42,6 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
-        Long newId= (Long) counter.incrementAndGet();
-        Map<NotificationTypeEnum,Boolean>notificationSettings=null;
-
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE);
         return Optional.of(userRepository.save(createdUser));
     }

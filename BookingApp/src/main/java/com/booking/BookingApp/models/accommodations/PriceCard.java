@@ -1,15 +1,27 @@
 package com.booking.BookingApp.models.accommodations;
 
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
+@Entity
 public class PriceCard {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    public TimeSlot timeSlot;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "accommodation_id")
+    public Accommodation accommodation;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "time_slot_id")
+    public TimeSlot timeSlot;
     public double price;
+    @Enumerated(EnumType.STRING)
     public PriceTypeEnum type;
 
     public PriceCard(Long id, TimeSlot timeSlot, double price, PriceTypeEnum type) {
@@ -17,6 +29,10 @@ public class PriceCard {
         this.timeSlot=timeSlot;
         this.price = price;
         this.type = type;
+    }
+
+    public PriceCard() {
+
     }
 
     public Long getId() {
@@ -50,5 +66,13 @@ public class PriceCard {
 
     public void setType(PriceTypeEnum type) {
         this.type = type;
+    }
+
+    public Accommodation getAccommodation() {
+        return accommodation;
+    }
+
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
     }
 }

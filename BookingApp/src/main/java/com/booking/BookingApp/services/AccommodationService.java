@@ -1,6 +1,7 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
+import com.booking.BookingApp.models.accommodations.Location;
 import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
@@ -18,12 +19,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class AccommodationService implements IAccommodationService{
     @Autowired
     public IAccommodationRepository accommodationRepository;
-    private static AtomicLong counter=new AtomicLong();
-
 
     @Override
     public List<Accommodation> findAll() {
-        return accommodationRepository.findAll();
+        return accommodationRepository.findAll(); ///ovde mozda korigovati
     }
 
     @Override
@@ -33,10 +32,30 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
-        Long newId=(Long) counter.incrementAndGet();
-        List<Review> reviews=new ArrayList<>();
-        Accommodation createdAccommodation=new Accommodation(newId,newAccommodation.name, newAccommodation.description, newAccommodation.location,newAccommodation.minGuests,newAccommodation. maxGuests, newAccommodation.type, newAccommodation.assets, newAccommodation.prices, newAccommodation.availability,newAccommodation.ownerId,AccommodationStatusEnum.PENDING,newAccommodation.cancellationDeadline, newAccommodation.reservationConfirmation,reviews,newAccommodation.images);
-        return accommodationRepository.save(createdAccommodation);
+
+            List<Review> reviews = new ArrayList<>();
+
+            Accommodation createdAccommodation = new Accommodation(
+                    newAccommodation.getName(),
+                    newAccommodation.getDescription(),
+                    new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY()),
+                    newAccommodation.getMinGuests(),
+                    newAccommodation.getMaxGuests(),
+                    newAccommodation.getType(),
+                    newAccommodation.getAssets(),
+                    newAccommodation.getPrices(),
+                    newAccommodation.getAvailability(),
+                    newAccommodation.getOwnerId(),
+                    newAccommodation.getCancellationDeadline(),
+                    newAccommodation.getReservationConfirmation(),
+                    reviews,
+                    newAccommodation.getImages(),
+                    AccommodationStatusEnum.PENDING
+            );
+
+        System.out.println("Values: " + createdAccommodation.name);
+            return Optional.of(accommodationRepository.save(createdAccommodation));
+
     }
 
     @Override

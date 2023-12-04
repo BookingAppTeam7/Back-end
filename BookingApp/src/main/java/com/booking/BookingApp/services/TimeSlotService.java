@@ -46,13 +46,13 @@ public class TimeSlotService implements  ITimeSlotService{
     @Override
     public Optional<TimeSlot> create(TimeSlotPostDTO newTimeSlot) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        TimeSlot createdTimeSlot=new TimeSlot(newId,newTimeSlot.startDate,newTimeSlot.endDate);
+        TimeSlot createdTimeSlot=new TimeSlot(newId,newTimeSlot.startDate,newTimeSlot.endDate,newTimeSlot.type);
         return timeSlotRepository.save(createdTimeSlot);
     }
 
     @Override
     public TimeSlot update(TimeSlotPutDTO updatedTimeSlot, Long id) throws Exception {
-        TimeSlot result=new TimeSlot(id,updatedTimeSlot.startDate,updatedTimeSlot.endDate);
+        TimeSlot result=new TimeSlot(id,updatedTimeSlot.startDate,updatedTimeSlot.endDate,updatedTimeSlot.type);
         return timeSlotRepository.saveAndFlush(result);
     }
 
