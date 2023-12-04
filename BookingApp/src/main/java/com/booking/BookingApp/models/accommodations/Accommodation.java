@@ -1,9 +1,6 @@
 package com.booking.BookingApp.models.accommodations;
 
-import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
-import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
-import com.booking.BookingApp.models.enums.TimeSlotType;
-import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.enums.*;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

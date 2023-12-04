@@ -1,17 +1,17 @@
 package com.booking.BookingApp.services;
 
-import com.booking.BookingApp.models.accommodations.Accommodation;
-import com.booking.BookingApp.models.accommodations.Location;
-import com.booking.BookingApp.models.accommodations.Review;
+import com.booking.BookingApp.models.accommodations.*;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
+import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,6 +36,21 @@ public class AccommodationService implements IAccommodationService{
 
             List<Review> reviews = new ArrayList<>();
 
+//            List<PriceCard> prices=newAccommodation.getPrices();
+//            List<PriceCard> modifiedPrices=new ArrayList<>();
+//
+//            for(PriceCard b:prices) {
+//                TimeSlot bTimeSlot=b.timeSlot;
+//                Date bStart=bTimeSlot.startDate;
+//                Date bEnd=bTimeSlot.endDate;
+//                for(PriceCard a:prices){
+//                    TimeSlot aTimeSlot=a.timeSlot;
+//                    Date aStart=aTimeSlot.startDate;
+//                    Date aEnd=aTimeSlot.endDate;
+//                }
+//
+//            }
+
             //treba korigovati datume od cenovnika i dostupnosti i postaviti u newAccommodation.prices i newAccommodation.availability
 
             //ako su timeslotovi od cenovnika isti,treba napraviti jedan cenovnik koji ce imati poslednju unetu cenu za taj time slot
@@ -53,7 +68,6 @@ public class AccommodationService implements IAccommodationService{
                 //b_startDate - b_endDate - cena iz cenovnika b
 
             //ako nema preklapanja to je novi cenovnik i  ne treba mu korigovati datume
-
 
         Accommodation createdAccommodation = new Accommodation(
                     newAccommodation.getName(),
