@@ -45,13 +45,16 @@ public class UserService implements IUserService{
         Long newId= (Long) counter.incrementAndGet();
         Map<NotificationTypeEnum,Boolean>notificationSettings=null;
 
-        User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE);
+        User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
+                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification);
         return Optional.of(userRepository.save(createdUser));
     }
 
     @Override
     public User update(UserPutDTO updatedUser, String username) throws Exception {
-        User result=new User(updatedUser.firstName, updatedUser.lastName,updatedUser.username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status);
+        User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status,
+                updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
+                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification);
         return userRepository.saveAndFlush(result);
     }
 

@@ -3,6 +3,7 @@ package com.booking.BookingApp.models.users;
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -26,10 +27,19 @@ public class User {
 
     public StatusEnum status;
 
-   // public Map<NotificationTypeEnum,Boolean> notificationSettings;
+    @Column(nullable = true,columnDefinition = "boolean default false")
+    public Boolean reservationRequestNotification=false;
+    @Column(nullable = true,columnDefinition = "boolean default false")
+    public Boolean reservationCancellationNotification=false;
+    @Column(nullable = true,columnDefinition = "boolean default false")
+    public Boolean ownerRatingNotification=false;
+    @Column(nullable = true,columnDefinition = "boolean default false")
+    public Boolean accommodationRatingNotification=false;
+    //guest
+    @Column(nullable = true,columnDefinition = "boolean default false")
+    public Boolean ownerRepliedToRequestNotification=false;
 
-    public User( String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
-        //this.id = id;
+    public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -37,8 +47,12 @@ public class User {
         this.role = role;
         this.address = address;
         this.phoneNumber = phoneNumber;
-        this.status=status;
-        //this.notificationSettings=notificationSettings;
+        this.status = status;
+        this.reservationRequestNotification = reservationRequestNotification;
+        this.reservationCancellationNotification = reservationCancellationNotification;
+        this.ownerRatingNotification = ownerRatingNotification;
+        this.accommodationRatingNotification = accommodationRatingNotification;
+        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
     }
 
     public User() {
@@ -65,6 +79,8 @@ public class User {
         return password;
     }
 
+
+
     public RoleEnum getRole() {
         return role;
     }
@@ -77,9 +93,46 @@ public class User {
         return phoneNumber;
     }
 
-    //public void setId(Long id) {
-        //this.id = id;
-   // }
+
+    public Boolean getReservationRequestNotification() {
+        return reservationRequestNotification;
+    }
+
+    public void setReservationRequestNotification(Boolean reservationRequestNotification) {
+        this.reservationRequestNotification = reservationRequestNotification;
+    }
+
+    public Boolean getReservationCancellationNotification() {
+        return reservationCancellationNotification;
+    }
+
+    public void setReservationCancellationNotification(Boolean reservationCancellationNotification) {
+        this.reservationCancellationNotification = reservationCancellationNotification;
+    }
+
+    public Boolean getOwnerRatingNotification() {
+        return ownerRatingNotification;
+    }
+
+    public void setOwnerRatingNotification(Boolean ownerRatingNotification) {
+        this.ownerRatingNotification = ownerRatingNotification;
+    }
+
+    public Boolean getAccommodationRatingNotification() {
+        return accommodationRatingNotification;
+    }
+
+    public void setAccommodationRatingNotification(Boolean accommodationRatingNotification) {
+        this.accommodationRatingNotification = accommodationRatingNotification;
+    }
+
+    public Boolean getOwnerRepliedToRequestNotification() {
+        return ownerRepliedToRequestNotification;
+    }
+
+    public void setOwnerRepliedToRequestNotification(Boolean ownerRepliedToRequestNotification) {
+        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -117,11 +170,4 @@ public class User {
         this.status = status;
     }
 
-   // public Map<NotificationTypeEnum, Boolean> getNotificationSettings() {
-    //    return notificationSettings;
-   // }
-
-   // public void setNotificationSettings(Map<NotificationTypeEnum, Boolean> notificationSettings) {
-  //      this.notificationSettings = notificationSettings;
-  //  }
 }
