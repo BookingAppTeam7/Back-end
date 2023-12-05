@@ -52,7 +52,7 @@ public class UserService implements IUserService{
 
     @Override
     public User update(UserPutDTO updatedUser, String username) throws Exception {
-        User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status,
+        User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
                 updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification);
         return userRepository.saveAndFlush(result);
