@@ -20,6 +20,7 @@ public class PriceCardController {
     @Autowired
     private IPriceCardService priceCardService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<PriceCard>> findAll(){
         List<PriceCard> result=priceCardService.findAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -52,4 +53,13 @@ public class PriceCardController {
         priceCardService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping(value="accommodation/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PriceCard>> findByAccommodationId(@PathVariable Long id){
+        List<PriceCard> result=priceCardService.findByAccommodationId(id);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        return new ResponseEntity<>(result,HttpStatus.OK );
+    }
+
+
 }

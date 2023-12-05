@@ -1,9 +1,11 @@
 package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
+import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.services.IAccommodationService;
+import com.booking.BookingApp.services.IPriceCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
