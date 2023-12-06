@@ -29,7 +29,12 @@ public class UserPutDTO { //User model without id
     //guest
     public Boolean ownerRepliedToRequestNotification;
 
-    public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification) {
+    public Boolean deleted;
+
+    public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
+                      Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
+                      Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,
+                        Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -43,6 +48,7 @@ public class UserPutDTO { //User model without id
         this.ownerRatingNotification = ownerRatingNotification;
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        this.deleted=deleted;
     }
 
     public Boolean getReservationRequestNotification() {
@@ -83,6 +89,14 @@ public class UserPutDTO { //User model without id
 
     public void setOwnerRepliedToRequestNotification(Boolean ownerRepliedToRequestNotification) {
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public String getFirstName() {
@@ -148,4 +162,5 @@ public class UserPutDTO { //User model without id
     public void setStatus(StatusEnum status) {
         this.status = status;
     }
+
 }

@@ -24,7 +24,10 @@ public class UserPostDTO {  //User model without id and status (created user is 
     //guest
     public Boolean ownerRepliedToRequestNotification;
 
-    public UserPostDTO(String firstName, String lastName, String username, String password, String passwordConfirmation, RoleEnum role, String address, String phoneNumber, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification) {
+    public Boolean deleted;
+
+    public UserPostDTO(String firstName, String lastName, String username, String password, String passwordConfirmation, RoleEnum role, String address, String phoneNumber, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification,
+                       Boolean ownerRepliedToRequestNotification,Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -38,6 +41,7 @@ public class UserPostDTO {  //User model without id and status (created user is 
         this.ownerRatingNotification = ownerRatingNotification;
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        this.deleted=deleted;
     }
 
     public Boolean getReservationRequestNotification() {

@@ -7,9 +7,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.Map;
 @Table(name="users")
+@SQLDelete(sql
+        = "UPDATE users "
+        + "SET deleted = true "
+        + "WHERE username = ?")
+@Where(clause = "deleted = false")
 @Entity
 public class User {
     //@Id
@@ -26,6 +33,8 @@ public class User {
     public String phoneNumber;
 
     public StatusEnum status;
+    @Column(name = "deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
 
     @Column(nullable = true,columnDefinition = "boolean default false")
     public Boolean reservationRequestNotification=false;
@@ -39,7 +48,7 @@ public class User {
     @Column(nullable = true,columnDefinition = "boolean default false")
     public Boolean ownerRepliedToRequestNotification=false;
 
-    public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification) {
+    public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -53,6 +62,7 @@ public class User {
         this.ownerRatingNotification = ownerRatingNotification;
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        this.deleted=deleted;
     }
 
     public User() {
@@ -132,6 +142,14 @@ public class User {
 
     public void setOwnerRepliedToRequestNotification(Boolean ownerRepliedToRequestNotification) {
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setFirstName(String firstName) {
