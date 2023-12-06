@@ -42,13 +42,19 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
-        User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.address, StatusEnum.DEACTIVE);
+        Long newId= (Long) counter.incrementAndGet();
+        Map<NotificationTypeEnum,Boolean>notificationSettings=null;
+
+        User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
+                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification,newUser.deleted);
         return Optional.of(userRepository.save(createdUser));
     }
 
     @Override
     public User update(UserPutDTO updatedUser, String username) throws Exception {
-        User result=new User(updatedUser.firstName, updatedUser.lastName,updatedUser.username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.address, updatedUser.status);
+        User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
+                updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
+                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification,updatedUser.deleted);
         return userRepository.saveAndFlush(result);
     }
 

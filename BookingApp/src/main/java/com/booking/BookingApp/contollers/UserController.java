@@ -44,6 +44,7 @@ public class UserController {
     }
 
     @PutMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable String username) throws Exception {
         User result=userService.update(user,username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -51,6 +52,7 @@ public class UserController {
 
     }
     @DeleteMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<User> delete(@PathVariable String username){
         userService.delete(username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

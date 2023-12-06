@@ -13,15 +13,75 @@ public class UserPostDTO {  //User model without id and status (created user is 
     public String address;
     public String phoneNumber;
 
-    public UserPostDTO(String firstName, String lastName, String username, String password, String passwordConfirmation,RoleEnum role, String address, String phoneNumber) {
+    public Boolean reservationRequestNotification;
+
+    public Boolean reservationCancellationNotification;
+
+    public Boolean ownerRatingNotification;
+
+    public Boolean accommodationRatingNotification;
+
+    //guest
+    public Boolean ownerRepliedToRequestNotification;
+
+    public Boolean deleted;
+
+    public UserPostDTO(String firstName, String lastName, String username, String password, String passwordConfirmation, RoleEnum role, String address, String phoneNumber, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification,
+                       Boolean ownerRepliedToRequestNotification,Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
-        this.passwordConfirmation=passwordConfirmation;
+        this.passwordConfirmation = passwordConfirmation;
         this.role = role;
         this.address = address;
         this.phoneNumber = phoneNumber;
+        this.reservationRequestNotification = reservationRequestNotification;
+        this.reservationCancellationNotification = reservationCancellationNotification;
+        this.ownerRatingNotification = ownerRatingNotification;
+        this.accommodationRatingNotification = accommodationRatingNotification;
+        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        this.deleted=deleted;
+    }
+
+    public Boolean getReservationRequestNotification() {
+        return reservationRequestNotification;
+    }
+
+    public void setReservationRequestNotification(Boolean reservationRequestNotification) {
+        this.reservationRequestNotification = reservationRequestNotification;
+    }
+
+    public Boolean getReservationCancellationNotification() {
+        return reservationCancellationNotification;
+    }
+
+    public void setReservationCancellationNotification(Boolean reservationCancellationNotification) {
+        this.reservationCancellationNotification = reservationCancellationNotification;
+    }
+
+    public Boolean getOwnerRatingNotification() {
+        return ownerRatingNotification;
+    }
+
+    public void setOwnerRatingNotification(Boolean ownerRatingNotification) {
+        this.ownerRatingNotification = ownerRatingNotification;
+    }
+
+    public Boolean getAccommodationRatingNotification() {
+        return accommodationRatingNotification;
+    }
+
+    public void setAccommodationRatingNotification(Boolean accommodationRatingNotification) {
+        this.accommodationRatingNotification = accommodationRatingNotification;
+    }
+
+    public Boolean getOwnerRepliedToRequestNotification() {
+        return ownerRepliedToRequestNotification;
+    }
+
+    public void setOwnerRepliedToRequestNotification(Boolean ownerRepliedToRequestNotification) {
+        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
     }
 
     public String getFirstName() {
