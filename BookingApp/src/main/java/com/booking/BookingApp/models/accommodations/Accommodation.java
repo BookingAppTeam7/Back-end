@@ -1,32 +1,57 @@
 package com.booking.BookingApp.models.accommodations;
 
-import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
-import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
-import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.enums.*;
+import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name="accommodations")
+@SQLDelete(sql
+    = "UPDATE accommodations"
+    + " SET deleted = true "
+    + "WHERE id = ?")
+@Where(clause="deleted=false")
 
 public class Accommodation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     public String name;
     public String description;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id")
     public Location location;
     public int minGuests;
     public int maxGuests;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+
     public TypeEnum type;
+    @ElementCollection
     public List<String> assets;
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     public List<PriceCard> prices;
-    public List<TimeSlot> availability;
-    public Long ownerId;
+    public String ownerId;
+    @Enumerated(EnumType.STRING)
     public AccommodationStatusEnum status;
     public int cancellationDeadline;
+    @Enumerated(EnumType.STRING)
     public ReservationConfirmationEnum reservationConfirmation;
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     public List<Review> reviews;
-
+    @ElementCollection
     public List<String> images;
 
-    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images) {
+    @Column(name="deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
+
+    //constructor with id (update)
+    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId,int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images,Boolean deleted) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,13 +61,53 @@ public class Accommodation {
         this.type = type;
         this.assets = assets;
         this.prices = prices;
-        this.availability = availability;
+
+        if (prices != null) {
+            for (PriceCard priceCard : prices) {
+                priceCard.setAccommodation(this);
+                priceCard.timeSlot.setAccommodation(this);
+                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
+            }
+        }
+
         this.ownerId = ownerId;
-        this.status = status;
+        this.status = AccommodationStatusEnum.PENDING;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
         this.reviews=reviews;
         this.images=images;
+        this.deleted=deleted;
+    }
+
+    public Accommodation() {
+
+    }
+    //constructor without id (create)
+
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status,Boolean deleted) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.minGuests = minGuests;
+        this.maxGuests = maxGuests;
+        this.type = type;
+        this.assets = assets;
+        this.prices = (prices != null) ? prices : new ArrayList<>();
+
+        if (prices != null) {
+            for (PriceCard priceCard : prices) {
+                priceCard.setAccommodation(this);
+                priceCard.timeSlot.setAccommodation(this);
+                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
+            }
+        }
+        this.ownerId = ownerId;
+        this.status = status;
+        this.cancellationDeadline = cancellationDeadline;
+        this.reservationConfirmation = reservationConfirmation;
+        this.reviews = reviews;
+        this.images = images;
+        this.deleted=deleted;
     }
 
     public Long getId() {
@@ -117,19 +182,11 @@ public class Accommodation {
         this.prices = prices;
     }
 
-    public List<TimeSlot> getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(List<TimeSlot> availability) {
-        this.availability = availability;
-    }
-
-    public Long getOwnerId() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(Long ownerId) {
+    public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
 
@@ -171,5 +228,13 @@ public class Accommodation {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

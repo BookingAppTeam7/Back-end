@@ -1,13 +1,23 @@
 package com.booking.BookingApp.models.accommodations;
 
 import com.booking.BookingApp.models.enums.ReviewEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-
+@Entity
 public class Review {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     public Long userId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "accommodation_id")
+    private Accommodation accommodation;
+
+    @Enumerated(EnumType.STRING)
     public ReviewEnum type;
     public String comment;
     public int grade;
@@ -20,6 +30,10 @@ public class Review {
         this.comment = comment;
         this.grade=grade;
         this.dateTime = dateTime;
+    }
+
+    public Review() {
+
     }
 
     public Long getId() {
@@ -40,6 +54,14 @@ public class Review {
 
     public ReviewEnum getType() {
         return type;
+    }
+
+    public Accommodation getAccommodation() {
+        return accommodation;
+    }
+
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
     }
 
     public void setType(ReviewEnum type) {

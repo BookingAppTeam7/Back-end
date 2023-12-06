@@ -21,14 +21,13 @@ public class AccommodationPutDTO {  //Accommodation model without id
     public List<String> assets;
     public List<PriceCard> prices;
     public List<TimeSlot> availability;
-    public Long ownerId;
-    public AccommodationStatusEnum status;
+    public String ownerId;
     public int cancellationDeadline;
     public ReservationConfirmationEnum reservationConfirmation;
     public List<Review> reviews;
     public List<String> images;
 
-    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, Long ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews,List<String> images) {
+    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -39,7 +38,6 @@ public class AccommodationPutDTO {  //Accommodation model without id
         this.prices = prices;
         this.availability = availability;
         this.ownerId = ownerId;
-        this.status = status;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
         this.reviews = reviews;
@@ -118,20 +116,12 @@ public class AccommodationPutDTO {  //Accommodation model without id
         this.availability = availability;
     }
 
-    public Long getOwnerId() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(Long ownerId) {
+    public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public AccommodationStatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(AccommodationStatusEnum status) {
-        this.status = status;
     }
 
     public int getCancellationDeadline() {

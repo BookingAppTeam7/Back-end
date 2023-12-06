@@ -35,11 +35,16 @@ public class PriceCardService implements IPriceCardService{
 
     @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
-        Long newId= (Long) counter.incrementAndGet();
-
-        PriceCard createdPriceCard=new PriceCard(newId,newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
-        return priceCardRepository.save(createdPriceCard);
+        return Optional.empty();
     }
+
+//    @Override
+//    public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
+//        Long newId= (Long) counter.incrementAndGet();
+//
+//        PriceCard createdPriceCard=new PriceCard(newId,newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
+//        return priceCardRepository.save(createdPriceCard);
+//    }
 
     @Override
     public PriceCard update(PriceCardPutDTO updatedPriceCard, Long id) throws Exception {
@@ -51,6 +56,11 @@ public class PriceCardService implements IPriceCardService{
     public void delete(Long id) {
         priceCardRepository.deleteById(id);
 
+    }
+
+    @Override
+    public List<PriceCard> findByAccommodationId(Long id) {
+        return priceCardRepository.findByAccommodationId(id);
     }
 
 }
