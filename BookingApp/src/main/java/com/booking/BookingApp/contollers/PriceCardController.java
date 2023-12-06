@@ -55,6 +55,7 @@ public class PriceCardController {
     }
 
     @GetMapping(value="accommodation/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<PriceCard>> findByAccommodationId(@PathVariable Long id){
         List<PriceCard> result=priceCardService.findByAccommodationId(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}

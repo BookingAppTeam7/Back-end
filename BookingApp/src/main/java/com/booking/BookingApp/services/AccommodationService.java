@@ -83,7 +83,8 @@ public class AccommodationService implements IAccommodationService{
                     ReservationConfirmationEnum.MANUAL,
                     reviews,
                     newAccommodation.getImages(),
-                    AccommodationStatusEnum.PENDING
+                    AccommodationStatusEnum.PENDING,
+                    false
             );
 
             return Optional.of(accommodationRepository.save(createdAccommodation));
@@ -92,7 +93,7 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public Accommodation update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices,updatedAccommodation.ownerId,updatedAccommodation.status,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images);
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images,false);
         return accommodationRepository.saveAndFlush(result);
     }
 

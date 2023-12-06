@@ -19,11 +19,11 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
     public TypeEnum type;
     public List<String> assets;
     public List<PriceCard> prices;
-    public Long ownerId;
+    public String ownerId;
     public int cancellationDeadline;
     public List<String> images;
 
-    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, Long ownerId, int cancellationDeadline,List<String> images) {
+    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId, int cancellationDeadline,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -101,11 +101,11 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.prices = prices;
     }
 
-    public Long getOwnerId() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(Long ownerId) {
+    public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
 

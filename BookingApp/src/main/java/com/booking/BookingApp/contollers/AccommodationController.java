@@ -28,7 +28,7 @@ public class AccommodationController {
         return new ResponseEntity<List<Accommodation>>(accommodations, HttpStatus.OK);
     }
 
-    @GetMapping(value="/{id}")
+    @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Accommodation> findById(@PathVariable Long id){return accommodationService.findById(id);}
 
