@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface IPriceCardRepository extends JpaRepository<PriceCard,Long> {
 
-    List<PriceCard> findByAccommodationId(Long id);
+    //List<PriceCard> findByAccommodationId(Long id);
 }

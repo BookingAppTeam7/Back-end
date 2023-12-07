@@ -13,19 +13,18 @@ public class TimeSlot {
     public Long id;
     public Date startDate;
     public Date endDate;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "accommodation_id")
-    private Accommodation accommodation;
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "accommodation_id")
+//    private Accommodation accommodation;
 
-    @Enumerated(EnumType.STRING)
-    public TimeSlotType type;
+//    @Enumerated(EnumType.STRING)
+//    public TimeSlotType type;
 
-    public TimeSlot(Long id, Date startDate, Date endDate,TimeSlotType type) {
+    public TimeSlot(Long id, Date startDate, Date endDate) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.type=type;
     }
 
     public TimeSlot() {
@@ -56,19 +55,4 @@ public class TimeSlot {
         this.id = id;
     }
 
-    public Accommodation getAccommodation() {
-        return accommodation;
-    }
-
-    public void setAccommodation(Accommodation accommodation) {
-        this.accommodation = accommodation;
-    }
-
-    public TimeSlotType getType() {
-        return type;
-    }
-
-    public void setType(TimeSlotType type) {
-        this.type = type;
-    }
 }

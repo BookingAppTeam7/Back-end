@@ -10,12 +10,11 @@ public class TimeSlotPostDTO {
     public Date startDate;
     public Date endDate;
 
-    public TimeSlotType type;
 
-    public TimeSlotPostDTO(Date startDate, Date endDate,TimeSlotType type) {
+    public TimeSlotPostDTO(Date startDate, Date endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.type=type;
+
     }
 
     public Date getStartDate() {
@@ -34,11 +33,4 @@ public class TimeSlotPostDTO {
         this.endDate = endDate;
     }
 
-    public TimeSlotType getType() {
-        return type;
-    }
-
-    public void setType(TimeSlotType type) {
-        this.type = type;
-    }
 }

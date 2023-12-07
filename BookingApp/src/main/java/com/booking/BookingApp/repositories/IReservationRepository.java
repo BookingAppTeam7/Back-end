@@ -1,19 +1,11 @@
 package com.booking.BookingApp.repositories;
 
 import com.booking.BookingApp.models.reservations.Reservation;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IReservationRepository {
+public interface IReservationRepository extends JpaRepository<Reservation,Long> {
 
-    List<Reservation> findAll();
-
-   Optional<Reservation> findById(Long id);
-
-    Optional<Reservation> save(Reservation createdReservation);
-
-    Reservation saveAndFlush(Reservation result);
-
-    void deleteById(Long id);
 }

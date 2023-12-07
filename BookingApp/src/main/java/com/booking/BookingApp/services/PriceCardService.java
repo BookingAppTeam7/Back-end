@@ -58,9 +58,9 @@ public class PriceCardService implements IPriceCardService{
 
     }
 
-    @Override
-    public List<PriceCard> findByAccommodationId(Long id) {
-        return priceCardRepository.findByAccommodationId(id);
-    }
+//    @Override
+//    public List<PriceCard> findByAccommodationId(Long id) {
+//        return priceCardRepository.findByAccommodationId(id);
+//    }
 
 }

@@ -20,24 +20,29 @@ public class ReservationService implements IReservationService{
     private static AtomicLong counter=new AtomicLong();
     @Override
     public List<Reservation> findAll() {
-         return reservationRepository.findAll();
+        return reservationRepository.findAll();
     }
 
     @Override
     public Optional<Reservation> findById(Long id) {
-        return reservationRepository.findById(id);
+
+        Optional<Reservation> res= reservationRepository.findById(id);
+        if(res.isPresent()){
+            return res;
+        }
+        return null;
     }
 
     @Override
     public Optional<Reservation> create(ReservationPostDTO newReservation) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        Reservation createdReservation=new Reservation(newId,newReservation.accommodationId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING);
-        return reservationRepository.save(createdReservation);
+        Reservation createdReservation=new Reservation(newId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING);
+        return Optional.of(reservationRepository.save(createdReservation));
     }
 
     @Override
     public Reservation update(ReservationPutDTO updatedReservation, Long id) throws Exception {
-        Reservation result=new Reservation(id,updatedReservation.accommodationId,updatedReservation.userId,updatedReservation.timeSlot,updatedReservation.status);
+        Reservation result=new Reservation(id,updatedReservation.userId,updatedReservation.timeSlot,updatedReservation.status);
         return reservationRepository.saveAndFlush(result);
     }
 

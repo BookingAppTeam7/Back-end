@@ -2,21 +2,29 @@ package com.booking.BookingApp.models.reservations;
 
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
+@Table(name="reservations")
+@Entity
 public class Reservation {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    public  Long accommodationId;
-    public Long userId;
-    public TimeSlot timeSlot;
 
+    public Long userId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "time_slot_id")
+    public TimeSlot timeSlot;
+    @Enumerated(EnumType.STRING)
     public ReservationStatusEnum status;
 
-    public Reservation(Long id, Long accommodationId,Long userId, TimeSlot timeSlot,ReservationStatusEnum status) {
+    public Reservation(){}
+
+    public Reservation(Long id,Long userId, TimeSlot timeSlot,ReservationStatusEnum status) {
         this.id = id;
-        this.accommodationId = accommodationId;
         this.userId=userId;
         this.timeSlot=timeSlot;
         this.status=status;
@@ -24,10 +32,6 @@ public class Reservation {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getAccommodationId() {
-        return accommodationId;
     }
 
 
@@ -43,9 +47,6 @@ public class Reservation {
         this.id = id;
     }
 
-    public void setAccommodationId(Long accommodationId) {
-        this.accommodationId = accommodationId;
-    }
 
     public TimeSlot getTimeSlot() {
         return timeSlot;
