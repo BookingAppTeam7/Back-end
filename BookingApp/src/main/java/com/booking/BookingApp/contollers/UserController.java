@@ -28,6 +28,7 @@ public class UserController {
     }
 
     @GetMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<UserGetDTO> findById(@PathVariable String username){
         Optional<UserGetDTO> result=userService.findById(username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}

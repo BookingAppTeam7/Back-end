@@ -1,5 +1,6 @@
 package com.booking.BookingApp.services;
 
+import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
@@ -17,6 +18,14 @@ public class ReservationService implements IReservationService{
 
     @Autowired
     public IReservationRepository reservationRepository;
+
+    private AccommodationService accommodationService=new AccommodationService();
+
+    @Autowired
+    public ReservationService(AccommodationService accommodationService) {
+        this.accommodationService = accommodationService;
+    }
+
     private static AtomicLong counter=new AtomicLong();
     @Override
     public List<Reservation> findAll() {
@@ -36,14 +45,25 @@ public class ReservationService implements IReservationService{
     @Override
     public Optional<Reservation> create(ReservationPostDTO newReservation) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        Reservation createdReservation=new Reservation(newId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING);
+        //AccommodationService accommodationService = new AccommodationService();
+        Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
+                .orElseThrow(() -> new Exception("Accommodation not found with id: " + newReservation.getAccommodationId()));
+        Reservation createdReservation=new Reservation(newId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation);
         return Optional.of(reservationRepository.save(createdReservation));
     }
 
     @Override
     public Reservation update(ReservationPutDTO updatedReservation, Long id) throws Exception {
-        Reservation result=new Reservation(id,updatedReservation.userId,updatedReservation.timeSlot,updatedReservation.status);
-        return reservationRepository.saveAndFlush(result);
+       // Reservation result=new Reservation(id,updatedReservation.userId,updatedReservation.timeSlot,updatedReservation.status);
+       //return reservationRepository.saveAndFlush(result);
+        Reservation existingReservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new Exception("Reservation not found with id: " + id));
+        existingReservation.setUserId(updatedReservation.getUserId());
+        existingReservation.setTimeSlot(updatedReservation.getTimeSlot());
+        existingReservation.setStatus(updatedReservation.getStatus());
+
+        // Save and flush the updated reservation
+        return reservationRepository.saveAndFlush(existingReservation);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class TimeSlotService implements  ITimeSlotService{
     public Optional<TimeSlot> create(TimeSlotPostDTO newTimeSlot) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
         TimeSlot createdTimeSlot=new TimeSlot(newId,newTimeSlot.startDate,newTimeSlot.endDate);
-        return timeSlotRepository.save(createdTimeSlot);
+        return Optional.of(timeSlotRepository.save(createdTimeSlot));
     }
 
     @Override

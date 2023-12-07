@@ -25,12 +25,14 @@ public class TimeSlotController {
     @Autowired
     private ITimeSlotService timeSlotService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<TimeSlot>> findAll(){
         List<TimeSlot> timeSlots=timeSlotService.findAll();
         return new ResponseEntity<>(timeSlots, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<TimeSlot> findById(@PathVariable Long id){
         Optional<TimeSlot> result=timeSlotService.findById(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -39,6 +41,7 @@ public class TimeSlotController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<TimeSlot> create(@RequestBody TimeSlotPostDTO newTimeSlot) throws Exception {
         Optional<TimeSlot> result=timeSlotService.create(newTimeSlot);
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
@@ -46,6 +49,7 @@ public class TimeSlotController {
     }
 
     @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<TimeSlot> update(@RequestBody TimeSlotPutDTO timeSlot, @PathVariable Long id) throws Exception {
         TimeSlot result=timeSlotService.update(timeSlot,id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -53,6 +57,7 @@ public class TimeSlotController {
 
     }
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<TimeSlot> delete(@PathVariable Long id){
         timeSlotService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

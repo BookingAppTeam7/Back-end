@@ -12,7 +12,7 @@ public class ReservationPostDTO { //Reservation model without id and status (def
     public TimeSlot timeSlot;
 
 
-    public ReservationPostDTO(Long id, Long accommodationId, Long userId, TimeSlot timeSlot) {
+    public ReservationPostDTO( Long accommodationId, Long userId, TimeSlot timeSlot) {
 
         this.accommodationId = accommodationId;
         this.userId=userId;

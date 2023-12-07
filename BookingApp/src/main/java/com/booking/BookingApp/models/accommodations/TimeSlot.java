@@ -3,10 +3,11 @@ package com.booking.BookingApp.models.accommodations;
 import com.booking.BookingApp.models.enums.TimeSlotType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 @Entity
-
 public class TimeSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -29,7 +29,11 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public Optional<Accommodation> findById(Long id) {
-        return accommodationRepository.findById(id);
+        Optional<Accommodation> res=accommodationRepository.findById(id);
+        if(res.isPresent()){
+            return res;
+        }
+        return null;
     }
 
     @Override

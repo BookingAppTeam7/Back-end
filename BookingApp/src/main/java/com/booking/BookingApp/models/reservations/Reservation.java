@@ -30,11 +30,20 @@ public class Reservation {
 
     public Reservation(){}
 
-    public Reservation(Long id,Long userId, TimeSlot timeSlot,ReservationStatusEnum status) {
+    public Reservation(Long id,Long userId, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation) {
         this.id = id;
         this.userId=userId;
         this.timeSlot=timeSlot;
         this.status=status;
+        this.accommodation=accommodation;
+    }
+
+    public Accommodation getAccommodation() {
+        return accommodation;
+    }
+
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
     }
 
     public Long getId() {
