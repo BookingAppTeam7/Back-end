@@ -50,4 +50,9 @@ public class ReservationService implements IReservationService{
     public void delete(Long id) {
         reservationRepository.deleteById(id);
     }
+
+    @Override
+    public List<Reservation> findByAccommodationId(Long id){
+        return reservationRepository.findByAccommodationId(id);
+    }
 }

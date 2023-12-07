@@ -1,7 +1,9 @@
 package com.booking.BookingApp.models.reservations;
 
+import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -13,6 +15,11 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "accommodation_id")
+    public Accommodation accommodation;
 
     public Long userId;
     @OneToOne(cascade = CascadeType.ALL)

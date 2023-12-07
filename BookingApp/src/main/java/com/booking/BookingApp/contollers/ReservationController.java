@@ -47,4 +47,12 @@ public class ReservationController {
         reservationService.delete(id);
         return new ResponseEntity<Reservation>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping(value="accommodation/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Reservation>> findByAccommodationId(@PathVariable Long id){
+        List<Reservation> result=reservationService.findByAccommodationId(id);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        return new ResponseEntity<>(result,HttpStatus.OK );
+    }
 }
