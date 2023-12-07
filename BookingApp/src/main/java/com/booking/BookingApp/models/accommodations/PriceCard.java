@@ -12,10 +12,10 @@ public class PriceCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "accommodation_id")
-    public Accommodation accommodation;
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "accommodation_id")
+//    public Accommodation accommodation;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "time_slot_id")
@@ -68,11 +68,4 @@ public class PriceCard {
         this.type = type;
     }
 
-    public Accommodation getAccommodation() {
-        return accommodation;
-    }
-
-    public void setAccommodation(Accommodation accommodation) {
-        this.accommodation = accommodation;
-    }
 }

@@ -7,6 +7,7 @@ import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.reservations.Reservation;
 
 import java.util.List;
 
@@ -20,14 +21,14 @@ public class AccommodationPutDTO {  //Accommodation model without id
     public TypeEnum type;
     public List<String> assets;
     public List<PriceCard> prices;
-    public List<TimeSlot> availability;
     public String ownerId;
     public int cancellationDeadline;
     public ReservationConfirmationEnum reservationConfirmation;
     public List<Review> reviews;
     public List<String> images;
 
-    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, List<TimeSlot> availability, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews,List<String> images) {
+
+    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -36,7 +37,6 @@ public class AccommodationPutDTO {  //Accommodation model without id
         this.type = type;
         this.assets = assets;
         this.prices = prices;
-        this.availability = availability;
         this.ownerId = ownerId;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
@@ -106,14 +106,6 @@ public class AccommodationPutDTO {  //Accommodation model without id
 
     public void setPrices(List<PriceCard> prices) {
         this.prices = prices;
-    }
-
-    public List<TimeSlot> getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(List<TimeSlot> availability) {
-        this.availability = availability;
     }
 
     public String getOwnerId() {

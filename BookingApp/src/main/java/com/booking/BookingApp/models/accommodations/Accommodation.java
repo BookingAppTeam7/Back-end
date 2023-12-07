@@ -1,6 +1,7 @@
 package com.booking.BookingApp.models.accommodations;
 
 import com.booking.BookingApp.models.enums.*;
+import com.booking.BookingApp.models.reservations.Reservation;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -28,21 +29,26 @@ public class Accommodation {
     public Location location;
     public int minGuests;
     public int maxGuests;
+
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-
     public TypeEnum type;
     @ElementCollection
     public List<String> assets;
-    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     public List<PriceCard> prices;
+
+//    @OneToMany( cascade = CascadeType.ALL)
+//    public List<Reservation> reservations;
     public String ownerId;
     @Enumerated(EnumType.STRING)
     public AccommodationStatusEnum status;
     public int cancellationDeadline;
     @Enumerated(EnumType.STRING)
     public ReservationConfirmationEnum reservationConfirmation;
-    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     public List<Review> reviews;
     @ElementCollection
     public List<String> images;
@@ -51,7 +57,7 @@ public class Accommodation {
     private Boolean deleted;
 
     //constructor with id (update)
-    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId,int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images,Boolean deleted) {
+    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices,String ownerId,int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images,Boolean deleted) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -61,14 +67,15 @@ public class Accommodation {
         this.type = type;
         this.assets = assets;
         this.prices = prices;
+//        this.reservations=reservations;
 
-        if (prices != null) {
-            for (PriceCard priceCard : prices) {
-                priceCard.setAccommodation(this);
-                priceCard.timeSlot.setAccommodation(this);
-                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
-            }
-        }
+//        if (prices != null) {
+//            for (PriceCard priceCard : prices) {
+//                priceCard.setAccommodation(this);
+//                priceCard.timeSlot.setAccommodation(this);
+//                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
+//            }
+//        }
 
         this.ownerId = ownerId;
         this.status = AccommodationStatusEnum.PENDING;
@@ -84,7 +91,7 @@ public class Accommodation {
     }
     //constructor without id (create)
 
-    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status,Boolean deleted) {
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices,String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status,Boolean deleted) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -94,13 +101,14 @@ public class Accommodation {
         this.assets = assets;
         this.prices = (prices != null) ? prices : new ArrayList<>();
 
-        if (prices != null) {
-            for (PriceCard priceCard : prices) {
-                priceCard.setAccommodation(this);
-                priceCard.timeSlot.setAccommodation(this);
-                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
-            }
-        }
+//        if (prices != null) {
+//            for (PriceCard priceCard : prices) {
+//                priceCard.setAccommodation(this);
+//                priceCard.timeSlot.setAccommodation(this);
+//                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
+//            }
+//        }
+//        this.reservations=reservations;
         this.ownerId = ownerId;
         this.status = status;
         this.cancellationDeadline = cancellationDeadline;

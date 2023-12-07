@@ -11,11 +11,11 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    public Long userId;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "accommodation_id")
-    private Accommodation accommodation;
+    public String userId;
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "accommodation_id")
+//    private Accommodation accommodation;
 
     @Enumerated(EnumType.STRING)
     public ReviewEnum type;
@@ -23,7 +23,7 @@ public class Review {
     public int grade;
     public LocalDateTime dateTime;
 
-    public Review(Long id, Long userId, ReviewEnum type, String comment,int grade, LocalDateTime dateTime) {
+    public Review(Long id, String userId, ReviewEnum type, String comment,int grade, LocalDateTime dateTime) {
         this.id = id;
         this.userId = userId;
         this.type = type;
@@ -44,24 +44,13 @@ public class Review {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public ReviewEnum getType() {
         return type;
     }
 
-    public Accommodation getAccommodation() {
-        return accommodation;
-    }
-
-    public void setAccommodation(Accommodation accommodation) {
-        this.accommodation = accommodation;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public void setType(ReviewEnum type) {
@@ -90,5 +79,9 @@ public class Review {
 
     public void setGrade(int grade) {
         this.grade = grade;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }

@@ -12,6 +12,6 @@ public interface IReviewService {
     List<Review> findAll();
     Optional<Review> findById(Long id);
     Optional<Review> create(ReviewPostDTO newReview) throws Exception;
-    Review update(ReviewPutDTO updatedReview, Long id, Long userId, ReviewEnum type) throws Exception;
+    Review update(ReviewPutDTO updatedReview, Long id, String userId, ReviewEnum type) throws Exception;
     void delete(Long id);
 }

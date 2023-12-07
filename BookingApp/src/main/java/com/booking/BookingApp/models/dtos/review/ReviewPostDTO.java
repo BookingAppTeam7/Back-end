@@ -6,23 +6,23 @@ import java.time.LocalDateTime;
 
 public class ReviewPostDTO {//Review model without id, and dateTime
 
-    public Long userId;
+    public String userId;
     public ReviewEnum type;
     public String comment;
     public int grade;
 
-    public ReviewPostDTO(Long userId, ReviewEnum type, String comment, int grade) {
+    public ReviewPostDTO(String userId, ReviewEnum type, String comment, int grade) {
         this.userId = userId;
         this.type = type;
         this.comment = comment;
         this.grade = grade;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

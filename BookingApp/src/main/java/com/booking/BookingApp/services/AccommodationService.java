@@ -6,6 +6,7 @@ import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
+import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class AccommodationService implements IAccommodationService{
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
 
             List<Review> reviews = new ArrayList<>();
+            //List<Reservation> reservations = new ArrayList<>();
 
 //            List<PriceCard> prices=newAccommodation.getPrices();
 //            List<PriceCard> modifiedPrices=new ArrayList<>();

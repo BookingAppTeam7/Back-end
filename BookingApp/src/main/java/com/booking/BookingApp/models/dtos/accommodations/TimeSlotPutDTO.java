@@ -7,12 +7,10 @@ import java.util.Date;
 public class TimeSlotPutDTO {
     public Date startDate;
     public Date endDate;
-    public TimeSlotType type;
 
     public TimeSlotPutDTO(Date startDate, Date endDate,TimeSlotType type) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.type=type;
     }
 
     public Date getStartDate() {
@@ -31,11 +29,4 @@ public class TimeSlotPutDTO {
         this.endDate = endDate;
     }
 
-    public TimeSlotType getType() {
-        return type;
-    }
-
-    public void setType(TimeSlotType type) {
-        this.type = type;
-    }
 }
