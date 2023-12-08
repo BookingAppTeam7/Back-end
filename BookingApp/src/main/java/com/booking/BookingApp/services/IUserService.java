@@ -12,7 +12,7 @@ public interface IUserService {
 
     List<UserGetDTO> findAll();
 
-    Optional<UserGetDTO> findById(String username);
+    Optional<User> findById(String username);
 
     Optional<User> create(UserPostDTO newUser) throws Exception;
     User update(UserPutDTO updatedUser,String username) throws  Exception;
