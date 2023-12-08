@@ -28,14 +28,24 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     public ReservationStatusEnum status;
 
+    public Long numberOfGuests;
     public Reservation(){}
 
-    public Reservation(Long id,Long userId, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation) {
+    public Reservation(Long id,Long userId, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation, Long numberOfGuests) {
         this.id = id;
         this.userId=userId;
         this.timeSlot=timeSlot;
         this.status=status;
         this.accommodation=accommodation;
+        this.numberOfGuests=numberOfGuests;
+    }
+
+    public Long getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public void setNumberOfGuests(Long numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Accommodation getAccommodation() {

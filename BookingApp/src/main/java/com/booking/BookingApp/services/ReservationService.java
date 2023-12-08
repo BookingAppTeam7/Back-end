@@ -48,7 +48,7 @@ public class ReservationService implements IReservationService{
         //AccommodationService accommodationService = new AccommodationService();
         Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
                 .orElseThrow(() -> new Exception("Accommodation not found with id: " + newReservation.getAccommodationId()));
-        Reservation createdReservation=new Reservation(newId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation);
+        Reservation createdReservation=new Reservation(newId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests);
         return Optional.of(reservationRepository.save(createdReservation));
     }
 
@@ -61,7 +61,7 @@ public class ReservationService implements IReservationService{
         existingReservation.setUserId(updatedReservation.getUserId());
         existingReservation.setTimeSlot(updatedReservation.getTimeSlot());
         existingReservation.setStatus(updatedReservation.getStatus());
-
+        existingReservation.setNumberOfGuests(updatedReservation.getNumberOfGuests());
         // Save and flush the updated reservation
         return reservationRepository.saveAndFlush(existingReservation);
     }

@@ -12,13 +12,22 @@ public class ReservationPutDTO { //Reservation model without id
     public TimeSlot timeSlot;
 
     public ReservationStatusEnum status;
-
-    public ReservationPutDTO(Long id, Long accommodationId, Long userId,TimeSlot timeSlot,ReservationStatusEnum status) {
+    public Long numberOfGuests;
+    public ReservationPutDTO(Long id, Long accommodationId, Long userId,TimeSlot timeSlot,ReservationStatusEnum status, Long numberOfGuests) {
 
         this.accommodationId = accommodationId;
         this.userId=userId;
         this.timeSlot=timeSlot;
         this.status=status;
+        this.numberOfGuests=numberOfGuests;
+    }
+
+    public Long getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public void setNumberOfGuests(Long numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getUserId() {
