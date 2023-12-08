@@ -5,6 +5,7 @@ import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
+import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,11 @@ public class ReservationService implements IReservationService{
     public IReservationRepository reservationRepository;
 
     private AccommodationService accommodationService=new AccommodationService();
-
+    private UserService userService=new UserService();
     @Autowired
-    public ReservationService(AccommodationService accommodationService) {
+    public ReservationService(AccommodationService accommodationService,UserService userService) {
         this.accommodationService = accommodationService;
+        this.userService=userService;
     }
 
     private static AtomicLong counter=new AtomicLong();
@@ -48,7 +50,11 @@ public class ReservationService implements IReservationService{
         //AccommodationService accommodationService = new AccommodationService();
         Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
                 .orElseThrow(() -> new Exception("Accommodation not found with id: " + newReservation.getAccommodationId()));
-        Reservation createdReservation=new Reservation(newId,newReservation.userId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests);
+        User user=this.userService.findById(newReservation.getUserId())
+                .orElseThrow(()->new Exception("User not found with id: "+newReservation.getUserId()));
+
+        Reservation createdReservation=new Reservation(newId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests,
+                user);
         return Optional.of(reservationRepository.save(createdReservation));
     }
 
@@ -58,7 +64,7 @@ public class ReservationService implements IReservationService{
        //return reservationRepository.saveAndFlush(result);
         Reservation existingReservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + id));
-        existingReservation.setUserId(updatedReservation.getUserId());
+        //existingReservation.setUserId(updatedReservation.getUserId());
         existingReservation.setTimeSlot(updatedReservation.getTimeSlot());
         existingReservation.setStatus(updatedReservation.getStatus());
         existingReservation.setNumberOfGuests(updatedReservation.getNumberOfGuests());

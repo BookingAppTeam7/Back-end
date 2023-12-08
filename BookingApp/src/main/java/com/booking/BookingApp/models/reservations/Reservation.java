@@ -3,6 +3,7 @@ package com.booking.BookingApp.models.reservations;
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
+import com.booking.BookingApp.models.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -21,7 +22,12 @@ public class Reservation {
     @JoinColumn(name = "accommodation_id")
     public Accommodation accommodation;
 
-    public Long userId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    public User user;
+
+    //public Long userId;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "time_slot_id")
     public TimeSlot timeSlot;
@@ -31,13 +37,21 @@ public class Reservation {
     public Long numberOfGuests;
     public Reservation(){}
 
-    public Reservation(Long id,Long userId, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation, Long numberOfGuests) {
+    public Reservation(Long id, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation, Long numberOfGuests, User user) {
         this.id = id;
-        this.userId=userId;
         this.timeSlot=timeSlot;
         this.status=status;
         this.accommodation=accommodation;
         this.numberOfGuests=numberOfGuests;
+        this.user=user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getNumberOfGuests() {
@@ -61,13 +75,13 @@ public class Reservation {
     }
 
 
-    public Long getUserId() {
-        return userId;
-    }
+   // public Long getUserId() {
+    //    return userId;
+    //}
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    //public void setUserId(Long userId) {
+    //    this.userId = userId;
+   // }
 
     public void setId(Long id) {
         this.id = id;

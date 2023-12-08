@@ -1,6 +1,7 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
+import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPostDTO;
@@ -31,11 +32,10 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public Optional<UserGetDTO> findById(String username) {
+    public Optional<User> findById(String username) {
         Optional<User> u=userRepository.findById(username);
         if(u.isPresent()) {
-            UserGetDTO userDTO = new UserGetDTO(u.get().getFirstName(), u.get().getLastName(), u.get().getUsername(), u.get().getRole(), u.get().getAddress(), u.get().getPhoneNumber(), u.get().getStatus());
-            return Optional.of(userDTO);
+            return u;
         }
         return null;
     }
@@ -44,7 +44,6 @@ public class UserService implements IUserService{
     public Optional<User> create(UserPostDTO newUser) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
         Map<NotificationTypeEnum,Boolean>notificationSettings=null;
-
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
                 newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification,newUser.deleted);
         return Optional.of(userRepository.save(createdUser));

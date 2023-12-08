@@ -3,7 +3,9 @@ package com.booking.BookingApp.models.dtos.users;
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
+import com.booking.BookingApp.models.reservations.Reservation;
 
+import java.util.List;
 import java.util.Map;
 
 public class UserPutDTO { //User model without id
@@ -28,7 +30,6 @@ public class UserPutDTO { //User model without id
 
     //guest
     public Boolean ownerRepliedToRequestNotification;
-
     public Boolean deleted;
 
     public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,

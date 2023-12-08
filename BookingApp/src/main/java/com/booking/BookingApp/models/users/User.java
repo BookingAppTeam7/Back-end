@@ -3,13 +3,12 @@ package com.booking.BookingApp.models.users;
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.booking.BookingApp.models.reservations.Reservation;
+import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.util.List;
 import java.util.Map;
 @Table(name="users")
 @SQLDelete(sql
@@ -48,6 +47,8 @@ public class User {
     @Column(nullable = true,columnDefinition = "boolean default false")
     public Boolean ownerRepliedToRequestNotification=false;
 
+    //@OneToMany(cascade=CascadeType.ALL)
+    //public List<Reservation> reservations;
     public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -62,6 +63,7 @@ public class User {
         this.ownerRatingNotification = ownerRatingNotification;
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        //this.reservations=reservations;
         this.deleted=deleted;
     }
 
@@ -72,6 +74,7 @@ public class User {
    // public Long getId() {
        // return id;
     //}
+
 
     public String getFirstName() {
         return firstName;

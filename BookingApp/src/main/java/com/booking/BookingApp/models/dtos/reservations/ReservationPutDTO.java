@@ -8,12 +8,12 @@ import java.util.Date;
 public class ReservationPutDTO { //Reservation model without id
 
     public  Long accommodationId;
-    public Long userId;
+    public String userId;
     public TimeSlot timeSlot;
 
     public ReservationStatusEnum status;
     public Long numberOfGuests;
-    public ReservationPutDTO(Long id, Long accommodationId, Long userId,TimeSlot timeSlot,ReservationStatusEnum status, Long numberOfGuests) {
+    public ReservationPutDTO(Long id, Long accommodationId, String userId,TimeSlot timeSlot,ReservationStatusEnum status, Long numberOfGuests) {
 
         this.accommodationId = accommodationId;
         this.userId=userId;
@@ -30,11 +30,11 @@ public class ReservationPutDTO { //Reservation model without id
         this.numberOfGuests = numberOfGuests;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

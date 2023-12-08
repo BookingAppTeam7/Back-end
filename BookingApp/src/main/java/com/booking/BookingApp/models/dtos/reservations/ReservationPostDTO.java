@@ -8,11 +8,11 @@ import java.util.Date;
 public class ReservationPostDTO { //Reservation model without id and status (default --> PENDING)
 
     public  Long accommodationId;
-    public Long userId;
+    public String userId;
     public TimeSlot timeSlot;
     public Long numberOfGuests;
 
-    public ReservationPostDTO( Long accommodationId, Long userId, TimeSlot timeSlot, Long numberOfGuests) {
+    public ReservationPostDTO( Long accommodationId, String userId, TimeSlot timeSlot, Long numberOfGuests) {
 
         this.accommodationId = accommodationId;
         this.userId=userId;
@@ -28,11 +28,11 @@ public class ReservationPostDTO { //Reservation model without id and status (def
         this.numberOfGuests = numberOfGuests;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
     public Long getAccommodationId() {
