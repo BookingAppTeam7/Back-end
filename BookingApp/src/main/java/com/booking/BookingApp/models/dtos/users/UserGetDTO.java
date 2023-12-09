@@ -14,8 +14,9 @@ public class UserGetDTO {  //User model without password
     public String phoneNumber;
 
     public StatusEnum status;
+    public String token;
 
-    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status) {
+    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status, String token) {
        // this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,6 +25,7 @@ public class UserGetDTO {  //User model without password
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status=status;
+        this.token=token;
     }
 
     public UserGetDTO() {

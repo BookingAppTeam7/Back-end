@@ -46,10 +46,11 @@ public class User {
     //guest
     @Column(nullable = true,columnDefinition = "boolean default false")
     public Boolean ownerRepliedToRequestNotification=false;
-
+    public String token;
     //@OneToMany(cascade=CascadeType.ALL)
     //public List<Reservation> reservations;
-    public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,Boolean deleted) {
+    public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
+                Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -64,6 +65,7 @@ public class User {
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
         //this.reservations=reservations;
+        this.token=token;
         this.deleted=deleted;
     }
 
@@ -75,6 +77,14 @@ public class User {
        // return id;
     //}
 
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public String getFirstName() {
         return firstName;

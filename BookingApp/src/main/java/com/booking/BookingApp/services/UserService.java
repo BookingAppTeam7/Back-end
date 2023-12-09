@@ -21,14 +21,15 @@ public class UserService implements IUserService{
     private static AtomicLong counter=new AtomicLong();
 
     @Override
-    public List<UserGetDTO> findAll() {
-        List<User> result=userRepository.findAll();
-        List<UserGetDTO>resultDTO=new ArrayList<>();
+    public List<User> findAll() {
+        //List<User> result=userRepository.findAll();
+        return userRepository.findAll();
+       //List<UserGetDTO>resultDTO=new ArrayList<>();
 
-        for(User u:result){
-            resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus()));
-        }
-        return resultDTO;
+        //for(User u:result){
+        //    resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus(),u.getToken()));
+        //}
+        //return resultDTO;
     }
 
     @Override
@@ -42,10 +43,11 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
-        Long newId= (Long) counter.incrementAndGet();
+        //Long newId= (Long) counter.incrementAndGet();
         Map<NotificationTypeEnum,Boolean>notificationSettings=null;
+        String token = UUID.randomUUID().toString();
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
-                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification,newUser.deleted);
+                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted);
         return Optional.of(userRepository.save(createdUser));
     }
 
@@ -53,12 +55,21 @@ public class UserService implements IUserService{
     public User update(UserPutDTO updatedUser, String username) throws Exception {
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
-                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification,updatedUser.deleted);
+                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);
         return userRepository.saveAndFlush(result);
     }
 
     @Override
     public void delete(String username) {
         userRepository.deleteById(username);
+    }
+
+    @Override
+    public Optional<User> findByToken(String token){
+        return userRepository.findByToken(token);
+    }
+    @Override
+    public Optional<User> save(User user){
+        return Optional.of(userRepository.save(user));
     }
 }
