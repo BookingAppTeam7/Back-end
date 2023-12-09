@@ -25,6 +25,7 @@ public class UserPostDTO {  //User model without id and status (created user is 
     public Boolean ownerRepliedToRequestNotification;
 
     public Boolean deleted;
+    //public String token;//automatically generated
 
     public UserPostDTO(String firstName, String lastName, String username, String password, String passwordConfirmation, RoleEnum role, String address, String phoneNumber, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification,
                        Boolean ownerRepliedToRequestNotification,Boolean deleted) {
@@ -41,6 +42,7 @@ public class UserPostDTO {  //User model without id and status (created user is 
         this.ownerRatingNotification = ownerRatingNotification;
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        //this.token=token;
         this.deleted=deleted;
     }
 
