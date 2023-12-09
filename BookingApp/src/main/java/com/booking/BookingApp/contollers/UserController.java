@@ -29,8 +29,8 @@ public class UserController {
     private EmailService emailService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
-    public ResponseEntity<List<UserGetDTO>> findAll(){
-        List<UserGetDTO> users=userService.findAll();
+    public ResponseEntity<List<User>> findAll(){
+        List<User> users=userService.findAll();
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 

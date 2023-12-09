@@ -21,14 +21,15 @@ public class UserService implements IUserService{
     private static AtomicLong counter=new AtomicLong();
 
     @Override
-    public List<UserGetDTO> findAll() {
-        List<User> result=userRepository.findAll();
-        List<UserGetDTO>resultDTO=new ArrayList<>();
+    public List<User> findAll() {
+        //List<User> result=userRepository.findAll();
+        return userRepository.findAll();
+       //List<UserGetDTO>resultDTO=new ArrayList<>();
 
-        for(User u:result){
-            resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus(),u.getToken()));
-        }
-        return resultDTO;
+        //for(User u:result){
+        //    resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus(),u.getToken()));
+        //}
+        //return resultDTO;
     }
 
     @Override

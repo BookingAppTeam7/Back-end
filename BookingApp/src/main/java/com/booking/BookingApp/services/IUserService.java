@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface IUserService {
 
-    List<UserGetDTO> findAll();
+    List<User> findAll();
 
     Optional<User> findById(String username);
 
