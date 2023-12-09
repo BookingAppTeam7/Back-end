@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface IUserService {
 
-    List<User> findAll();
+    List<UserGetDTO> findAll();
 
-    Optional<User> findById(String username);
+    Optional<UserGetDTO> findById(String username);
 
     Optional<User> create(UserPostDTO newUser) throws Exception;
     User update(UserPutDTO updatedUser,String username) throws  Exception;

@@ -21,22 +21,29 @@ public class UserService implements IUserService{
     private static AtomicLong counter=new AtomicLong();
 
     @Override
-    public List<User> findAll() {
-        //List<User> result=userRepository.findAll();
-        return userRepository.findAll();
-       //List<UserGetDTO>resultDTO=new ArrayList<>();
+    public List<UserGetDTO> findAll() {
+        List<User> result=userRepository.findAll();
+        //return userRepository.findAll();
+        List<UserGetDTO>resultDTO=new ArrayList<>();
 
-        //for(User u:result){
-        //    resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus(),u.getToken()));
-        //}
-        //return resultDTO;
+        for(User u:result){
+            resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),
+                    u.getPhoneNumber(),u.getStatus(),u.getDeleted(),u.getReservationRequestNotification(),
+                    u.getReservationCancellationNotification(),u.getOwnerRatingNotification(),u.getAccommodationRatingNotification()
+                    ,u.getOwnerRepliedToRequestNotification(),u.getToken()));
+        }
+        return resultDTO;
     }
 
     @Override
-    public Optional<User> findById(String username) {
-        Optional<User> u=userRepository.findById(username);
-        if(u.isPresent()) {
-            return u;
+    public Optional<UserGetDTO> findById(String username) {
+        Optional<User> res=userRepository.findById(username);
+        if(res.isPresent()) {
+            User u=res.get();
+            return Optional.of(new UserGetDTO(u.getFirstName(), u.getLastName(), u.getUsername(), u.getRole(), u.getAddress(),
+                    u.getPhoneNumber(), u.getStatus(), u.getDeleted(), u.getReservationRequestNotification(),
+                    u.getReservationCancellationNotification(), u.getOwnerRatingNotification(), u.getAccommodationRatingNotification()
+                    , u.getOwnerRepliedToRequestNotification(), u.getToken()));
         }
         return null;
     }
@@ -66,7 +73,15 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> findByToken(String token){
-        return userRepository.findByToken(token);
+        List<User> userList = userRepository.findAll();
+
+        for (User user : userList) {
+            if (user.getToken().equals(token)) {
+                return Optional.of(user);
+            }
+        }
+
+        return Optional.empty();
     }
     @Override
     public Optional<User> save(User user){

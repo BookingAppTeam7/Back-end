@@ -1,6 +1,7 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
+import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
@@ -47,14 +48,13 @@ public class ReservationService implements IReservationService{
     @Override
     public Optional<Reservation> create(ReservationPostDTO newReservation) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
-        //AccommodationService accommodationService = new AccommodationService();
         Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
                 .orElseThrow(() -> new Exception("Accommodation not found with id: " + newReservation.getAccommodationId()));
-        User user=this.userService.findById(newReservation.getUserId())
+        UserGetDTO user=this.userService.findById(newReservation.getUserId())
                 .orElseThrow(()->new Exception("User not found with id: "+newReservation.getUserId()));
-
+        User foundUser=this.userService.findByToken(user.token).orElseThrow(()->new Exception("User not found with token: "+user.token));
         Reservation createdReservation=new Reservation(newId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests,
-                user);
+                    foundUser);
         return Optional.of(reservationRepository.save(createdReservation));
     }
 
