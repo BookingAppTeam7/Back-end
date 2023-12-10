@@ -40,13 +40,12 @@ public class PriceCardController {
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
 
     }
-
-    @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO priceCard, @PathVariable Long id) throws Exception {
-        PriceCard result=priceCardService.update(priceCard,id);
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PriceCard> update(@RequestBody PriceCard priceCard) throws Exception {
+        PriceCard result=priceCardService.update(priceCard);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK);
-
     }
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PriceCard> delete(@PathVariable Long id){

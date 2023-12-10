@@ -47,9 +47,9 @@ public class PriceCardService implements IPriceCardService{
 //    }
 
     @Override
-    public PriceCard update(PriceCardPutDTO updatedPriceCard, Long id) throws Exception {
-        PriceCard result=new PriceCard(id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type);
-        return priceCardRepository.saveAndFlush(result);
+    public PriceCard update(PriceCard updatedPriceCard) throws Exception {
+//        PriceCard result=new PriceCard(id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type);
+        return priceCardRepository.saveAndFlush(updatedPriceCard);
     }
 
     @Override
