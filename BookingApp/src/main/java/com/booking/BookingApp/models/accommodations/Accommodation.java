@@ -94,7 +94,7 @@ public class Accommodation {
     }
     //constructor without id (create)
 
-    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices,String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status,Boolean deleted) {
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets,String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status,Boolean deleted) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -102,16 +102,9 @@ public class Accommodation {
         this.maxGuests = maxGuests;
         this.type = type;
         this.assets = assets;
-        this.prices = (prices != null) ? prices : new ArrayList<>();
+        //this.prices = (prices != null) ? prices : new ArrayList<>();
 
-//        if (prices != null) {
-//            for (PriceCard priceCard : prices) {
-//                priceCard.setAccommodation(this);
-//                priceCard.timeSlot.setAccommodation(this);
-//                priceCard.timeSlot.setType(TimeSlotType.PRICECARD);
-//            }
-//        }
-//        this.reservations=reservations;
+
         this.ownerId = ownerId;
         this.status = status;
         this.cancellationDeadline = cancellationDeadline;

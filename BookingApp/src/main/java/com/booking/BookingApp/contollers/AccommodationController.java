@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +35,22 @@ public class AccommodationController {
 
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
-    public Optional<Accommodation> create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
-        return accommodationService.create(newAccommodation);
+    public ResponseEntity<Accommodation>  create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
+        Optional<Accommodation> result = accommodationService.create(newAccommodation);
+        if (result.isPresent()) {
+            return new ResponseEntity<>(result.get(), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-    public Accommodation update(@RequestBody AccommodationPutDTO accommodation, @PathVariable Long id) throws Exception{
-        return accommodationService.update(accommodation,id);
+    public ResponseEntity<Accommodation> update(@RequestBody AccommodationPutDTO accommodation, @PathVariable Long id) throws Exception{
+        Optional<Accommodation> result = accommodationService.update(accommodation, id);
+        if (result.isPresent()) {
+            return new ResponseEntity<>(result.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     @DeleteMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")

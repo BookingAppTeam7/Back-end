@@ -20,15 +20,15 @@ public class AccommodationPutDTO {  //Accommodation model without id
     public int maxGuests;
     public TypeEnum type;
     public List<String> assets;
-    public List<PriceCard> prices;
+    //public List<PriceCard> prices;
     public String ownerId;
     public int cancellationDeadline;
     public ReservationConfirmationEnum reservationConfirmation;
-    public List<Review> reviews;
+   // public List<Review> reviews;
     public List<String> images;
 
 
-    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews,List<String> images) {
+    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -36,11 +36,11 @@ public class AccommodationPutDTO {  //Accommodation model without id
         this.maxGuests = maxGuests;
         this.type = type;
         this.assets = assets;
-        this.prices = prices;
+        //this.prices = prices;
         this.ownerId = ownerId;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
-        this.reviews = reviews;
+        //this.reviews = reviews;
         this.images=images;
     }
 
@@ -100,14 +100,6 @@ public class AccommodationPutDTO {  //Accommodation model without id
         this.assets = assets;
     }
 
-    public List<PriceCard> getPrices() {
-        return prices;
-    }
-
-    public void setPrices(List<PriceCard> prices) {
-        this.prices = prices;
-    }
-
     public String getOwnerId() {
         return ownerId;
     }
@@ -130,14 +122,6 @@ public class AccommodationPutDTO {  //Accommodation model without id
 
     public void setReservationConfirmation(ReservationConfirmationEnum reservationConfirmation) {
         this.reservationConfirmation = reservationConfirmation;
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
     }
 
     public List<String> getImages() {
