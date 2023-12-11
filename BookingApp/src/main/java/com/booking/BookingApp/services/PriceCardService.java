@@ -40,7 +40,6 @@ public class PriceCardService implements IPriceCardService{
 
     @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
-
         validatorService.validatePriceCard(newPriceCard);
         PriceCard createdPriceCard=new PriceCard(newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
@@ -50,9 +49,9 @@ public class PriceCardService implements IPriceCardService{
 
 
     @Override
-    public PriceCard update(PriceCardPutDTO updatedPriceCard, Long id) throws Exception {
-        PriceCard result=new PriceCard(id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type);
-        return priceCardRepository.saveAndFlush(result);
+    public PriceCard update(PriceCard updatedPriceCard) throws Exception {
+//        PriceCard result=new PriceCard(id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type);
+        return priceCardRepository.saveAndFlush(updatedPriceCard);
     }
 
     @Override

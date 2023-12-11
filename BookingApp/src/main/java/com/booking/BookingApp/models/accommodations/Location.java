@@ -1,9 +1,6 @@
 package com.booking.BookingApp.models.accommodations;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 
@@ -16,14 +13,17 @@ public class Location {
     public String country;
     public double x;
     public double y;
+    @Column(name="deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
 
-    public Location(Long id, String address, String city, String country, double x, double y) {
+    public Location(Long id, String address, String city, String country, double x, double y,Boolean deleted) {
         this.id = id;
         this.address = address;
         this.city = city;
         this.country = country;
         this.x = x;
         this.y = y;
+        this.deleted=deleted;
     }
 
     public Location() {
@@ -84,5 +84,13 @@ public class Location {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

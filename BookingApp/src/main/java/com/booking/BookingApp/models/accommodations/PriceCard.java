@@ -12,11 +12,6 @@ public class PriceCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-//    @JsonIgnore
-//    @ManyToOne
-//    @JoinColumn(name = "accommodation_id")
-//    public Accommodation accommodation;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "time_slot_id")
     public TimeSlot timeSlot;
@@ -24,11 +19,15 @@ public class PriceCard {
     @Enumerated(EnumType.STRING)
     public PriceTypeEnum type;
 
-    public PriceCard(Long id, TimeSlot timeSlot, double price, PriceTypeEnum type) {
+    @Column(name="deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
+
+    public PriceCard(Long id, TimeSlot timeSlot, double price, PriceTypeEnum type,Boolean deleted) {
         this.id = id;
         this.timeSlot=timeSlot;
         this.price = price;
         this.type = type;
+        this.deleted=deleted;
     }
 
     public PriceCard(TimeSlot timeSlot, double price, PriceTypeEnum type) {
@@ -39,6 +38,12 @@ public class PriceCard {
 
     public PriceCard() {
 
+    }
+
+    public PriceCard(TimeSlot timeSlot, double price, PriceTypeEnum type) {
+        this.timeSlot=timeSlot;
+        this.price=price;
+        this.type=type;
     }
 
     public Long getId() {
@@ -74,4 +79,11 @@ public class PriceCard {
         this.type = type;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 }

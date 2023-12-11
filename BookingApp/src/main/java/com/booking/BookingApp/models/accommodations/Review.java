@@ -12,10 +12,6 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     public String userId;
-//    @JsonIgnore
-//    @ManyToOne
-//    @JoinColumn(name = "accommodation_id")
-//    private Accommodation accommodation;
 
     @Enumerated(EnumType.STRING)
     public ReviewEnum type;
@@ -23,13 +19,17 @@ public class Review {
     public int grade;
     public LocalDateTime dateTime;
 
-    public Review(Long id, String userId, ReviewEnum type, String comment,int grade, LocalDateTime dateTime) {
+    @Column(name="deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
+
+    public Review(Long id, String userId, ReviewEnum type, String comment,int grade, LocalDateTime dateTime,Boolean deleted) {
         this.id = id;
         this.userId = userId;
         this.type = type;
         this.comment = comment;
         this.grade=grade;
         this.dateTime = dateTime;
+        this.deleted=deleted;
     }
 
     public Review() {
@@ -83,5 +83,13 @@ public class Review {
 
     public String getUserId() {
         return userId;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

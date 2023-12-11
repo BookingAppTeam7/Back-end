@@ -14,18 +14,15 @@ public class TimeSlot {
     public Long id;
     public Date startDate;
     public Date endDate;
-//    @JsonIgnore
-//    @ManyToOne
-//    @JoinColumn(name = "accommodation_id")
-//    private Accommodation accommodation;
 
-//    @Enumerated(EnumType.STRING)
-//    public TimeSlotType type;
+    @Column(name="deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
 
-    public TimeSlot(Long id, Date startDate, Date endDate) {
+    public TimeSlot(Long id, Date startDate, Date endDate,Boolean deleted) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.deleted=deleted;
     }
 
     public TimeSlot() {
@@ -56,4 +53,11 @@ public class TimeSlot {
         this.id = id;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
 }
