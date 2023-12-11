@@ -22,6 +22,7 @@ public class JwtTokenUtil implements Serializable {
 
 	// retrieve username from jwt token
 	public String getUsernameFromToken(String token) {
+		System.out.println("USAO U 25 LINIJU JAWA TOKEN UTIL");
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
@@ -31,12 +32,15 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+		System.out.println("USAO U 35 LINIJU GET CLAIM");
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
 
 	// for retrieveing any information from token we will need the secret key
 	private Claims getAllClaimsFromToken(String token) {
+		System.out.println("USAO U 42 LINIJU GETALLCLAIMS FOR TOKEN ");
+		System.out.println("SECREEEET   "+secret);
 		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
 

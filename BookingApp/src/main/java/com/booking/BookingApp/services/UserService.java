@@ -8,7 +8,11 @@ import com.booking.BookingApp.models.dtos.users.UserPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.repositories.IUserRepository;
+import com.booking.BookingApp.security.jwt.JwtTokenUtil;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +25,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class UserService implements IUserService, UserDetailsService {
     @Autowired
     public IUserRepository userRepository;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    private static final long serialVersionUID = -2550185165626007488L;
+    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    @Value("${jwt.secret}")
+    private String secret;
     private static AtomicLong counter=new AtomicLong();
 
     @Override
@@ -47,8 +57,16 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
         //Long newId= (Long) counter.incrementAndGet();
-        Map<NotificationTypeEnum,Boolean>notificationSettings=null;
-        String token = UUID.randomUUID().toString();
+       //Map<NotificationTypeEnum,Boolean>notificationSettings=null;
+
+      // String token = UUID.randomUUID().toString();
+//        Map<String, Object> claims = new HashMap<>();
+//
+//
+//        String token= Jwts.builder().setClaims(claims).setSubject(newUser.username).setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+//                .signWith(SignatureAlgorithm.HS512, secret).compact();
+        String token = jwtTokenUtil.generateToken(newUser.getUsername());
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
                 newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted);
         return Optional.of(userRepository.save(createdUser));
