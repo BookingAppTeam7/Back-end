@@ -54,7 +54,7 @@ public class AccommodationService implements IAccommodationService{
                 newAccommodation.getMaxGuests(),
                 newAccommodation.getType(),
                 newAccommodation.getAssets(),
-                newAccommodation.getPrices(),
+//                newAccommodation.getPrices(),
                 newAccommodation.getOwnerId(),
                 newAccommodation.getCancellationDeadline(),
                 ReservationConfirmationEnum.MANUAL,

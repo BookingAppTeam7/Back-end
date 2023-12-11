@@ -18,12 +18,12 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
     public int maxGuests;
     public TypeEnum type;
     public List<String> assets;
-    public List<PriceCard> prices;
+    //public List<PriceCard> prices;
     public String ownerId;
     public int cancellationDeadline;
     public List<String> images;
 
-    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices, String ownerId, int cancellationDeadline,List<String> images) {
+    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId, int cancellationDeadline,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -31,7 +31,6 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.maxGuests = maxGuests;
         this.type = type;
         this.assets = assets;
-        this.prices = prices;
         this.ownerId = ownerId;
         this.cancellationDeadline = cancellationDeadline;
         this.images=images;
@@ -91,14 +90,6 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
 
     public void setAssets(List<String> assets) {
         this.assets = assets;
-    }
-
-    public List<PriceCard> getPrices() {
-        return prices;
-    }
-
-    public void setPrices(List<PriceCard> prices) {
-        this.prices = prices;
     }
 
     public String getOwnerId() {
