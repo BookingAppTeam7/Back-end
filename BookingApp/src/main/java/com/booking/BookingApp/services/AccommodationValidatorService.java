@@ -4,7 +4,9 @@ import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
+import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
@@ -23,7 +25,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
     public IAccommodationRepository accommodationRepository;
     @Autowired
     public IReservationRepository reservationRepository;
-    public void validate(AccommodationPostDTO accommodation) {
+    public void validatePost(AccommodationPostDTO accommodation) {
         if (accommodation == null) {
             throw new IllegalArgumentException("Accommodation data is null");
         }
@@ -53,7 +55,44 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
     }
 
     @Override
-    public void validatePriceCard(PriceCardPostDTO newPriceCard) {
+    public void validatePut(AccommodationPutDTO updatedAccommodation, Long id) {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
+        if(!accommodation.isPresent()){
+            throw new IllegalArgumentException("Cannot change accommodation with this id - not found!");
+        }
+        if (updatedAccommodation == null) {
+            throw new IllegalArgumentException("Accommodation data is null");
+        }
+
+        if (StringUtils.isEmpty(updatedAccommodation.getName())) {
+            throw new IllegalArgumentException("Accommodation name cannot be empty");
+        }
+
+        if (StringUtils.isEmpty(updatedAccommodation.getDescription())) {
+            throw new IllegalArgumentException("Accommodation description cannot be empty");
+        }
+
+        if (updatedAccommodation.getLocation() == null) {
+            throw new IllegalArgumentException("Accommodation location cannot be null");
+        }
+
+        if (updatedAccommodation.getMinGuests() <= 0 || updatedAccommodation.getMaxGuests() <= 0 || updatedAccommodation.getMinGuests() > updatedAccommodation.getMaxGuests()) {
+            throw new IllegalArgumentException("Invalid values for minGuests or maxGuests");
+        }
+
+        if (updatedAccommodation.getType() == null) {
+            throw new IllegalArgumentException("Accommodation type cannot be null");
+        }
+        if (updatedAccommodation.getCancellationDeadline() <= 0) {
+            throw new IllegalArgumentException("Invalid values for cancellationDeadline");
+        }
+        if(updatedAccommodation.getReservationConfirmation()==null){
+            throw new IllegalArgumentException("Reservation confirmation cannot be null");
+        }
+    }
+
+    @Override
+    public void validatePriceCardPost(PriceCardPostDTO newPriceCard) {
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
 
         if (!accommodation.isPresent()) {
@@ -94,6 +133,51 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
             }
         }
     }
+
+    @Override
+    public void validatePriceCardPut(PriceCardPutDTO newPriceCard) {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
+
+        if (!accommodation.isPresent()) {
+            throw new IllegalArgumentException("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
+        }
+        Date currentDate = new Date();
+
+        if (newPriceCard.timeSlot.startDate.before(currentDate) || newPriceCard.timeSlot.endDate.before(currentDate)) {
+            throw new IllegalArgumentException("Both start date and end date must be in the future.");
+        }
+
+        if (newPriceCard.timeSlot.startDate.after(newPriceCard.timeSlot.endDate)) {
+            throw new IllegalArgumentException("Start date must be before end date.");
+        }
+
+        if(newPriceCard.price<=0){
+            throw new IllegalArgumentException("Invalid price value.Price must be positive number.");
+        }
+
+        if(newPriceCard.type==null){
+            throw new IllegalArgumentException("Price type must be defined.");
+        }
+
+        List<PriceCard> existingPrices=accommodation.get().getPrices();
+        for (PriceCard existingPrice : existingPrices) {
+            if(existingPrice.id!= newPriceCard.id) { //da bismo izbegli proveru sa vec postojecim
+                if (isTimeSlotOverlap(existingPrice.getTimeSlot(), newPriceCard.getTimeSlot())) {
+                    throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
+                }
+            }
+        }
+
+        List<Reservation> existingReservations=reservationRepository.findByAccommodationId(newPriceCard.accommodationId);
+        for (Reservation existingReservation : existingReservations) {
+            if (existingReservation.getStatus() != ReservationStatusEnum.APPROVED && existingReservation.getStatus() != ReservationStatusEnum.INPROCESS) {
+                continue;
+            }
+            if (isTimeSlotOverlap(existingReservation.getTimeSlot(), newPriceCard.getTimeSlot())) {
+                throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed.");
+            }
+        }
+    }
     private boolean isTimeSlotOverlap(TimeSlot existingTimeSlot, TimeSlot newTimeSlot) {
         return (newTimeSlot.getStartDate().before(existingTimeSlot.getEndDate()) &&
                 newTimeSlot.getEndDate().after(existingTimeSlot.getStartDate())) ||
@@ -102,4 +186,6 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
                 (existingTimeSlot.getStartDate().equals(newTimeSlot.getEndDate()) ||
                         existingTimeSlot.getEndDate().equals(newTimeSlot.getStartDate()));
     }
+
+
 }

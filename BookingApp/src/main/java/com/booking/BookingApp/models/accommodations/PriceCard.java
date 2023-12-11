@@ -40,6 +40,13 @@ public class PriceCard {
 
     }
 
+    public PriceCard(Long id, TimeSlot timeSlot, double price, PriceTypeEnum type) {
+        this.id=id;
+        this.timeSlot=timeSlot;
+        this.price = price;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }

@@ -13,6 +13,6 @@ public interface IAccommodationService {
     Optional<Accommodation> findById(Long id);
 
     Optional<Accommodation> create(AccommodationPostDTO newUser) throws Exception;
-    Accommodation update(AccommodationPutDTO updatedUser, Long  id) throws  Exception;
+    Optional<Accommodation> update(AccommodationPutDTO updatedUser, Long  id) throws  Exception;
     void delete(Long id);
 }

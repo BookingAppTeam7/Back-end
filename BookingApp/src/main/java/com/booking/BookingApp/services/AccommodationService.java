@@ -42,7 +42,7 @@ public class AccommodationService implements IAccommodationService{
     @Override
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
 
-        validatorService.validate(newAccommodation);
+        validatorService.validatePost(newAccommodation);
 
         List<Review> reviews = new ArrayList<>();
 
@@ -67,9 +67,14 @@ public class AccommodationService implements IAccommodationService{
     }
 
     @Override
-    public Accommodation update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images,false);
-        return accommodationRepository.saveAndFlush(result);
+    public Optional<Accommodation> update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
+        validatorService.validatePut(updatedAccommodation,id);
+        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
+        if(!accommodation.isPresent()){return null;}
+        List<PriceCard>prices=accommodation.get().prices;
+        List<Review>reviews=accommodation.get().reviews;
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false);
+        return Optional.of(accommodationRepository.saveAndFlush(result));
     }
 
     @Override
