@@ -1,8 +1,10 @@
 package com.booking.BookingApp.services;
 
+import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
+import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IPriceCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PriceCardService implements IPriceCardService{
     @Autowired
     public IPriceCardRepository priceCardRepository;
-    private static AtomicLong counter=new AtomicLong();
+    @Autowired
+    public IAccommodationValidatorService validatorService;
+    @Autowired
+    public IAccommodationRepository accommodationRepository;
 
     @Override
     public List<PriceCard> findAll() {
@@ -35,17 +40,13 @@ public class PriceCardService implements IPriceCardService{
 
     @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
+        validatorService.validatePriceCard(newPriceCard);
         PriceCard createdPriceCard=new PriceCard(newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
+        Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
+        accommodation.get().prices.add(createdPriceCard);
         return Optional.of(priceCardRepository.save(createdPriceCard));
     }
 
-//    @Override
-//    public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
-//        Long newId= (Long) counter.incrementAndGet();
-//
-//        PriceCard createdPriceCard=new PriceCard(newId,newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
-//        return priceCardRepository.save(createdPriceCard);
-//    }
 
     @Override
     public PriceCard update(PriceCard updatedPriceCard) throws Exception {

@@ -38,7 +38,6 @@ public class PriceCardController {
     public ResponseEntity<PriceCard> create(@RequestBody PriceCardPostDTO newPriceCard) throws Exception {
         Optional<PriceCard> result=priceCardService.create(newPriceCard);
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
-
     }
     @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)

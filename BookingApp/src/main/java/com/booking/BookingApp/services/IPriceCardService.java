@@ -15,5 +15,4 @@ public interface IPriceCardService {
     PriceCard update(PriceCard updatedPriceCard) throws  Exception;
     void delete(Long id);
 
-    //List<PriceCard> findByAccommodationId(Long id);
 }
