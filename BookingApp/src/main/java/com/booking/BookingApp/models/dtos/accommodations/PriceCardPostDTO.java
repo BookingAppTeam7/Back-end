@@ -8,10 +8,13 @@ public class PriceCardPostDTO {
     public double price;
     public PriceTypeEnum type;
 
-    public PriceCardPostDTO(TimeSlot timeSlot, double price, PriceTypeEnum type) {
+    public Long accommodationId;
+
+    public PriceCardPostDTO(TimeSlot timeSlot, double price, PriceTypeEnum type,Long accommodationId) {
         this.timeSlot=timeSlot;
         this.price = price;
         this.type = type;
+        this.accommodationId=accommodationId;
     }
 
     public TimeSlot getTimeSlot() {
@@ -36,5 +39,13 @@ public class PriceCardPostDTO {
 
     public void setType(PriceTypeEnum type) {
         this.type = type;
+    }
+
+    public Long getAccommodationId() {
+        return accommodationId;
+    }
+
+    public void setAccommodationId(Long accommodationId) {
+        this.accommodationId = accommodationId;
     }
 }
