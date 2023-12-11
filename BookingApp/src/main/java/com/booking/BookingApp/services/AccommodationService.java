@@ -64,7 +64,6 @@ public class AccommodationService implements IAccommodationService{
                 false
         );
         return Optional.of(accommodationRepository.save(createdAccommodation));
-
     }
 
     @Override
