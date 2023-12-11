@@ -46,7 +46,7 @@ public class AccommodationController {
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Accommodation> delete(@PathVariable Long id){
         accommodationService.delete(id);
-        return new ResponseEntity<Accommodation>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

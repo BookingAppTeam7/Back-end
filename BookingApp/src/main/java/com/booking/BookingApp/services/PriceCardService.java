@@ -35,7 +35,8 @@ public class PriceCardService implements IPriceCardService{
 
     @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
-        return Optional.empty();
+        PriceCard createdPriceCard=new PriceCard(newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
+        return Optional.of(priceCardRepository.save(createdPriceCard));
     }
 
 //    @Override

@@ -12,10 +12,17 @@ import java.util.List;
 
 @Entity
 @Table(name="accommodations")
+//@SQLDelete(sql
+//    = "UPDATE accommodations"
+//    + " SET deleted = true "
+//    + "WHERE id = ?")
 @SQLDelete(sql
-    = "UPDATE accommodations"
-    + " SET deleted = true "
-    + "WHERE id = ?")
+        = "UPDATE accommodations "
+        + "SET deleted = true "
+        + "WHERE id = ? "
+        +"UPDATE location SET deleted=true WHERE accommodation_id=?"
+        )
+
 @Where(clause="deleted=false")
 
 public class Accommodation {
@@ -35,19 +42,15 @@ public class Accommodation {
     public TypeEnum type;
     @ElementCollection
     public List<String> assets;
-//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     @OneToMany(cascade = CascadeType.ALL)
     public List<PriceCard> prices;
 
-//    @OneToMany( cascade = CascadeType.ALL)
-//    public List<Reservation> reservations;
     public String ownerId;
     @Enumerated(EnumType.STRING)
     public AccommodationStatusEnum status;
     public int cancellationDeadline;
     @Enumerated(EnumType.STRING)
     public ReservationConfirmationEnum reservationConfirmation;
-//    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL)
     @OneToMany(cascade = CascadeType.ALL)
     public List<Review> reviews;
     @ElementCollection

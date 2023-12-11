@@ -42,7 +42,7 @@ public class ReviewService implements IReviewService{
 
     @Override
     public Review update(ReviewPutDTO updatedReview, Long id, String userId, ReviewEnum type) throws Exception {
-        Review result=new Review(id,userId,type, updatedReview.comment, updatedReview.grade, LocalDateTime.now());
+        Review result=new Review(id,userId,type, updatedReview.comment, updatedReview.grade, LocalDateTime.now(),false);
         return reviewRepository.saveAndFlush(result);
     }
 
