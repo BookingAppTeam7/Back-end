@@ -9,13 +9,16 @@ import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-public class UserService implements IUserService{
+public class UserService implements IUserService, UserDetailsService {
     @Autowired
     public IUserRepository userRepository;
     private static AtomicLong counter=new AtomicLong();
@@ -71,5 +74,14 @@ public class UserService implements IUserService{
     @Override
     public Optional<User> save(User user){
         return Optional.of(userRepository.save(user));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> ret = userRepository.findById(username);
+        if (!ret.isEmpty() ) {
+            return org.springframework.security.core.userdetails.User.withUsername(username).password(ret.get().getPassword()).roles(ret.get().getRole().toString()).build();
+        }
+        throw new UsernameNotFoundException("User not found with this username: " + username);
     }
 }
