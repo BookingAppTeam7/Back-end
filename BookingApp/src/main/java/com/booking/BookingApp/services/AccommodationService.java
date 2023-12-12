@@ -31,7 +31,7 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public List<Accommodation> findAll() {
-        return accommodationRepository.findAll(); ///ovde mozda korigovati da vraca u availabilitiju samo tip AVAILABILITY
+        return accommodationRepository.findAll();
     }
 
     @Override
@@ -59,11 +59,8 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
-
-        validatorService.validatePost(newAccommodation);
-
+        if(!validatorService.validatePost(newAccommodation)){return Optional.empty();}
         List<Review> reviews = new ArrayList<>();
-
         Accommodation createdAccommodation = new Accommodation(
                 newAccommodation.getName(),
                 newAccommodation.getDescription(),
@@ -72,7 +69,6 @@ public class AccommodationService implements IAccommodationService{
                 newAccommodation.getMaxGuests(),
                 newAccommodation.getType(),
                 newAccommodation.getAssets(),
-//                newAccommodation.getPrices(),
                 newAccommodation.getOwnerId(),
                 newAccommodation.getCancellationDeadline(),
                 ReservationConfirmationEnum.MANUAL,
@@ -86,7 +82,9 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public Optional<Accommodation> update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        validatorService.validatePut(updatedAccommodation,id);
+        if(!validatorService.validatePut(updatedAccommodation,id)){
+            return Optional.empty();
+        }
         Optional<Accommodation> accommodation=accommodationRepository.findById(id);
         if(!accommodation.isPresent()){return null;}
         List<PriceCard>prices=accommodation.get().prices;
@@ -102,6 +100,10 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public Optional<Accommodation> updateStatus(Long accommodationId, AccommodationStatusEnum status) {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(accommodationId);
+        if(!accommodation.isPresent()){
+            return Optional.empty();
+        }
         int updatedRows = accommodationRepository.updateStatus(accommodationId, status);
         if (updatedRows > 0) {
             return accommodationRepository.findById(accommodationId);

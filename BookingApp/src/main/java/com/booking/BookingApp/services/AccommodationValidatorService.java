@@ -9,8 +9,10 @@ import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
+import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
+import com.booking.BookingApp.repositories.IUserRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,70 +27,101 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
     public IAccommodationRepository accommodationRepository;
     @Autowired
     public IReservationRepository reservationRepository;
-    public void validatePost(AccommodationPostDTO accommodation) {
+    @Autowired
+    public IUserRepository userRepository;
+    public boolean validatePost(AccommodationPostDTO accommodation) {
         if (accommodation == null) {
-            throw new IllegalArgumentException("Accommodation data is null");
+            return false;
+            //throw new IllegalArgumentException("Accommodation data is null");
+        }
+        Optional<User> owner=userRepository.findById(accommodation.ownerId);
+        if(!owner.isPresent()){
+            return false;
+            //throw new IllegalArgumentException("Owner not found");
         }
 
         if (StringUtils.isEmpty(accommodation.getName())) {
-            throw new IllegalArgumentException("Accommodation name cannot be empty");
+            return false;
+            //throw new IllegalArgumentException("Accommodation name cannot be empty");
         }
 
         if (StringUtils.isEmpty(accommodation.getDescription())) {
-            throw new IllegalArgumentException("Accommodation description cannot be empty");
+            return false;
+            //throw new IllegalArgumentException("Accommodation description cannot be empty");
         }
 
         if (accommodation.getLocation() == null) {
-            throw new IllegalArgumentException("Accommodation location cannot be null");
+            return false;
+            //throw new IllegalArgumentException("Accommodation location cannot be null");
         }
 
         if (accommodation.getMinGuests() <= 0 || accommodation.getMaxGuests() <= 0 || accommodation.getMinGuests() > accommodation.getMaxGuests()) {
-            throw new IllegalArgumentException("Invalid values for minGuests or maxGuests");
+            return false;
+            //throw new IllegalArgumentException("Invalid values for minGuests or maxGuests");
         }
 
         if (accommodation.getType() == null) {
-            throw new IllegalArgumentException("Accommodation type cannot be null");
+            return false;
+            //throw new IllegalArgumentException("Accommodation type cannot be null");
         }
         if (accommodation.getCancellationDeadline() <= 0) {
-            throw new IllegalArgumentException("Invalid values for cancellationDeadline");
+            return false;
+            //throw new IllegalArgumentException("Invalid values for cancellationDeadline");
         }
+        return true;
     }
 
     @Override
-    public void validatePut(AccommodationPutDTO updatedAccommodation, Long id) {
+    public boolean validatePut(AccommodationPutDTO updatedAccommodation, Long id) {
         Optional<Accommodation> accommodation=accommodationRepository.findById(id);
         if(!accommodation.isPresent()){
-            throw new IllegalArgumentException("Cannot change accommodation with this id - not found!");
+            return false;
+            //throw new IllegalArgumentException("Cannot change accommodation with this id - not found!");
         }
         if (updatedAccommodation == null) {
-            throw new IllegalArgumentException("Accommodation data is null");
+            return false;
+            //throw new IllegalArgumentException("Accommodation data is null");
+        }
+
+        Optional<User> owner=userRepository.findById(updatedAccommodation.ownerId);
+        if(!owner.isPresent()){
+            return false;
+            //throw new IllegalArgumentException("Owner not found");
         }
 
         if (StringUtils.isEmpty(updatedAccommodation.getName())) {
-            throw new IllegalArgumentException("Accommodation name cannot be empty");
+            return false;
+            //throw new IllegalArgumentException("Accommodation name cannot be empty");
         }
 
         if (StringUtils.isEmpty(updatedAccommodation.getDescription())) {
-            throw new IllegalArgumentException("Accommodation description cannot be empty");
+            return false;
+            //throw new IllegalArgumentException("Accommodation description cannot be empty");
         }
 
         if (updatedAccommodation.getLocation() == null) {
-            throw new IllegalArgumentException("Accommodation location cannot be null");
+            return false;
+            //throw new IllegalArgumentException("Accommodation location cannot be null");
         }
 
         if (updatedAccommodation.getMinGuests() <= 0 || updatedAccommodation.getMaxGuests() <= 0 || updatedAccommodation.getMinGuests() > updatedAccommodation.getMaxGuests()) {
-            throw new IllegalArgumentException("Invalid values for minGuests or maxGuests");
+            return false;
+            //throw new IllegalArgumentException("Invalid values for minGuests or maxGuests");
         }
 
         if (updatedAccommodation.getType() == null) {
-            throw new IllegalArgumentException("Accommodation type cannot be null");
+            return false;
+            //throw new IllegalArgumentException("Accommodation type cannot be null");
         }
         if (updatedAccommodation.getCancellationDeadline() <= 0) {
-            throw new IllegalArgumentException("Invalid values for cancellationDeadline");
+            return false;
+            //throw new IllegalArgumentException("Invalid values for cancellationDeadline");
         }
         if(updatedAccommodation.getReservationConfirmation()==null){
-            throw new IllegalArgumentException("Reservation confirmation cannot be null");
+            return false;
+            //throw new IllegalArgumentException("Reservation confirmation cannot be null");
         }
+        return true;
     }
 
     @Override
