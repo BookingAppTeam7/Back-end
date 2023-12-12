@@ -1,18 +1,25 @@
 package com.booking.BookingApp.contollers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.booking.BookingApp.models.accommodations.Accommodation;
+import com.booking.BookingApp.models.accommodations.AccommodationDetails;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
+import com.booking.BookingApp.models.enums.TypeEnum;
 import com.booking.BookingApp.services.IAccommodationService;
 import com.booking.BookingApp.services.IPriceCardService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +39,37 @@ public class AccommodationController {
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Accommodation> findById(@PathVariable Long id){return accommodationService.findById(id);}
-
+    @GetMapping(value="/search",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<AccommodationDetails>> search(@RequestParam String city,
+                                                             @RequestParam int guests,
+                                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date arrival,
+                                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkout){  //treba u get zahtevu za availability podesiti samo one TIMESLOTOVE gde je tip AVAILABILITY
+        if (checkout.before(arrival) || city.isEmpty() || guests < 1) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<AccommodationDetails> accommodations=accommodationService.search(city,guests,arrival,checkout);
+        return new ResponseEntity<>(accommodations, HttpStatus.OK);
+    }
+    @GetMapping(value="/filter",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<AccommodationDetails>> filter(@RequestParam String searched,
+                                                             @RequestParam List<String> assets,
+                                                             @RequestParam TypeEnum type,
+                                                             @RequestParam double minTotalPrice,
+                                                             @RequestParam double maxTotalPrice) {
+        List<AccommodationDetails> searchedList = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            searchedList = objectMapper.readValue(searched, new TypeReference<List<AccommodationDetails>>() {
+            });
+            List<AccommodationDetails> accommodations = accommodationService.filter(searchedList, assets, type, minTotalPrice, maxTotalPrice);
+            return new ResponseEntity<>(accommodations, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Accommodation>  create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{

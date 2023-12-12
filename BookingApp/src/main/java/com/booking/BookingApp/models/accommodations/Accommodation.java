@@ -7,7 +7,12 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -113,7 +118,48 @@ public class Accommodation {
         this.images = images;
         this.deleted=deleted;
     }
-
+    public double calculateUnitPrice(Date arrival,Date checkout){
+        double unitPrice=0.0;
+        for (PriceCard p:this.prices) {
+            if(isWithinTimeSlot(arrival,checkout,p.timeSlot)){
+                unitPrice= p.price;
+            }
+        }
+        return unitPrice;
+    }
+    public double calculateAverageRating(){
+        double averageRating=0.0;
+        if(this.reviews.isEmpty())
+            return 0.0;
+        for(Review r:this.reviews){
+            averageRating+=r.grade;
+        }
+        return averageRating/this.reviews.size();
+    }
+    public double calculateTotalPrice(Date arrival, Date checkout, int guests){
+        double totalPrice=0.0;
+        Instant instant1 =arrival.toInstant();
+        LocalDate a1=instant1.atZone(ZoneId.systemDefault()).toLocalDate();
+        Instant instant2 =checkout.toInstant();
+        LocalDate a2=instant2.atZone(ZoneId.systemDefault()).toLocalDate();
+        long totalDays = ChronoUnit.DAYS.between(a1, a2);
+        for (PriceCard p:this.prices) {
+            if(isWithinTimeSlot(arrival,checkout,p.timeSlot)){
+                if(p.type.equals(PriceTypeEnum.PERUNIT)){
+                    totalPrice=totalDays*p.price;
+                }
+                else if(p.type.equals(PriceTypeEnum.PERGUEST)){
+                    totalPrice=totalDays*p.price*guests;
+                }
+            }
+        }
+        return totalPrice;
+    }
+    private boolean isWithinTimeSlot(Date arrival, Date checkout, TimeSlot timeSlot) {
+        Date timeSlotStart = timeSlot.getStartDate();
+        Date timeSlotEnd = timeSlot.getEndDate();
+        return !(arrival.before(timeSlotStart) || checkout.after(timeSlotEnd));
+    }
     public Long getId() {
         return id;
     }
@@ -240,5 +286,27 @@ public class Accommodation {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public String toString() {
+        return "Accommodation{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", location=" + location +
+                ", minGuests=" + minGuests +
+                ", maxGuests=" + maxGuests +
+                ", type=" + type +
+                ", assets=" + assets +
+                ", prices=" + prices +
+                ", ownerId='" + ownerId + '\'' +
+                ", status=" + status +
+                ", cancellationDeadline=" + cancellationDeadline +
+                ", reservationConfirmation=" + reservationConfirmation +
+                ", reviews=" + reviews +
+                ", images=" + images +
+                ", deleted=" + deleted +
+                '}';
     }
 }

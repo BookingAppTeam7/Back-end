@@ -6,16 +6,14 @@ import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
+import com.booking.BookingApp.models.enums.TypeEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -80,5 +78,55 @@ public class AccommodationService implements IAccommodationService{
     @Override
     public void delete(Long id) {
         accommodationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<AccommodationDetails> search(String city, int guests, Date arrivalDate, Date checkoutDate){
+        List<Accommodation> retAcc=new ArrayList<>();
+        List<Accommodation> allAcc=findAll();
+        for(Accommodation a:allAcc){
+            if(a.location.city.equalsIgnoreCase(city) && a.status.equals(AccommodationStatusEnum.APPROVED)){
+                if(a.minGuests<=guests && a.maxGuests>=guests){
+                    if(hasAvailableTimeSlot(a,arrivalDate,checkoutDate)){
+                        retAcc.add(a);
+                    }
+                }
+            }
+        }
+        List<AccommodationDetails> retDet=new ArrayList<>();
+        for(Accommodation a:retAcc)
+            retDet.add(convertToAccommodationDetails(a,arrivalDate,checkoutDate,guests));
+        return retDet;
+    }
+    @Override
+    public List<AccommodationDetails> filter(List<AccommodationDetails> searched, List<String> assets, TypeEnum type, double minTotalPrice, double maxTotalPrice){
+        List<AccommodationDetails> ret=new ArrayList<>();
+        for(AccommodationDetails ad:searched){
+            if(ad.getAccommodation().type.equals(type) && ad.getTotalPrice()>=minTotalPrice && ad.getTotalPrice()<=maxTotalPrice &&
+                    ad.getAccommodation().getAssets().containsAll(assets)){
+                ret.add(ad);
+            }
+        }
+        return ret;
+    }
+    private boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
+        for (PriceCard priceCard : accommodation.prices) {
+            if (isWithinTimeSlot(arrival, checkout, priceCard.timeSlot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean isWithinTimeSlot(Date arrival, Date checkout, TimeSlot timeSlot) {
+        Date timeSlotStart = timeSlot.getStartDate();
+        Date timeSlotEnd = timeSlot.getEndDate();
+        return !(arrival.before(timeSlotStart) || checkout.after(timeSlotEnd));
+    }
+    private AccommodationDetails convertToAccommodationDetails(Accommodation accommodation, Date arrival, Date checkout, int guests) {
+        double totalPrice = accommodation.calculateTotalPrice(arrival, checkout, guests);
+        double averageRating = accommodation.calculateAverageRating();
+        double unitPrice = accommodation.calculateUnitPrice(arrival, checkout);
+
+        return new AccommodationDetails(accommodation,totalPrice,unitPrice,averageRating);
     }
 }
