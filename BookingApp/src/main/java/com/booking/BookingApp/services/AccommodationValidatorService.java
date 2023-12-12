@@ -125,34 +125,40 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
     }
 
     @Override
-    public void validatePriceCardPost(PriceCardPostDTO newPriceCard) {
+    public boolean validatePriceCardPost(PriceCardPostDTO newPriceCard) {
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
 
         if (!accommodation.isPresent()) {
-            throw new IllegalArgumentException("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
+            return false;
+            //throw new IllegalArgumentException("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
         }
         Date currentDate = new Date();
 
         if (newPriceCard.timeSlot.startDate.before(currentDate) || newPriceCard.timeSlot.endDate.before(currentDate)) {
-            throw new IllegalArgumentException("Both start date and end date must be in the future.");
+            return false;
+            //throw new IllegalArgumentException("Both start date and end date must be in the future.");
         }
 
         if (newPriceCard.timeSlot.startDate.after(newPriceCard.timeSlot.endDate)) {
-            throw new IllegalArgumentException("Start date must be before end date.");
+            return false;
+            //throw new IllegalArgumentException("Start date must be before end date.");
         }
 
         if(newPriceCard.price<=0){
-            throw new IllegalArgumentException("Invalid price value.Price must be positive number.");
+            return false;
+            //throw new IllegalArgumentException("Invalid price value.Price must be positive number.");
         }
 
         if(newPriceCard.type==null){
-            throw new IllegalArgumentException("Price type must be defined.");
+            return false;
+            //throw new IllegalArgumentException("Price type must be defined.");
         }
 
         List<PriceCard> existingPrices=accommodation.get().getPrices();
         for (PriceCard existingPrice : existingPrices) {
             if (isTimeSlotOverlap(existingPrice.getTimeSlot(), newPriceCard.getTimeSlot())) {
-                throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
+                return false;
+                //throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
             }
         }
 
@@ -162,41 +168,49 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
                 continue;
             }
             if (isTimeSlotOverlap(existingReservation.getTimeSlot(), newPriceCard.getTimeSlot())) {
-                throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed.");
+                return false;
+                //throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed.");
             }
         }
+        return true;
     }
 
     @Override
-    public void validatePriceCardPut(PriceCardPutDTO newPriceCard) {
-        Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
+    public boolean validatePriceCardPut(PriceCardPutDTO newPriceCard,Long id) {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
 
         if (!accommodation.isPresent()) {
-            throw new IllegalArgumentException("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
+            return false;
+            //throw new IllegalArgumentException("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
         }
         Date currentDate = new Date();
 
         if (newPriceCard.timeSlot.startDate.before(currentDate) || newPriceCard.timeSlot.endDate.before(currentDate)) {
-            throw new IllegalArgumentException("Both start date and end date must be in the future.");
+            return false;
+            //throw new IllegalArgumentException("Both start date and end date must be in the future.");
         }
 
         if (newPriceCard.timeSlot.startDate.after(newPriceCard.timeSlot.endDate)) {
-            throw new IllegalArgumentException("Start date must be before end date.");
+            return false;
+            //throw new IllegalArgumentException("Start date must be before end date.");
         }
 
         if(newPriceCard.price<=0){
-            throw new IllegalArgumentException("Invalid price value.Price must be positive number.");
+            return false;
+            //throw new IllegalArgumentException("Invalid price value.Price must be positive number.");
         }
 
         if(newPriceCard.type==null){
-            throw new IllegalArgumentException("Price type must be defined.");
+            return false;
+            //throw new IllegalArgumentException("Price type must be defined.");
         }
 
         List<PriceCard> existingPrices=accommodation.get().getPrices();
         for (PriceCard existingPrice : existingPrices) {
-            if(existingPrice.id!= newPriceCard.id) { //da bismo izbegli proveru sa vec postojecim
+            if(existingPrice.id!= id) { //da bismo izbegli proveru sa vec postojecim
                 if (isTimeSlotOverlap(existingPrice.getTimeSlot(), newPriceCard.getTimeSlot())) {
-                    throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
+                    return false;
+                    //throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
                 }
             }
         }
@@ -207,9 +221,11 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
                 continue;
             }
             if (isTimeSlotOverlap(existingReservation.getTimeSlot(), newPriceCard.getTimeSlot())) {
-                throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed.");
+                return false;
+                //throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed.");
             }
         }
+        return true;
     }
     private boolean isTimeSlotOverlap(TimeSlot existingTimeSlot, TimeSlot newTimeSlot) {
         return (newTimeSlot.getStartDate().before(existingTimeSlot.getEndDate()) &&
