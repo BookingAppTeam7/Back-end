@@ -7,7 +7,9 @@ import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
+import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
+import com.booking.BookingApp.repositories.IUserRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class AccommodationService implements IAccommodationService{
     public IAccommodationRepository accommodationRepository;
     @Autowired
     public IAccommodationValidatorService validatorService;
+    @Autowired
+    public IUserRepository userRepository;
 
     @Override
     public List<Accommodation> findAll() {
@@ -42,6 +46,15 @@ public class AccommodationService implements IAccommodationService{
     @Override
     public List<Accommodation> findByStatus(AccommodationStatusEnum status) {
         return accommodationRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<Accommodation> findByOwnerId(String ownerId) {
+        Optional<User> user=userRepository.findById(ownerId);
+        if(user.isPresent()) {
+            return accommodationRepository.findByOwnerId(ownerId);
+        }
+        return null;
     }
 
     @Override

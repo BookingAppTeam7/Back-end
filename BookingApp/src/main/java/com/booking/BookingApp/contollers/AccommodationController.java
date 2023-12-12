@@ -41,6 +41,17 @@ public class AccommodationController {
         return new ResponseEntity<List<Accommodation>>(accommodations, HttpStatus.OK);
     }
 
+    @GetMapping(value="owner/{ownerId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Accommodation>> findByOwnerId(@PathVariable String ownerId){
+        List<Accommodation> accommodations=accommodationService.findByOwnerId(ownerId);
+        if (accommodations!=null) {
+            return new ResponseEntity<>(accommodations, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Accommodation>  create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
