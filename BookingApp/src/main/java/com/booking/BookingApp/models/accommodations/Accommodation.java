@@ -60,7 +60,7 @@ public class Accommodation {
     private Boolean deleted;
 
     //constructor with id (update)
-    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices,String ownerId,int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images,Boolean deleted) {
+    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, List<PriceCard> prices,String ownerId,int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<Review> reviews,List<String>images,Boolean deleted,AccommodationStatusEnum status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -87,6 +87,7 @@ public class Accommodation {
         this.reviews=reviews;
         this.images=images;
         this.deleted=deleted;
+        this.status=status;
     }
 
     public Accommodation() {
