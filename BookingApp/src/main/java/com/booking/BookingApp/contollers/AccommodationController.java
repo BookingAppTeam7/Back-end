@@ -4,6 +4,7 @@ import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.services.IAccommodationService;
 import com.booking.BookingApp.services.IPriceCardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,13 @@ public class AccommodationController {
     @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Accommodation> findById(@PathVariable Long id){return accommodationService.findById(id);}
 
+    @GetMapping(value="status/{status}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Accommodation>> findByStatus(@PathVariable AccommodationStatusEnum status){
+        List<Accommodation> accommodations=accommodationService.findByStatus(status);
+        return new ResponseEntity<List<Accommodation>>(accommodations, HttpStatus.OK);
+    }
+
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Accommodation>  create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
@@ -52,6 +60,25 @@ public class AccommodationController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @PutMapping(value = "/{id}/update-status")
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Accommodation> updateStatus(
+            @PathVariable("id") Long accommodationId,
+            @RequestParam("status") AccommodationStatusEnum status) {
+        try {
+            Optional<Accommodation> result = accommodationService.updateStatus(accommodationId, status);
+
+            if (result.isPresent()) {
+                return new ResponseEntity<>(result.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Accommodation> delete(@PathVariable Long id){
