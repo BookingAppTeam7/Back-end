@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class UserService implements IUserService{
     @Autowired
     public IUserRepository userRepository;
+    @Autowired
+    public IUserValidatorService userValidatorService;
     private static AtomicLong counter=new AtomicLong();
 
     @Override
@@ -50,6 +52,7 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
+        userValidatorService.validatePost(newUser);
         //Long newId= (Long) counter.incrementAndGet();
         Map<NotificationTypeEnum,Boolean>notificationSettings=null;
         String token = UUID.randomUUID().toString();
@@ -60,6 +63,7 @@ public class UserService implements IUserService{
 
     @Override
     public User update(UserPutDTO updatedUser, String username) throws Exception {
+        userValidatorService.validatePut(updatedUser,username);
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
                 updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);
