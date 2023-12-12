@@ -16,12 +16,16 @@ import java.util.List;
 //    = "UPDATE accommodations"
 //    + " SET deleted = true "
 //    + "WHERE id = ?")
-@SQLDelete(sql
-        = "UPDATE accommodations "
-        + "SET deleted = true "
-        + "WHERE id = ? "
-        +"UPDATE location SET deleted=true WHERE accommodation_id=?"
-        )
+//@SQLDelete(sql
+//        = "UPDATE accommodations "
+//        + "SET deleted = true "
+//        + "WHERE id = ? "
+//        +"UPDATE location SET deleted=true WHERE accommodation_id=?"
+//        )
+
+
+@SQLDelete(sql = "UPDATE accommodations SET deleted = true WHERE id = ?")
+//@SQLDelete(sql = "UPDATE location SET deleted = true WHERE accommodation_id = ?")
 
 @Where(clause="deleted=false")
 
@@ -31,8 +35,12 @@ public class Accommodation {
     public Long id;
     public String name;
     public String description;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id")
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "location_id")
+@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+@JoinColumn(name = "location_id", referencedColumnName = "id", foreignKey = @ForeignKey(
+        name = "fk_accommodation_location",
+        foreignKeyDefinition = "FOREIGN KEY (location_id) REFERENCES location(id) ON DELETE CASCADE"))
     public Location location;
     public int minGuests;
     public int maxGuests;
