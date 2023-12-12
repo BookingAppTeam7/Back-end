@@ -89,7 +89,6 @@ public class Accommodation {
 //        }
 
         this.ownerId = ownerId;
-        this.status = AccommodationStatusEnum.PENDING;
         this.cancellationDeadline = cancellationDeadline;
         this.reservationConfirmation = reservationConfirmation;
         this.reviews=reviews;

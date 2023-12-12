@@ -40,6 +40,11 @@ public class AccommodationService implements IAccommodationService{
     }
 
     @Override
+    public List<Accommodation> findByStatus(AccommodationStatusEnum status) {
+        return accommodationRepository.findByStatus(status);
+    }
+
+    @Override
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
 
         validatorService.validatePost(newAccommodation);
@@ -73,12 +78,21 @@ public class AccommodationService implements IAccommodationService{
         if(!accommodation.isPresent()){return null;}
         List<PriceCard>prices=accommodation.get().prices;
         List<Review>reviews=accommodation.get().reviews;
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING_EDITED);
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
         return Optional.of(accommodationRepository.saveAndFlush(result));
     }
 
     @Override
     public void delete(Long id) {
         accommodationRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Accommodation> updateStatus(Long accommodationId, AccommodationStatusEnum status) {
+        int updatedRows = accommodationRepository.updateStatus(accommodationId, status);
+        if (updatedRows > 0) {
+            return accommodationRepository.findById(accommodationId);
+        }
+        return Optional.empty();
     }
 }
