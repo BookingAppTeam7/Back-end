@@ -177,7 +177,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
 
     @Override
     public boolean validatePriceCardPut(PriceCardPutDTO newPriceCard,Long id) {
-        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
+        Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
 
         if (!accommodation.isPresent()) {
             return false;
