@@ -41,7 +41,7 @@ public class PriceCardController {
     }
     @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PriceCard> update(@RequestBody PriceCard priceCard) throws Exception {
+    public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO priceCard) throws Exception {
         PriceCard result=priceCardService.update(priceCard);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK);
