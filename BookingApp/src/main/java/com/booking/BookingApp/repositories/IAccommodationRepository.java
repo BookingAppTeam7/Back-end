@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface IAccommodationRepository extends JpaRepository<Accommodation,Long> {
     List<Accommodation> findByStatus(AccommodationStatusEnum status);
-
+    List<Accommodation> findByOwnerId(String ownerId);
     @Modifying
     @Transactional
     @Query("UPDATE Accommodation a SET a.status = :status WHERE a.id = :accommodationId")

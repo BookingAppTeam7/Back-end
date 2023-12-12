@@ -8,6 +8,7 @@ import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IPriceCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class PriceCardService implements IPriceCardService{
 
     @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
-        validatorService.validatePriceCardPost(newPriceCard);
-        PriceCard createdPriceCard=new PriceCard(newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type);
+        if(!validatorService.validatePriceCardPost(newPriceCard)){return Optional.empty();};
+        PriceCard createdPriceCard=new PriceCard(newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type,false);
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
         accommodation.get().prices.add(createdPriceCard);
         return Optional.of(priceCardRepository.save(createdPriceCard));
@@ -49,11 +50,11 @@ public class PriceCardService implements IPriceCardService{
 
 
     @Override
-    public PriceCard update(PriceCardPutDTO updatedPriceCard) throws Exception {
+    public Optional<PriceCard> update(PriceCardPutDTO updatedPriceCard,@PathVariable Long id) throws Exception {
 //        PriceCard result=new PriceCard(id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type);
-        validatorService.validatePriceCardPut(updatedPriceCard);
-        PriceCard newPriceCard=new PriceCard(updatedPriceCard.id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type);
-        return priceCardRepository.saveAndFlush(newPriceCard);
+        if(!validatorService.validatePriceCardPut(updatedPriceCard,id)){return null;}
+        PriceCard newPriceCard=new PriceCard(id,updatedPriceCard.timeSlot,updatedPriceCard.price,updatedPriceCard.type,false);
+        return Optional.of(priceCardRepository.saveAndFlush(newPriceCard));
     }
 
     @Override

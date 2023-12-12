@@ -7,8 +7,8 @@ import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
 
 public interface IAccommodationValidatorService {
-    void validatePost(AccommodationPostDTO accommodation);
-    void validatePut(AccommodationPutDTO accommodation,Long id);
-    void validatePriceCardPost(PriceCardPostDTO newPriceCard);
-    void validatePriceCardPut(PriceCardPutDTO newPriceCard);
+    boolean validatePost(AccommodationPostDTO accommodation);
+    boolean validatePut(AccommodationPutDTO accommodation,Long id);
+    boolean validatePriceCardPost(PriceCardPostDTO newPriceCard);
+    boolean validatePriceCardPut(PriceCardPutDTO newPriceCard,Long id);
 }

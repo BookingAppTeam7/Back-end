@@ -25,20 +25,35 @@ public class AccommodationController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<List<Accommodation>> findAll(){  //treba u get zahtevu za availability podesiti samo one TIMESLOTOVE gde je tip AVAILABILITY
+    public ResponseEntity<List<Accommodation>> findAll(){
         List<Accommodation> accommodations=accommodationService.findAll();
-        return new ResponseEntity<List<Accommodation>>(accommodations, HttpStatus.OK);
+        return new ResponseEntity<>(accommodations, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public Optional<Accommodation> findById(@PathVariable Long id){return accommodationService.findById(id);}
+    public ResponseEntity<Accommodation> findById(@PathVariable Long id){
+        Optional<Accommodation>result=accommodationService.findById(id);
+        if(result!=null){return new ResponseEntity<>(result.get(),HttpStatus.OK);}
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @GetMapping(value="status/{status}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<Accommodation>> findByStatus(@PathVariable AccommodationStatusEnum status){
         List<Accommodation> accommodations=accommodationService.findByStatus(status);
-        return new ResponseEntity<List<Accommodation>>(accommodations, HttpStatus.OK);
+        return new ResponseEntity<>(accommodations, HttpStatus.OK);
+    }
+
+    @GetMapping(value="owner/{ownerId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Accommodation>> findByOwnerId(@PathVariable String ownerId){
+        List<Accommodation> accommodations=accommodationService.findByOwnerId(ownerId);
+        if (accommodations!=null) {
+            return new ResponseEntity<>(accommodations, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping

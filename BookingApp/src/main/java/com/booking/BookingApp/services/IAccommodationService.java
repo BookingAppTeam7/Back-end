@@ -13,6 +13,7 @@ public interface IAccommodationService {
 
     Optional<Accommodation> findById(Long id);
     List<Accommodation> findByStatus(AccommodationStatusEnum status);
+    List<Accommodation> findByOwnerId(String ownerId);
 
     Optional<Accommodation> create(AccommodationPostDTO newUser) throws Exception;
     Optional<Accommodation> update(AccommodationPutDTO updatedUser, Long  id) throws  Exception;
