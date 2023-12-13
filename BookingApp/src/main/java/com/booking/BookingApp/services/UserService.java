@@ -13,20 +13,32 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-public class UserService implements IUserService, UserDetailsService {
+public class UserService implements IUserService{
     @Autowired
     public IUserRepository userRepository;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    public UserService(){
+
+    }
+
     private static final long serialVersionUID = -2550185165626007488L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     @Value("${jwt.secret}")
@@ -56,19 +68,11 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
-        //Long newId= (Long) counter.incrementAndGet();
-       //Map<NotificationTypeEnum,Boolean>notificationSettings=null;
-
-      // String token = UUID.randomUUID().toString();
-//        Map<String, Object> claims = new HashMap<>();
-//
-//
-//        String token= Jwts.builder().setClaims(claims).setSubject(newUser.username).setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-//                .signWith(SignatureAlgorithm.HS512, secret).compact();
         String token = jwtTokenUtil.generateToken(newUser.getUsername());
+
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
                 newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted);
+        createdUser.setPassword(passwordEncoder.encode(createdUser.password));
         return Optional.of(userRepository.save(createdUser));
     }
 
@@ -94,12 +98,6 @@ public class UserService implements IUserService, UserDetailsService {
         return Optional.of(userRepository.save(user));
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> ret = userRepository.findById(username);
-        if (!ret.isEmpty() ) {
-            return org.springframework.security.core.userdetails.User.withUsername(username).password(ret.get().getPassword()).roles(ret.get().getRole().toString()).build();
-        }
-        throw new UsernameNotFoundException("User not found with this username: " + username);
-    }
+
+
 }

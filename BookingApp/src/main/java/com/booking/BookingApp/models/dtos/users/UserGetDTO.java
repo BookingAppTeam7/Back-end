@@ -2,6 +2,7 @@ package com.booking.BookingApp.models.dtos.users;
 
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
+import jakarta.persistence.Transient;
 
 public class UserGetDTO {  //User model without password
 
@@ -16,7 +17,9 @@ public class UserGetDTO {  //User model without password
     public StatusEnum status;
     public String token;
 
-    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status, String token) {
+    @Transient
+    public String jwt;
+    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status, String token,String jwt) {
        // this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -26,6 +29,7 @@ public class UserGetDTO {  //User model without password
         this.phoneNumber = phoneNumber;
         this.status=status;
         this.token=token;
+        this.jwt=jwt;
     }
 
     public UserGetDTO() {

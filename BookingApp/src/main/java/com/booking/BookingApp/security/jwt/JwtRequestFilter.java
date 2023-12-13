@@ -1,5 +1,6 @@
 package com.booking.BookingApp.security.jwt;
 
+import com.booking.BookingApp.services.CustomDetailsServce;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +21,7 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 	@Autowired
-	private UserDetailsService jwtUserDetailsService;
+	private CustomDetailsServce jwtUserDetailsService;
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
