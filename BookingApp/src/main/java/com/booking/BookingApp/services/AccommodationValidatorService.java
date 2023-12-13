@@ -68,6 +68,19 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
             return false;
             //throw new IllegalArgumentException("Invalid values for cancellationDeadline");
         }
+        if (StringUtils.isEmpty(accommodation.location.getAddress())) {
+            return false;
+            //throw new IllegalArgumentException("Address can not be empty");
+        }
+        if (StringUtils.isEmpty(accommodation.location.getCountry())) {
+            return false;
+            //throw new IllegalArgumentException("Country can not be empty");
+        }
+        if (StringUtils.isEmpty(accommodation.location.getCity())) {
+            return false;
+            //throw new IllegalArgumentException("City can not be empty");
+        }
+
         return true;
     }
 
@@ -119,6 +132,18 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
         if(updatedAccommodation.getReservationConfirmation()==null){
             return false;
             //throw new IllegalArgumentException("Reservation confirmation cannot be null");
+        }
+        if (StringUtils.isEmpty(updatedAccommodation.location.getAddress())) {
+            return false;
+            //throw new IllegalArgumentException("Address can not be empty");
+        }
+        if (StringUtils.isEmpty(updatedAccommodation.location.getCountry())) {
+            return false;
+            //throw new IllegalArgumentException("Country can not be empty");
+        }
+        if (StringUtils.isEmpty(updatedAccommodation.location.getCity())) {
+            return false;
+            //throw new IllegalArgumentException("City can not be empty");
         }
         return true;
     }
