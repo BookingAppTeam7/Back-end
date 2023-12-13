@@ -45,7 +45,7 @@ public class AccommodationController {
                                                              @RequestParam int guests,
                                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date arrival,
                                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkout){  //treba u get zahtevu za availability podesiti samo one TIMESLOTOVE gde je tip AVAILABILITY
-        if (checkout.before(arrival) || city.isEmpty() || guests < 1) {
+        if (checkout.before(arrival) || arrival.before(new Date()) || checkout.before(new Date()) || city.isEmpty() || guests < 1) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<AccommodationDetails> accommodations=accommodationService.search(city,guests,arrival,checkout);
