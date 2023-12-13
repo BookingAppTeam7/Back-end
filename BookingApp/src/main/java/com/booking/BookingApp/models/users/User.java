@@ -26,6 +26,7 @@ public class User {
     @Id
     public String username;
     public String password;
+
     public RoleEnum role;
 
     public String address;

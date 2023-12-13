@@ -81,6 +81,7 @@ public class UserService implements IUserService{
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
                 updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);
+        result.setPassword(passwordEncoder.encode(result.password));
         return userRepository.saveAndFlush(result);
     }
 
