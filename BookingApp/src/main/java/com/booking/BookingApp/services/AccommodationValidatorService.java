@@ -82,7 +82,6 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
             return false;
             //throw new IllegalArgumentException("Accommodation data is null");
         }
-
         Optional<User> owner=userRepository.findById(updatedAccommodation.ownerId);
         if(!owner.isPresent()){
             return false;

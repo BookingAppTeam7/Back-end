@@ -9,6 +9,7 @@ import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
+import com.booking.BookingApp.repositories.ILocationRepository;
 import com.booking.BookingApp.repositories.IUserRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class AccommodationService implements IAccommodationService{
     public IAccommodationValidatorService validatorService;
     @Autowired
     public IUserRepository userRepository;
+    @Autowired
+    public ILocationRepository locationRepository;
 
     @Override
     public List<Accommodation> findAll() {
@@ -61,10 +64,14 @@ public class AccommodationService implements IAccommodationService{
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
         if(!validatorService.validatePost(newAccommodation)){return Optional.empty();}
         List<Review> reviews = new ArrayList<>();
+
+        Location newLocation=new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY(),false);
+        Location createdLocation=locationRepository.save(newLocation);
+
         Accommodation createdAccommodation = new Accommodation(
                 newAccommodation.getName(),
                 newAccommodation.getDescription(),
-                new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY()),
+                createdLocation,
                 newAccommodation.getMinGuests(),
                 newAccommodation.getMaxGuests(),
                 newAccommodation.getType(),
@@ -77,6 +84,7 @@ public class AccommodationService implements IAccommodationService{
                 AccommodationStatusEnum.PENDING,
                 false
         );
+        //createdAccommodation.setLocation(createdLocation);
         return Optional.of(accommodationRepository.save(createdAccommodation));
     }
 
@@ -89,7 +97,13 @@ public class AccommodationService implements IAccommodationService{
         if(!accommodation.isPresent()){return null;}
         List<PriceCard>prices=accommodation.get().prices;
         List<Review>reviews=accommodation.get().reviews;
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
+
+        Location originalLocation=accommodation.get().location;
+        Location updatedLocation=new Location(originalLocation.id,updatedAccommodation.location.address,updatedAccommodation.location.city,updatedAccommodation.location.country,updatedAccommodation.location.x,updatedAccommodation.location.y,false);
+
+        locationRepository.saveAndFlush(updatedLocation);
+
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedLocation,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
         return Optional.of(accommodationRepository.saveAndFlush(result));
     }
 
