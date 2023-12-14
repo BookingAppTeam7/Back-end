@@ -8,7 +8,10 @@ import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.TypeEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
+import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
+import com.booking.BookingApp.repositories.ILocationRepository;
+import com.booking.BookingApp.repositories.IUserRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +25,14 @@ public class AccommodationService implements IAccommodationService{
     public IAccommodationRepository accommodationRepository;
     @Autowired
     public IAccommodationValidatorService validatorService;
+    @Autowired
+    public IUserRepository userRepository;
+    @Autowired
+    public ILocationRepository locationRepository;
 
     @Override
     public List<Accommodation> findAll() {
-        return accommodationRepository.findAll(); ///ovde mozda korigovati da vraca u availabilitiju samo tip AVAILABILITY
+        return accommodationRepository.findAll();
     }
 
     @Override
@@ -38,21 +45,35 @@ public class AccommodationService implements IAccommodationService{
     }
 
     @Override
+    public List<Accommodation> findByStatus(AccommodationStatusEnum status) {
+        return accommodationRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<Accommodation> findByOwnerId(String ownerId) {
+        Optional<User> user=userRepository.findById(ownerId);
+        if(user.isPresent()) {
+            return accommodationRepository.findByOwnerId(ownerId);
+        }
+        return null;
+    }
+
+    @Override
     public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
-
-        validatorService.validatePost(newAccommodation);
-
+        if(!validatorService.validatePost(newAccommodation)){return Optional.empty();}
         List<Review> reviews = new ArrayList<>();
+
+        Location newLocation=new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY(),false);
+        Location createdLocation=locationRepository.save(newLocation);
 
         Accommodation createdAccommodation = new Accommodation(
                 newAccommodation.getName(),
                 newAccommodation.getDescription(),
-                new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY()),
+                createdLocation,
                 newAccommodation.getMinGuests(),
                 newAccommodation.getMaxGuests(),
                 newAccommodation.getType(),
                 newAccommodation.getAssets(),
-//                newAccommodation.getPrices(),
                 newAccommodation.getOwnerId(),
                 newAccommodation.getCancellationDeadline(),
                 ReservationConfirmationEnum.MANUAL,
@@ -61,17 +82,26 @@ public class AccommodationService implements IAccommodationService{
                 AccommodationStatusEnum.PENDING,
                 false
         );
+        //createdAccommodation.setLocation(createdLocation);
         return Optional.of(accommodationRepository.save(createdAccommodation));
     }
 
     @Override
     public Optional<Accommodation> update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        validatorService.validatePut(updatedAccommodation,id);
+        if(!validatorService.validatePut(updatedAccommodation,id)){
+            return Optional.empty();
+        }
         Optional<Accommodation> accommodation=accommodationRepository.findById(id);
         if(!accommodation.isPresent()){return null;}
         List<PriceCard>prices=accommodation.get().prices;
         List<Review>reviews=accommodation.get().reviews;
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false);
+
+        Location originalLocation=accommodation.get().location;
+        Location updatedLocation=new Location(originalLocation.id,updatedAccommodation.location.address,updatedAccommodation.location.city,updatedAccommodation.location.country,updatedAccommodation.location.x,updatedAccommodation.location.y,false);
+
+        locationRepository.saveAndFlush(updatedLocation);
+
+        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedLocation,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
         return Optional.of(accommodationRepository.saveAndFlush(result));
     }
 
@@ -138,5 +168,18 @@ public class AccommodationService implements IAccommodationService{
         double unitPrice = accommodation.calculateUnitPrice(arrival, checkout);
 
         return new AccommodationDetails(accommodation,totalPrice,unitPrice,averageRating);
+    }
+
+    public Optional<Accommodation> updateStatus(Long accommodationId, AccommodationStatusEnum status) {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(accommodationId);
+        if(!accommodation.isPresent()){
+            return Optional.empty();
+        }
+        int updatedRows = accommodationRepository.updateStatus(accommodationId, status);
+        if (updatedRows > 0) {
+            return accommodationRepository.findById(accommodationId);
+        }
+        return Optional.empty();
+
     }
 }

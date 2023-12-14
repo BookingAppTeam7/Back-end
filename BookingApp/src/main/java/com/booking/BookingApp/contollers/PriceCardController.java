@@ -1,6 +1,8 @@
 package com.booking.BookingApp.contollers;
 
+import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
 import com.booking.BookingApp.services.IPriceCardService;
@@ -37,15 +39,26 @@ public class PriceCardController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PriceCard> create(@RequestBody PriceCardPostDTO newPriceCard) throws Exception {
         Optional<PriceCard> result=priceCardService.create(newPriceCard);
+        if(result==null){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
     }
+
+    @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO priceCard) throws Exception {
-        PriceCard result=priceCardService.update(priceCard);
-        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-        return new ResponseEntity<>(result,HttpStatus.OK);
+    public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO accommodation, @PathVariable Long id) throws Exception{
+        Optional<PriceCard> result = priceCardService.update(accommodation, id);
+        if (result!=null) {
+            return new ResponseEntity<>(result.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO priceCard) throws Exception {
+//        PriceCard result=priceCardService.update(priceCard);
+//        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+//        return new ResponseEntity<>(result,HttpStatus.OK);
+//    }
     @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PriceCard> delete(@PathVariable Long id){

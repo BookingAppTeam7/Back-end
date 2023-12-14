@@ -15,7 +15,7 @@ public class AccommodationPutDTO {  //Accommodation model without id
 
     public String name;
     public String description;
-    public Location location;
+    public LocationPutDTO location;
     public int minGuests;
     public int maxGuests;
     public TypeEnum type;
@@ -28,7 +28,7 @@ public class AccommodationPutDTO {  //Accommodation model without id
     public List<String> images;
 
 
-    public AccommodationPutDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<String> images) {
+    public AccommodationPutDTO(String name, String description, LocationPutDTO location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId,  int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -60,11 +60,11 @@ public class AccommodationPutDTO {  //Accommodation model without id
         this.description = description;
     }
 
-    public Location getLocation() {
+    public LocationPutDTO getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationPutDTO location) {
         this.location = location;
     }
 

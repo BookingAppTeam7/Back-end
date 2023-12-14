@@ -4,24 +4,24 @@ import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
 
 public class PriceCardPostDTO {
-    public TimeSlot timeSlot;
+    public TimeSlotPostDTO timeSlot;
     public double price;
     public PriceTypeEnum type;
 
     public Long accommodationId;
 
-    public PriceCardPostDTO(TimeSlot timeSlot, double price, PriceTypeEnum type,Long accommodationId) {
+    public PriceCardPostDTO(TimeSlotPostDTO timeSlot, double price, PriceTypeEnum type,Long accommodationId) {
         this.timeSlot=timeSlot;
         this.price = price;
         this.type = type;
         this.accommodationId=accommodationId;
     }
 
-    public TimeSlot getTimeSlot() {
+    public TimeSlotPostDTO getTimeSlot() {
         return timeSlot;
     }
 
-    public void setTimeSlot(TimeSlot timeSlot) {
+    public void setTimeSlot(TimeSlotPostDTO timeSlot) {
         this.timeSlot = timeSlot;
     }
 

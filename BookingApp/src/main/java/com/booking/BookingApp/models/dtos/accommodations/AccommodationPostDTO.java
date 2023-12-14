@@ -13,7 +13,7 @@ import java.util.List;
 public class AccommodationPostDTO { //Accommodation model without id,status and reviews
     public String name;
     public String description;
-    public Location location;
+    public LocationPostDTO location;
     public int minGuests;
     public int maxGuests;
     public TypeEnum type;
@@ -23,7 +23,7 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
     public int cancellationDeadline;
     public List<String> images;
 
-    public AccommodationPostDTO(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId, int cancellationDeadline,List<String> images) {
+    public AccommodationPostDTO(String name, String description, LocationPostDTO location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId, int cancellationDeadline,List<String> images) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -52,11 +52,11 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.description = description;
     }
 
-    public Location getLocation() {
+    public LocationPostDTO getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationPostDTO location) {
         this.location = location;
     }
 

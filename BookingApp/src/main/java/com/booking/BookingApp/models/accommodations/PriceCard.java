@@ -30,10 +30,11 @@ public class PriceCard {
         this.deleted=deleted;
     }
 
-    public PriceCard(TimeSlot timeSlot, double price, PriceTypeEnum type) {
+    public PriceCard(TimeSlot timeSlot, double price, PriceTypeEnum type,Boolean deleted) {
         this.timeSlot=timeSlot;
         this.price = price;
         this.type = type;
+        this.deleted=deleted;
     }
 
     public PriceCard() {
