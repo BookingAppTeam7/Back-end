@@ -21,5 +21,4 @@ public interface IAccommodationRepository extends JpaRepository<Accommodation,Lo
     @Query("UPDATE Accommodation a SET a.status = :status WHERE a.id = :accommodationId")
     int updateStatus(@Param("accommodationId") Long accommodationId, @Param("status") AccommodationStatusEnum status);
 
-
 }

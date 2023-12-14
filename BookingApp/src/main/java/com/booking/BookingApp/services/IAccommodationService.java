@@ -25,5 +25,6 @@ public interface IAccommodationService {
     List<AccommodationDetails> search(String city, int guests, Date arrivalDate, Date checkoutDate);
     List<AccommodationDetails> filter(List<AccommodationDetails> searched, List<String> assets, TypeEnum type, double minTotalPrice,double maxTotalPrice);
     Optional<Accommodation> updateStatus(Long accommodationId,AccommodationStatusEnum status);
+    Optional<Accommodation> updateImages(Long accommodationId,List<String> newImages);
 
 }

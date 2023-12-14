@@ -147,7 +147,23 @@ public class AccommodationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PutMapping(value="/{id}/add-image")
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<Accommodation> insertImage(
+            @PathVariable("id") Long accommodationId,
+            @RequestParam("image") String images){
+        try{
+            List<String> newImages= List.of(images.split(","));
+            Optional<Accommodation> result=accommodationService.updateImages(accommodationId,newImages);
+            if(result.isPresent()){
+                return new ResponseEntity<>(result.get(),HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @DeleteMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Accommodation> delete(@PathVariable Long id){
