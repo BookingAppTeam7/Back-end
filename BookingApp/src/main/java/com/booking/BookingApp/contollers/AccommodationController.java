@@ -54,16 +54,24 @@ public class AccommodationController {
     @GetMapping(value="/filter",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<AccommodationDetails>> filter(@RequestParam String searched,
-                                                             @RequestParam List<String> assets,
+                                                             @RequestParam String assets,
                                                              @RequestParam TypeEnum type,
                                                              @RequestParam double minTotalPrice,
                                                              @RequestParam double maxTotalPrice) {
+        System.out.println("Searched: " + searched);
+        System.out.println("Assets: " + assets);
+        System.out.println("Type: " + type);
+        System.out.println("Min Total Price: " + minTotalPrice);
+        System.out.println("Max Total Price: " + maxTotalPrice);
+        List<String> assetSplit= List.of(assets.split(","));
         List<AccommodationDetails> searchedList = null;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             searchedList = objectMapper.readValue(searched, new TypeReference<List<AccommodationDetails>>() {
             });
-            List<AccommodationDetails> accommodations = accommodationService.filter(searchedList, assets, type, minTotalPrice, maxTotalPrice);
+            List<AccommodationDetails> accommodations = accommodationService.filter(searchedList, assetSplit, type, minTotalPrice, maxTotalPrice);
+            for(AccommodationDetails ad:accommodations)
+                System.out.println(ad);
             return new ResponseEntity<>(accommodations, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
