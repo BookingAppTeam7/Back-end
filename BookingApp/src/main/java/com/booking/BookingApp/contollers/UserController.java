@@ -36,7 +36,7 @@ public class UserController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
-     @PreAuthorize("hasAuthority('ADMIN')")
+   //  @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<User>> findAll(){
         List<User> users=userService.findAll();
         return new ResponseEntity<>(users,HttpStatus.OK);

@@ -50,7 +50,7 @@ public class UserPutDTO { //User model without id
         this.ownerRatingNotification = ownerRatingNotification;
         this.accommodationRatingNotification = accommodationRatingNotification;
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
-        this.token=token;
+       this.token=token;
         this.deleted=deleted;
     }
 
