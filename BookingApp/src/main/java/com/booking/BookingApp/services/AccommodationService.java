@@ -82,31 +82,41 @@ public class AccommodationService implements IAccommodationService{
 
     @Override
     public List<AccommodationDetails> search(String city, int guests, Date arrivalDate, Date checkoutDate){
-        List<Accommodation> retAcc=new ArrayList<>();
-        List<Accommodation> allAcc=findAll();
-        for(Accommodation a:allAcc){
-            if(a.location.city.equalsIgnoreCase(city) && a.status.equals(AccommodationStatusEnum.APPROVED)){
-                if(a.minGuests<=guests && a.maxGuests>=guests){
-                    if(hasAvailableTimeSlot(a,arrivalDate,checkoutDate)){
-                        retAcc.add(a);
-                    }
+        List<Accommodation> retAcc = new ArrayList<>();
+        List<Accommodation> allAcc = findAll();
+
+        for (Accommodation a : allAcc) {
+            boolean cityMatches = city == null || a.location.city.equalsIgnoreCase(city);
+            boolean guestsInRange = guests == -1 || (a.minGuests <= guests && a.maxGuests >= guests);
+
+            if (cityMatches && a.status.equals(AccommodationStatusEnum.APPROVED) && guestsInRange) {
+                if (hasAvailableTimeSlot(a, arrivalDate, checkoutDate)) {
+                    retAcc.add(a);
                 }
             }
         }
-        List<AccommodationDetails> retDet=new ArrayList<>();
-        for(Accommodation a:retAcc)
-            retDet.add(convertToAccommodationDetails(a,arrivalDate,checkoutDate,guests));
+
+        List<AccommodationDetails> retDet = new ArrayList<>();
+        for (Accommodation a : retAcc)
+            retDet.add(convertToAccommodationDetails(a, arrivalDate, checkoutDate, guests));
+
         return retDet;
     }
     @Override
     public List<AccommodationDetails> filter(List<AccommodationDetails> searched, List<String> assets, TypeEnum type, double minTotalPrice, double maxTotalPrice){
-        List<AccommodationDetails> ret=new ArrayList<>();
-        for(AccommodationDetails ad:searched){
-            if(ad.getAccommodation().type.equals(type) && ad.getTotalPrice()>=minTotalPrice && ad.getTotalPrice()<=maxTotalPrice &&
-                    ad.getAccommodation().getAssets().containsAll(assets)){
+        List<AccommodationDetails> ret = new ArrayList<>();
+
+        for (AccommodationDetails ad : searched) {
+            boolean typeCondition = type == null || ad.getAccommodation().getType().equals(type);
+            boolean minPriceCondition = minTotalPrice == -1 || ad.getTotalPrice() >= minTotalPrice;
+            boolean maxPriceCondition = maxTotalPrice == -1 || ad.getTotalPrice() <= maxTotalPrice;
+            boolean assetsCondition = assets == null || ad.getAccommodation().getAssets().containsAll(assets);
+
+            if (typeCondition && minPriceCondition && maxPriceCondition && assetsCondition) {
                 ret.add(ad);
             }
         }
+
         return ret;
     }
     private boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {

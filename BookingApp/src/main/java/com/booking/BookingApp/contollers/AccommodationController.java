@@ -41,38 +41,44 @@ public class AccommodationController {
     public Optional<Accommodation> findById(@PathVariable Long id){return accommodationService.findById(id);}
     @GetMapping(value="/search",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<List<AccommodationDetails>> search(@RequestParam String city,
+    public ResponseEntity<List<AccommodationDetails>> search(@RequestParam(required = false) String city,
                                                              @RequestParam int guests,
                                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date arrival,
                                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkout){  //treba u get zahtevu za availability podesiti samo one TIMESLOTOVE gde je tip AVAILABILITY
-        if (checkout.before(arrival) || arrival.before(new Date()) || checkout.before(new Date()) || city.isEmpty() || guests < 1) {
+        System.out.println(city);
+        System.out.println(guests);
+        System.out.println(arrival);
+        System.out.println(checkout);
+        if (checkout.before(arrival) || arrival.before(new Date()) || checkout.before(new Date()) || guests<1) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<AccommodationDetails> accommodations=accommodationService.search(city,guests,arrival,checkout);
         return new ResponseEntity<>(accommodations, HttpStatus.OK);
     }
-    @GetMapping(value="/filter",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<List<AccommodationDetails>> filter(@RequestParam String searched,
-                                                             @RequestParam String assets,
-                                                             @RequestParam TypeEnum type,
-                                                             @RequestParam double minTotalPrice,
-                                                             @RequestParam double maxTotalPrice) {
-        System.out.println("Searched: " + searched);
-        System.out.println("Assets: " + assets);
-        System.out.println("Type: " + type);
-        System.out.println("Min Total Price: " + minTotalPrice);
-        System.out.println("Max Total Price: " + maxTotalPrice);
-        List<String> assetSplit= List.of(assets.split(","));
-        List<AccommodationDetails> searchedList = null;
+    public ResponseEntity<List<AccommodationDetails>> filter(
+            @RequestParam(required = false) String searched,
+            @RequestParam(required = false) String assets,
+            @RequestParam(required = false) TypeEnum type,
+            @RequestParam(required = false, defaultValue = "-1.0") String minTotalPrice,
+            @RequestParam(required = false, defaultValue = "-1.0") String maxTotalPrice) {
+
+        List<String> assetSplit = Arrays.asList(assets != null ? assets.split(",") : new String[]{});
+        List<AccommodationDetails> searchedList;
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             searchedList = objectMapper.readValue(searched, new TypeReference<List<AccommodationDetails>>() {
             });
-            List<AccommodationDetails> accommodations = accommodationService.filter(searchedList, assetSplit, type, minTotalPrice, maxTotalPrice);
-            for(AccommodationDetails ad:accommodations)
-                System.out.println(ad);
+            double minPrice = Double.parseDouble(minTotalPrice);
+            double maxPrice = Double.parseDouble(maxTotalPrice);
+
+            List<AccommodationDetails> accommodations = accommodationService.filter(searchedList, assetSplit, type, minPrice, maxPrice);
             return new ResponseEntity<>(accommodations, HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
