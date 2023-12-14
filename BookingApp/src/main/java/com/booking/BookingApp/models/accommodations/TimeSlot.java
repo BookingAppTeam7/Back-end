@@ -29,6 +29,12 @@ public class TimeSlot {
 
     }
 
+    public TimeSlot(Date startDate, Date endDate,Boolean deleted) {
+        this.startDate=startDate;
+        this.endDate=endDate;
+        this.deleted=deleted;
+    }
+
     public Date getStartDate() {
         return startDate;
     }

@@ -3,10 +3,7 @@ package com.booking.BookingApp.services;
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
-import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
-import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
-import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
-import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
+import com.booking.BookingApp.models.dtos.accommodations.*;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
@@ -251,7 +248,25 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
         }
         return true;
     }
+    private boolean isTimeSlotOverlap(TimeSlotPostDTO existingTimeSlot, TimeSlotPostDTO newTimeSlot) {
+        return (newTimeSlot.getStartDate().before(existingTimeSlot.getEndDate()) &&
+                newTimeSlot.getEndDate().after(existingTimeSlot.getStartDate())) ||
+                (existingTimeSlot.getStartDate().before(newTimeSlot.getEndDate()) &&
+                        existingTimeSlot.getEndDate().after(newTimeSlot.getStartDate())) ||
+                (existingTimeSlot.getStartDate().equals(newTimeSlot.getEndDate()) ||
+                        existingTimeSlot.getEndDate().equals(newTimeSlot.getStartDate()));
+    }
+
     private boolean isTimeSlotOverlap(TimeSlot existingTimeSlot, TimeSlot newTimeSlot) {
+        return (newTimeSlot.getStartDate().before(existingTimeSlot.getEndDate()) &&
+                newTimeSlot.getEndDate().after(existingTimeSlot.getStartDate())) ||
+                (existingTimeSlot.getStartDate().before(newTimeSlot.getEndDate()) &&
+                        existingTimeSlot.getEndDate().after(newTimeSlot.getStartDate())) ||
+                (existingTimeSlot.getStartDate().equals(newTimeSlot.getEndDate()) ||
+                        existingTimeSlot.getEndDate().equals(newTimeSlot.getStartDate()));
+    }
+
+    private boolean isTimeSlotOverlap(TimeSlot existingTimeSlot, TimeSlotPostDTO newTimeSlot) {
         return (newTimeSlot.getStartDate().before(existingTimeSlot.getEndDate()) &&
                 newTimeSlot.getEndDate().after(existingTimeSlot.getStartDate())) ||
                 (existingTimeSlot.getStartDate().before(newTimeSlot.getEndDate()) &&

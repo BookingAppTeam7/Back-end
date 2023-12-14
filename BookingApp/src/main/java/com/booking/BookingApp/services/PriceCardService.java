@@ -2,10 +2,12 @@ package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
+import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IPriceCardRepository;
+import com.booking.BookingApp.repositories.ITimeSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,8 @@ public class PriceCardService implements IPriceCardService{
     public IAccommodationValidatorService validatorService;
     @Autowired
     public IAccommodationRepository accommodationRepository;
+    @Autowired
+    public ITimeSlotRepository timeSlotRepository;
 
     @Override
     public List<PriceCard> findAll() {
@@ -42,7 +46,10 @@ public class PriceCardService implements IPriceCardService{
     @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
         if(!validatorService.validatePriceCardPost(newPriceCard)){return Optional.empty();};
-        PriceCard createdPriceCard=new PriceCard(newPriceCard.timeSlot,newPriceCard.price,newPriceCard.type,false);
+        TimeSlot timeSlot=new TimeSlot(newPriceCard.timeSlot.startDate,newPriceCard.timeSlot.endDate,false);
+        TimeSlot newTimeSlot=timeSlotRepository.save(timeSlot);
+        PriceCard createdPriceCard=new PriceCard(newTimeSlot,newPriceCard.price,newPriceCard.type,false);
+        createdPriceCard.timeSlot=newTimeSlot;
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
         accommodation.get().prices.add(createdPriceCard);
         return Optional.of(priceCardRepository.save(createdPriceCard));
