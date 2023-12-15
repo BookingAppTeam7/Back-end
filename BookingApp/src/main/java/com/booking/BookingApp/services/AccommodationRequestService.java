@@ -7,10 +7,8 @@ import com.booking.BookingApp.models.enums.AccommodationRequestStatus;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IAccommodationRequestRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,17 +69,19 @@ public class AccommodationRequestService implements IAccommodationRequestService
             else if(status==AccommodationRequestStatus.REJECTED){
                 //treba ga obrisati iz baze i staviti status REJECTED
                 accommodationRepository.updateStatus(request.get().unapprovedAccommodationId, AccommodationStatusEnum.BLOCKED);
-                //accommodationRepository.delete(accommodation.get());
+                accommodationRepository.delete(accommodation.get());
                 int updatedRows=requestRepository.updateStatus(requestId, status);
 
                 if (updatedRows > 0) {
                     return requestRepository.findById(requestId);
                 }
             }
-            else{  //menja se status u PENDING_CREATED ili PENDING_EDITED ili PENDING_EDITED
+            else{  //menja se status u PENDING_CREATED ili PENDING_EDITED ili PENDING_DELETED
                 return Optional.empty();
             }
         }
+
+
         else if(request.get().requestStatus==AccommodationRequestStatus.PENDING_EDITED){
             Optional<Accommodation> accommodation=accommodationRepository.findById(request.get().unapprovedAccommodationId);
             if(!accommodation.isPresent()){return  null;}
@@ -89,10 +89,10 @@ public class AccommodationRequestService implements IAccommodationRequestService
             if(status==AccommodationRequestStatus.APPROVED){
                 //odobrio je izmenu za smestaj
                 //njegov id je request.originalId i treba mu promeniti status
-                //treba primniti izmene
+                //treba primeniti izmene
                 Optional<Accommodation> originalAccommodation=accommodationRepository.findById(request.get().originalAccommodationId);
 
-                accommodationRepository.delete(accommodation.get());//treba obrisati taj objekat koji je sluzio samo za zasmenu
+                accommodationRepository.delete(accommodation.get());//treba obrisati taj objekat koji je sluzio samo za zamenu zbog zajednickih referenci
                 Accommodation updatedAccommodation=new Accommodation(request.get().originalAccommodationId, accommodation.get().name, accommodation.get().description,accommodation.get().location,accommodation.get().minGuests,accommodation.get().maxGuests,accommodation.get().type,accommodation.get().assets,originalAccommodation.get().prices,accommodation.get().ownerId, AccommodationStatusEnum.APPROVED,accommodation.get().cancellationDeadline,accommodation.get().reservationConfirmation, originalAccommodation.get().reviews,accommodation.get().images, false);
                 accommodationRepository.saveAndFlush(updatedAccommodation);
                 int updatedRows=requestRepository.updateStatus(requestId, status);
@@ -105,7 +105,6 @@ public class AccommodationRequestService implements IAccommodationRequestService
                 //treba sacuvati stare izmene i obrisati taj unapproved objekat
                 accommodationRepository.updateStatus(request.get().unapprovedAccommodationId, AccommodationStatusEnum.BLOCKED);
                 accommodationRepository.delete(accommodation.get()); //brisemo taj izmenjeni objekat
-                //accommodationRepository.delete(accommodation.get());
                 int updatedRows=requestRepository.updateStatus(requestId, status);
 
                 if (updatedRows > 0) {
@@ -118,11 +117,11 @@ public class AccommodationRequestService implements IAccommodationRequestService
 
         }
 
-        int updatedRows=requestRepository.updateStatus(requestId, status);
-
-        if (updatedRows > 0) {
-            return requestRepository.findById(requestId);
-        }
+//        int updatedRows=requestRepository.updateStatus(requestId, status);
+//
+//        if (updatedRows > 0) {
+//            return requestRepository.findById(requestId);
+//        }
         return Optional.empty();
     }
 }

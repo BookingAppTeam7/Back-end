@@ -13,7 +13,7 @@ public class AccommodationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    public Long unapprovedAccommodationId;   //za dobavljanje podatak ao neodobrenom smestaju
+    public Long unapprovedAccommodationId;   //za dobavljanje podataka o neodobrenom smestaju
     public AccommodationRequestStatus requestStatus;
     public Long originalAccommodationId;  //bice null ako je smestaj tek kreiran -->status tog smestaja u bazi je PENDING
 

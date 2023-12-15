@@ -71,13 +71,4 @@ public class AccommodationRequestController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    @PutMapping(value="/{id}")
-//    @CrossOrigin(origins = "http://localhost:4200")
-//    public ResponseEntity<Accommodation> update(@RequestBody AccommodationPutDTO accommodation, @PathVariable Long id) throws Exception{
-//        Optional<Accommodation> result = accommodationService.update(accommodation, id);
-//        if (result.isPresent()) {
-//            return new ResponseEntity<>(result.get(), HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
 }
