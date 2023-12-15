@@ -52,6 +52,7 @@ public class PriceCardService implements IPriceCardService{
         createdPriceCard.timeSlot=newTimeSlot;
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
         accommodation.get().prices.add(createdPriceCard);
+        //accommodationRepository.saveAndFlush(accommodation.get());
         return Optional.of(priceCardRepository.save(createdPriceCard));
     }
 

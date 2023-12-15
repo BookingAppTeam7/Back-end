@@ -3,13 +3,11 @@ package com.booking.BookingApp.services;
 import com.booking.BookingApp.models.accommodations.*;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
-import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
-import com.booking.BookingApp.models.enums.PriceTypeEnum;
-import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
-import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.enums.*;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
+import com.booking.BookingApp.repositories.IAccommodationRequestRepository;
 import com.booking.BookingApp.repositories.ILocationRepository;
 import com.booking.BookingApp.repositories.IUserRepository;
 import io.micrometer.common.util.StringUtils;
@@ -29,6 +27,8 @@ public class AccommodationService implements IAccommodationService{
     public IUserRepository userRepository;
     @Autowired
     public ILocationRepository locationRepository;
+    @Autowired
+    public IAccommodationRequestRepository requestRepository;
 
     @Override
     public List<Accommodation> findAll() {
@@ -79,30 +79,68 @@ public class AccommodationService implements IAccommodationService{
                 ReservationConfirmationEnum.MANUAL,
                 reviews,
                 newAccommodation.getImages(),
-                AccommodationStatusEnum.PENDING,
+                AccommodationStatusEnum.PENDING,  //postavljen status na pending - ceka se odobrenje ili odbijanje zahteva
                 false
         );
         //createdAccommodation.setLocation(createdLocation);
-        return Optional.of(accommodationRepository.save(createdAccommodation));
+
+        //kreiramo zahtev sada sa statusom PENDING_CREATED
+
+        Accommodation created=accommodationRepository.save(createdAccommodation);
+
+        AccommodationRequest request=new AccommodationRequest(created.id, AccommodationRequestStatus.PENDING_CREATED,null);
+        requestRepository.save(request);
+        return Optional.of(created);
     }
 
     @Override
     public Optional<Accommodation> update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
+        if(!accommodation.isPresent()){return null;}
+
         if(!validatorService.validatePut(updatedAccommodation,id)){
             return Optional.empty();
         }
-        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
-        if(!accommodation.isPresent()){return null;}
+
+        accommodationRepository.updateStatus(id,AccommodationStatusEnum.PENDING);
+
+        //treba prvo kreirati izmenjeni smestaj
+        Location newLocation=new Location(updatedAccommodation.location.getAddress(), updatedAccommodation.location.getCity(), updatedAccommodation.location.getCountry(), updatedAccommodation.location.getX(), updatedAccommodation.location.getY(),false);
+        Location createdLocation=locationRepository.save(newLocation);
+
         List<PriceCard>prices=accommodation.get().prices;
-        List<Review>reviews=accommodation.get().reviews;
+        Accommodation createdAccommodation = new Accommodation(
+                updatedAccommodation.getName(),
+                updatedAccommodation.getDescription(),
+                createdLocation,
+                updatedAccommodation.getMinGuests(),
+                updatedAccommodation.getMaxGuests(),
+                updatedAccommodation.getType(),
+                updatedAccommodation.getAssets(),
+                updatedAccommodation.getOwnerId(),
+                updatedAccommodation.getCancellationDeadline(),
+                updatedAccommodation.getReservationConfirmation(),
+                updatedAccommodation.getImages(),
+                AccommodationStatusEnum.PENDING,  //postavljen status na pending - ceka se odobrenje ili odbijanje zahteva
+                false
+        );
+        //createdAccommodation.setLocation(createdLocation);
 
-        Location originalLocation=accommodation.get().location;
-        Location updatedLocation=new Location(originalLocation.id,updatedAccommodation.location.address,updatedAccommodation.location.city,updatedAccommodation.location.country,updatedAccommodation.location.x,updatedAccommodation.location.y,false);
+        //kreiramo zahtev sada sa statusom PENDING_CREATED
 
-        locationRepository.saveAndFlush(updatedLocation);
+        Accommodation created=accommodationRepository.save(createdAccommodation);
+        AccommodationRequest request=new AccommodationRequest(created.id, AccommodationRequestStatus.PENDING_EDITED,id);
+        requestRepository.save(request);
 
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedLocation,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
-        return Optional.of(accommodationRepository.saveAndFlush(result));
+//        List<PriceCard>prices=accommodation.get().prices;
+//        List<Review>reviews=accommodation.get().reviews;
+//
+//        Location originalLocation=accommodation.get().location;
+//        Location updatedLocation=new Location(originalLocation.id,updatedAccommodation.location.address,updatedAccommodation.location.city,updatedAccommodation.location.country,updatedAccommodation.location.x,updatedAccommodation.location.y,false);
+//        locationRepository.saveAndFlush(updatedLocation);
+//
+//        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedLocation,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
+        return Optional.of(accommodationRepository.saveAndFlush(created));
     }
 
     @Override

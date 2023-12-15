@@ -55,7 +55,7 @@ public class Accommodation {
     public TypeEnum type;
     @ElementCollection
     public List<String> assets;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     public List<PriceCard> prices;
 
     public String ownerId;
@@ -107,6 +107,25 @@ public class Accommodation {
     }
     //constructor without id (create)
 
+    public Accommodation(Long id, String name, String description,Location location,int minGuests,int maxGuests,TypeEnum type,List<String> assets,List<PriceCard> prices,String ownerId, AccommodationStatusEnum status,int cancellationDeadline,ReservationConfirmationEnum reservationConfirmation, List<Review> reviews,List<String> images,Boolean deleted){
+        this.id=id;
+        this.name=name;
+        this.description=description;
+        this.location=location;
+        this.minGuests=minGuests;
+        this.maxGuests=maxGuests;
+        this.type=type;
+        this.assets=assets;
+        this.prices=prices;
+        this.ownerId=ownerId;
+        this.status=status;
+        this.cancellationDeadline=cancellationDeadline;
+        this.reservationConfirmation=reservationConfirmation;
+        this.deleted=deleted;
+        this.reviews=reviews;
+        this.images=images;
+    }
+
     public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets,String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<Review> reviews, List<String> images,AccommodationStatusEnum status,Boolean deleted) {
         this.name = name;
         this.description = description;
@@ -126,7 +145,61 @@ public class Accommodation {
         this.images = images;
         this.deleted=deleted;
     }
-    public double calculateUnitPrice(Date arrival,Date checkout){
+
+    public Accommodation(Long id, String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId, AccommodationStatusEnum status, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation,List<String> images, Boolean deleted) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.minGuests = minGuests;
+        this.maxGuests = maxGuests;
+        this.type = type;
+        this.assets = assets;
+        this.prices = prices;
+        this.ownerId = ownerId;
+        this.status = status;
+        this.cancellationDeadline = cancellationDeadline;
+        this.reservationConfirmation = reservationConfirmation;
+        this.images = images;
+        this.deleted = deleted;
+    }
+
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<PriceCard> prices, List<Review> reviews, List<String> images, AccommodationStatusEnum status, boolean deleted) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.minGuests = minGuests;
+        this.maxGuests = maxGuests;
+        this.type = type;
+        this.assets = assets;
+        this.prices = prices;
+        this.ownerId = ownerId;
+        this.status = status;
+        this.cancellationDeadline = cancellationDeadline;
+        this.reservationConfirmation = reservationConfirmation;
+        this.reviews = reviews;
+        this.images = images;
+        this.deleted = deleted;
+    }
+
+    public Accommodation(String name, String description, Location location, int minGuests, int maxGuests, TypeEnum type, List<String> assets, String ownerId, int cancellationDeadline, ReservationConfirmationEnum reservationConfirmation, List<String> images, AccommodationStatusEnum status, boolean deleted) {
+        this.name=name;
+        this.description=description;
+        this.location=location;
+        this.minGuests=minGuests;
+        this.maxGuests=maxGuests;
+        this.type=type;
+        this.assets=assets;
+        this.ownerId=ownerId;
+        this.cancellationDeadline=cancellationDeadline;
+        this.reservationConfirmation=reservationConfirmation;
+        this.images=images;
+        this.status=status;
+        this.deleted=deleted;
+
+    }
+
+    public double calculateUnitPrice(Date arrival, Date checkout){
         double unitPrice=0.0;
         for (PriceCard p:this.prices) {
             if(isWithinTimeSlot(arrival,checkout,p.timeSlot)){
