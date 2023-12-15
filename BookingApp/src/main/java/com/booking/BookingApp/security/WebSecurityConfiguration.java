@@ -52,6 +52,8 @@ public class WebSecurityConfiguration {
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 				//.httpBasic(Customizer.withDefaults());
+
+
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
@@ -64,6 +66,8 @@ public class WebSecurityConfiguration {
 				.requestMatchers(HttpMethod.GET,"/","/webjars/*","/*.html","favicon.ico","/*/*.html","/*/*.css",
 						"/*/*.js");
 		}
+
+
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
