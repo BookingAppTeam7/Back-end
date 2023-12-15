@@ -20,8 +20,8 @@ public interface IAccommodationService {
     List<Accommodation> findByStatus(AccommodationStatusEnum status);
     List<Accommodation> findByOwnerId(String ownerId);
 
-    Optional<Accommodation> create(AccommodationPostDTO newUser) throws Exception;
-    Optional<Accommodation> update(AccommodationPutDTO updatedUser, Long  id) throws  Exception;
+    Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception;
+    Optional<Accommodation> update(AccommodationPutDTO updatedAccommodation, Long  id) throws  Exception;
     void delete(Long id);
     List<AccommodationDetails> search(String city, int guests, Date arrivalDate, Date checkoutDate);
     List<AccommodationDetails> filter(List<AccommodationDetails> searched, List<String> assets, TypeEnum type, double minTotalPrice,double maxTotalPrice);
