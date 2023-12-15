@@ -10,6 +10,7 @@ import com.booking.BookingApp.repositories.IAccommodationRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,5 +124,10 @@ public class AccommodationRequestService implements IAccommodationRequestService
 //            return requestRepository.findById(requestId);
 //        }
         return Optional.empty();
+    }
+
+    @Override
+    public List<AccommodationRequest> findByRequestStatus(AccommodationRequestStatus status1, AccommodationRequestStatus status2) {
+        return requestRepository.findByRequestStatusIn(Arrays.asList(status1, status2));
     }
 }

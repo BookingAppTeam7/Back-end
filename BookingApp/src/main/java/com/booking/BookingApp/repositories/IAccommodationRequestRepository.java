@@ -19,4 +19,6 @@ public interface IAccommodationRequestRepository extends JpaRepository<Accommoda
     @Query("UPDATE AccommodationRequest r SET r.requestStatus = :status WHERE r.id = :requestId")
     int updateStatus(@Param("requestId") Long requestId, @Param("status") AccommodationRequestStatus status);
 
+    List<AccommodationRequest> findByRequestStatusIn(List<AccommodationRequestStatus> statuses);
+
 }

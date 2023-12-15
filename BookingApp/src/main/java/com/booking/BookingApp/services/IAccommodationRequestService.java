@@ -22,5 +22,6 @@ public interface IAccommodationRequestService {
     Optional<AccommodationRequest> update(AccommodationRequestPutDTO updatedRequest, Long  id) throws  Exception;
 
     Optional<AccommodationRequest> updateStatus(Long requestId,AccommodationRequestStatus status);
+    List<AccommodationRequest> findByRequestStatus(AccommodationRequestStatus status1, AccommodationRequestStatus status2);
 
 }

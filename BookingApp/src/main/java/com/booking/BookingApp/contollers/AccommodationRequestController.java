@@ -43,6 +43,15 @@ public class AccommodationRequestController {
         return new ResponseEntity<>(accommodations, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/status/{status1}/{status2}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<AccommodationRequest>> findByStatus(
+            @PathVariable AccommodationRequestStatus status1,
+            @PathVariable AccommodationRequestStatus status2) {
+        List<AccommodationRequest> accommodations = requestService.findByRequestStatus(status1, status2);
+        return new ResponseEntity<>(accommodations, HttpStatus.OK);
+    }
+
 //    @PostMapping
 //    @CrossOrigin(origins = "http://localhost:4200")
 //    public ResponseEntity<AccommodationRequest>  create(@RequestBody AccommodationRequestPostDTO newRequest) throws Exception{
