@@ -27,7 +27,6 @@ public class LoginController {
 	private IUserRepository userRepository;
 	@PostMapping()
 	@CrossOrigin(origins = "http://localhost:4200")
-
 	public User login(@RequestBody JwtAuthenticationRequest user) {
 		System.out.println("USEEER ----> "+ user.getUsername());
 		System.out.println("PASSWORD ----> "+ user.getPassword());

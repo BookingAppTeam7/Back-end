@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)  // <-- Obavezno za @PreAuthorize
+//@EnableMethodSecurity
 public class WebSecurityConfiguration {
 	
 	@Autowired
@@ -57,7 +59,8 @@ public class WebSecurityConfiguration {
 
 		@Bean
 		public WebSecurityCustomizer webSecurityCustomizer(){
-		return (web)->web.ignoring().requestMatchers(HttpMethod.POST,"/login")
+		return (web)->web.ignoring()
+//				.requestMatchers(HttpMethod.POST,"/login")
 				.requestMatchers(HttpMethod.GET,"/","/webjars/*","/*.html","favicon.ico","/*/*.html","/*/*.css",
 						"/*/*.js");
 		}
