@@ -14,6 +14,7 @@ import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -142,6 +143,20 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
             return false;
             //throw new IllegalArgumentException("City can not be empty");
         }
+
+        List<Reservation> existingReservations=reservationRepository.findByAccommodationId(id);
+        Date currentDate = new Date();
+        for (Reservation existingReservation : existingReservations) {
+            if (existingReservation.getStatus() != ReservationStatusEnum.APPROVED && existingReservation.getStatus() != ReservationStatusEnum.INPROCESS && existingReservation.getStatus()!=ReservationStatusEnum.REJECTED) {
+                continue;
+            }
+            if (existingReservation.getTimeSlot().startDate.after(currentDate)) {
+                return false;
+                //throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed ir un process.");
+            }
+        }
+
+
         return true;
     }
 
@@ -185,7 +200,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
 
         List<Reservation> existingReservations=reservationRepository.findByAccommodationId(newPriceCard.accommodationId);
         for (Reservation existingReservation : existingReservations) {
-            if (existingReservation.getStatus() != ReservationStatusEnum.APPROVED && existingReservation.getStatus() != ReservationStatusEnum.INPROCESS) {
+            if (existingReservation.getStatus() != ReservationStatusEnum.APPROVED && existingReservation.getStatus() != ReservationStatusEnum.INPROCESS && existingReservation.getStatus()!=ReservationStatusEnum.REJECTED) {
                 continue;
             }
             if (isTimeSlotOverlap(existingReservation.getTimeSlot(), newPriceCard.getTimeSlot())) {
@@ -193,6 +208,9 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
                 //throw new IllegalArgumentException("Overlap with an existing Reservation time slot - reservations are already confirmed.");
             }
         }
+
+
+
         return true;
     }
 
@@ -238,7 +256,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
 
         List<Reservation> existingReservations=reservationRepository.findByAccommodationId(newPriceCard.accommodationId);
         for (Reservation existingReservation : existingReservations) {
-            if (existingReservation.getStatus() != ReservationStatusEnum.APPROVED && existingReservation.getStatus() != ReservationStatusEnum.INPROCESS) {
+            if (existingReservation.getStatus() != ReservationStatusEnum.APPROVED && existingReservation.getStatus() != ReservationStatusEnum.INPROCESS && existingReservation.getStatus()!=ReservationStatusEnum.REJECTED) {
                 continue;
             }
             if (isTimeSlotOverlap(existingReservation.getTimeSlot(), newPriceCard.getTimeSlot())) {
