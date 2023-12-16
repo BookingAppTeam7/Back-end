@@ -50,7 +50,7 @@ public class UserController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<User> create(@RequestBody UserPostDTO newUser) throws Exception {
         Optional<User> optionalUser=userService.findById(newUser.username);
         if(optionalUser!=null){

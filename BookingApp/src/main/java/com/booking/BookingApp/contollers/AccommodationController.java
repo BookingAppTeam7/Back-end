@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,16 +35,19 @@ public class AccommodationController {
 
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public Optional<Accommodation> create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
         return accommodationService.create(newAccommodation);
     }
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public Accommodation update(@RequestBody AccommodationPutDTO accommodation, @PathVariable Long id) throws Exception{
         return accommodationService.update(accommodation,id);
     }
     @DeleteMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation> delete(@PathVariable Long id){
         accommodationService.delete(id);
         return new ResponseEntity<Accommodation>(HttpStatus.NO_CONTENT);
