@@ -12,6 +12,7 @@ import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.services.IAccommodationService;
 import com.booking.BookingApp.services.IPriceCardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -66,8 +67,9 @@ public class AccommodationController {
 
         List<String> assetSplit = Arrays.asList(assets != null ? assets.split(",") : new String[]{});
         List<AccommodationDetails> searchedList;
-       try {
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             searchedList = objectMapper.readValue(searched, new TypeReference<List<AccommodationDetails>>() {
             });
             double minPrice = Double.parseDouble(minTotalPrice);
