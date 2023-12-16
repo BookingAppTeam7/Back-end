@@ -60,7 +60,7 @@ public class UserService implements IUserService{
             resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),
                     u.getPhoneNumber(),u.getStatus(),u.getDeleted(),u.getReservationRequestNotification(),
                     u.getReservationCancellationNotification(),u.getOwnerRatingNotification(),u.getAccommodationRatingNotification()
-                    ,u.getOwnerRepliedToRequestNotification(),u.getToken()));
+                    ,u.getOwnerRepliedToRequestNotification(),u.getToken(),u.getJwt()));
         }
         return resultDTO;
     }
@@ -70,10 +70,10 @@ public class UserService implements IUserService{
         Optional<User> res=userRepository.findById(username);
         if(res.isPresent()) {
             User u=res.get();
-            return Optional.of(new UserGetDTO(u.getFirstName(), u.getLastName(), u.getUsername(), u.getRole(), u.getAddress(),
-                    u.getPhoneNumber(), u.getStatus(), u.getDeleted(), u.getReservationRequestNotification(),
-                    u.getReservationCancellationNotification(), u.getOwnerRatingNotification(), u.getAccommodationRatingNotification()
-                    , u.getOwnerRepliedToRequestNotification(), u.getToken()));
+            return Optional.of(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),
+                    u.getPhoneNumber(),u.getStatus(),u.getDeleted(),u.getReservationRequestNotification(),
+                    u.getReservationCancellationNotification(),u.getOwnerRatingNotification(),u.getAccommodationRatingNotification()
+                    ,u.getOwnerRepliedToRequestNotification(),u.getToken(),u.getJwt()));
         }
         return null;
     }

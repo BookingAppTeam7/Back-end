@@ -2,6 +2,7 @@ package com.booking.BookingApp.models.dtos.users;
 
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
+import jakarta.persistence.Column;
 import jakarta.persistence.Transient;
 
 public class UserGetDTO {  //User model without password
@@ -15,26 +16,60 @@ public class UserGetDTO {  //User model without password
     public String phoneNumber;
 
     public StatusEnum status;
+    public Boolean deleted;
     public String token;
+
+    public Boolean reservationRequestNotification;
+
+    public Boolean reservationCancellationNotification;
+
+    public Boolean ownerRatingNotification;
+
+    public Boolean accommodationRatingNotification;
+    //guest
+
+    public Boolean ownerRepliedToRequestNotification;
 
     @Transient
     public String jwt;
-    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status, String token,String jwt) {
-       // this.id = id;
+//    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status, String token,String jwt) {
+//       // this.id = id;
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.username = username;
+//        this.role = role;
+//        this.address = address;
+//        this.phoneNumber = phoneNumber;
+//        this.status=status;
+//        this.token=token;
+//        this.jwt=jwt;
+//    }
+
+
+    public UserGetDTO(String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean deleted, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification,
+                      Boolean ownerRepliedToRequestNotification,String token, String jwt) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.role = role;
         this.address = address;
         this.phoneNumber = phoneNumber;
-        this.status=status;
-        this.token=token;
-        this.jwt=jwt;
+        this.status = status;
+        this.deleted=deleted;
+        this.token = token;
+        this.reservationRequestNotification = reservationRequestNotification;
+        this.reservationCancellationNotification = reservationCancellationNotification;
+        this.ownerRatingNotification = ownerRatingNotification;
+        this.accommodationRatingNotification = accommodationRatingNotification;
+        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+
+        this.jwt = jwt;
     }
 
     public UserGetDTO() {
 
     }
+
 
 
 
