@@ -46,6 +46,7 @@ public class UserService implements IUserService{
     @Value("${jwt.secret}")
     private String secret;
 
+    @Autowired
     public IUserValidatorService userValidatorService;
 
     private static AtomicLong counter=new AtomicLong();
