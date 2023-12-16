@@ -30,6 +30,7 @@ public class UserService implements IUserService{
     @Autowired
     public IUserRepository userRepository;
     @Autowired
+
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,35 +42,48 @@ public class UserService implements IUserService{
 
     private static final long serialVersionUID = -2550185165626007488L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+  
     @Value("${jwt.secret}")
     private String secret;
+
+    public IUserValidatorService userValidatorService;
+
     private static AtomicLong counter=new AtomicLong();
 
     @Override
-    public List<User> findAll() {
-        //List<User> result=userRepository.findAll();
-        return userRepository.findAll();
-       //List<UserGetDTO>resultDTO=new ArrayList<>();
+    public List<UserGetDTO> findAll() {
+        List<User> result=userRepository.findAll();
+        //return userRepository.findAll();
+        List<UserGetDTO>resultDTO=new ArrayList<>();
 
-        //for(User u:result){
-        //    resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),u.getPhoneNumber(),u.getStatus(),u.getToken()));
-        //}
-        //return resultDTO;
+        for(User u:result){
+            resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),
+                    u.getPhoneNumber(),u.getStatus(),u.getDeleted(),u.getReservationRequestNotification(),
+                    u.getReservationCancellationNotification(),u.getOwnerRatingNotification(),u.getAccommodationRatingNotification()
+                    ,u.getOwnerRepliedToRequestNotification(),u.getToken()));
+        }
+        return resultDTO;
     }
 
     @Override
-    public Optional<User> findById(String username) {
-        Optional<User> u=userRepository.findById(username);
-        if(u.isPresent()) {
-            return u;
+    public Optional<UserGetDTO> findById(String username) {
+        Optional<User> res=userRepository.findById(username);
+        if(res.isPresent()) {
+            User u=res.get();
+            return Optional.of(new UserGetDTO(u.getFirstName(), u.getLastName(), u.getUsername(), u.getRole(), u.getAddress(),
+                    u.getPhoneNumber(), u.getStatus(), u.getDeleted(), u.getReservationRequestNotification(),
+                    u.getReservationCancellationNotification(), u.getOwnerRatingNotification(), u.getAccommodationRatingNotification()
+                    , u.getOwnerRepliedToRequestNotification(), u.getToken()));
         }
         return null;
     }
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
-        String token = jwtTokenUtil.generateToken(newUser.getUsername());
 
+        String token = jwtTokenUtil.generateToken(newUser.getUsername());
+        userValidatorService.validatePost(newUser);
+        //Long newId= (Long) counter.incrementAndGet()
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
                 newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted);
         createdUser.setPassword(passwordEncoder.encode(createdUser.password));
@@ -78,6 +92,7 @@ public class UserService implements IUserService{
 
     @Override
     public User update(UserPutDTO updatedUser, String username) throws Exception {
+        userValidatorService.validatePut(updatedUser,username);
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
                 updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);
@@ -92,13 +107,20 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> findByToken(String token){
-        return userRepository.findByToken(token);
+        List<User> userList = userRepository.findAll();
+
+        for (User user : userList) {
+            if (user.getToken().equals(token)) {
+                return Optional.of(user);
+            }
+        }
+
+        return Optional.empty();
     }
     @Override
     public Optional<User> save(User user){
         return Optional.of(userRepository.save(user));
     }
-
 
 
 }

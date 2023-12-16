@@ -3,28 +3,36 @@ package com.booking.BookingApp.services;
 import com.booking.BookingApp.models.accommodations.*;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
-import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
-import com.booking.BookingApp.models.enums.PriceTypeEnum;
-import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
+import com.booking.BookingApp.models.enums.*;
 import com.booking.BookingApp.models.reservations.Reservation;
+import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
+import com.booking.BookingApp.repositories.IAccommodationRequestRepository;
+import com.booking.BookingApp.repositories.ILocationRepository;
+import com.booking.BookingApp.repositories.IUserRepository;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class AccommodationService implements IAccommodationService{
     @Autowired
     public IAccommodationRepository accommodationRepository;
+    @Autowired
+    public IAccommodationValidatorService validatorService;
+    @Autowired
+    public IUserRepository userRepository;
+    @Autowired
+    public ILocationRepository locationRepository;
+    @Autowired
+    public IAccommodationRequestRepository requestRepository;
 
     @Override
     public List<Accommodation> findAll() {
-        return accommodationRepository.findAll(); ///ovde mozda korigovati da vraca u availabilitiju samo tip AVAILABILITY
+        return accommodationRepository.findAll();
     }
 
     @Override
@@ -37,74 +45,199 @@ public class AccommodationService implements IAccommodationService{
     }
 
     @Override
-    public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
-
-            List<Review> reviews = new ArrayList<>();
-            //List<Reservation> reservations = new ArrayList<>();
-
-//            List<PriceCard> prices=newAccommodation.getPrices();
-//            List<PriceCard> modifiedPrices=new ArrayList<>();
-//
-//            for(PriceCard b:prices) {
-//                TimeSlot bTimeSlot=b.timeSlot;
-//                Date bStart=bTimeSlot.startDate;
-//                Date bEnd=bTimeSlot.endDate;
-//                for(PriceCard a:prices){
-//                    TimeSlot aTimeSlot=a.timeSlot;
-//                    Date aStart=aTimeSlot.startDate;
-//                    Date aEnd=aTimeSlot.endDate;
-//                }
-//
-//            }
-
-            //treba korigovati datume od cenovnika i dostupnosti i postaviti u newAccommodation.prices i newAccommodation.availability
-
-            //ako su timeslotovi od cenovnika isti,treba napraviti jedan cenovnik koji ce imati poslednju unetu cenu za taj time slot
-            //ako datum cenovnika B upaada u datum cenovnika A:
-                // a_startDate - b_startDate cena iz cenovnika a
-                //b_startDate - b_endDate cena iz cenovnika b
-                //b_endDate - a_endDate cena iz cenovnika a
-
-            //ako je datum cenovnika B zauzeo deo cenovnika A  //prvo B pa onda A  (b_startDate<a_startDate i b_endDate<a_endDate i b_endDate>a_startDate)
-                //b_startDate - b_endDate cena iz cenovnika b
-                //b_endDate - a_endDate cena iz cenovnika A
-                /// ILI
-                ////prvo A pa onda B  (a_startDate<b_startDate i b_startDate<a_endDate i b_endDate>a_endDate)
-                // a_startDate-b_startDate - cena iz cenovnika a
-                //b_startDate - b_endDate - cena iz cenovnika b
-
-            //ako nema preklapanja to je novi cenovnik i  ne treba mu korigovati datume
-
-        Accommodation createdAccommodation = new Accommodation(
-                    newAccommodation.getName(),
-                    newAccommodation.getDescription(),
-                    new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY()),
-                    newAccommodation.getMinGuests(),
-                    newAccommodation.getMaxGuests(),
-                    newAccommodation.getType(),
-                    newAccommodation.getAssets(),
-                    newAccommodation.getPrices(),
-                    newAccommodation.getOwnerId(),
-                    newAccommodation.getCancellationDeadline(),
-                    ReservationConfirmationEnum.MANUAL,
-                    reviews,
-                    newAccommodation.getImages(),
-                    AccommodationStatusEnum.PENDING,
-                    false
-            );
-
-            return Optional.of(accommodationRepository.save(createdAccommodation));
-
+    public List<Accommodation> findByStatus(AccommodationStatusEnum status) {
+        return accommodationRepository.findByStatus(status);
     }
 
     @Override
-    public Accommodation update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
-        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedAccommodation.location,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, updatedAccommodation.prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation, updatedAccommodation.reviews,updatedAccommodation.images,false);
-        return accommodationRepository.saveAndFlush(result);
+    public List<Accommodation> findByOwnerId(String ownerId) {
+        Optional<User> user=userRepository.findById(ownerId);
+        if(user.isPresent()) {
+            return accommodationRepository.findByOwnerId(ownerId);
+        }
+        return null;
+    }
+
+    @Override
+    public Optional<Accommodation> create(AccommodationPostDTO newAccommodation) throws Exception {
+        if(!validatorService.validatePost(newAccommodation)){return Optional.empty();}
+        List<Review> reviews = new ArrayList<>();
+
+        Location newLocation=new Location(newAccommodation.location.getAddress(), newAccommodation.location.getCity(), newAccommodation.location.getCountry(), newAccommodation.location.getX(), newAccommodation.location.getY(),false);
+        Location createdLocation=locationRepository.save(newLocation);
+
+        Accommodation createdAccommodation = new Accommodation(
+                newAccommodation.getName(),
+                newAccommodation.getDescription(),
+                createdLocation,
+                newAccommodation.getMinGuests(),
+                newAccommodation.getMaxGuests(),
+                newAccommodation.getType(),
+                newAccommodation.getAssets(),
+                newAccommodation.getOwnerId(),
+                newAccommodation.getCancellationDeadline(),
+                ReservationConfirmationEnum.MANUAL,
+                reviews,
+                newAccommodation.getImages(),
+                AccommodationStatusEnum.PENDING,  //postavljen status na pending - ceka se odobrenje ili odbijanje zahteva
+                false
+        );
+        //createdAccommodation.setLocation(createdLocation);
+
+        //kreiramo zahtev sada sa statusom PENDING_CREATED
+
+        Accommodation created=accommodationRepository.save(createdAccommodation);
+
+        AccommodationRequest request=new AccommodationRequest(created.id, AccommodationRequestStatus.PENDING_CREATED,null);
+        requestRepository.save(request);
+        return Optional.of(created);
+    }
+
+    @Override
+    public Optional<Accommodation> update(AccommodationPutDTO updatedAccommodation, Long id) throws Exception {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(id);
+        if(!accommodation.isPresent()){return null;}
+
+        if(!validatorService.validatePut(updatedAccommodation,id)){
+            return Optional.empty();
+        }
+
+        accommodationRepository.updateStatus(id,AccommodationStatusEnum.PENDING);
+
+        //treba prvo kreirati izmenjeni smestaj
+        Location newLocation=new Location(updatedAccommodation.location.getAddress(), updatedAccommodation.location.getCity(), updatedAccommodation.location.getCountry(), updatedAccommodation.location.getX(), updatedAccommodation.location.getY(),false);
+        Location createdLocation=locationRepository.save(newLocation);
+
+        List<PriceCard>prices=accommodation.get().prices;
+        Accommodation createdAccommodation = new Accommodation(
+                updatedAccommodation.getName(),
+                updatedAccommodation.getDescription(),
+                createdLocation,
+                updatedAccommodation.getMinGuests(),
+                updatedAccommodation.getMaxGuests(),
+                updatedAccommodation.getType(),
+                updatedAccommodation.getAssets(),
+                updatedAccommodation.getOwnerId(),
+                updatedAccommodation.getCancellationDeadline(),
+                updatedAccommodation.getReservationConfirmation(),
+                updatedAccommodation.getImages(),
+                AccommodationStatusEnum.PENDING,  //postavljen status na pending - ceka se odobrenje ili odbijanje zahteva
+                false
+        );
+        //createdAccommodation.setLocation(createdLocation);
+
+        //kreiramo zahtev sada sa statusom PENDING_CREATED
+
+        Accommodation created=accommodationRepository.save(createdAccommodation);
+        AccommodationRequest request=new AccommodationRequest(created.id, AccommodationRequestStatus.PENDING_EDITED,id);
+        requestRepository.save(request);
+
+//        List<PriceCard>prices=accommodation.get().prices;
+//        List<Review>reviews=accommodation.get().reviews;
+//
+//        Location originalLocation=accommodation.get().location;
+//        Location updatedLocation=new Location(originalLocation.id,updatedAccommodation.location.address,updatedAccommodation.location.city,updatedAccommodation.location.country,updatedAccommodation.location.x,updatedAccommodation.location.y,false);
+//        locationRepository.saveAndFlush(updatedLocation);
+//
+//        Accommodation result=new Accommodation(id,updatedAccommodation.name, updatedAccommodation.description, updatedLocation,updatedAccommodation.minGuests,updatedAccommodation. maxGuests, updatedAccommodation.type, updatedAccommodation.assets, prices,updatedAccommodation.ownerId,updatedAccommodation.cancellationDeadline, updatedAccommodation.reservationConfirmation,reviews,updatedAccommodation.images,false,AccommodationStatusEnum.PENDING);
+        return Optional.of(accommodationRepository.saveAndFlush(created));
     }
 
     @Override
     public void delete(Long id) {
         accommodationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<AccommodationDetails> search(String city, int guests, Date arrivalDate, Date checkoutDate){
+        List<Accommodation> retAcc = new ArrayList<>();
+        List<Accommodation> allAcc = findAll();
+
+        for (Accommodation a : allAcc) {
+            boolean cityMatches = city == null || a.location.city.equalsIgnoreCase(city);
+            boolean guestsInRange = guests == -1 || (a.minGuests <= guests && a.maxGuests >= guests);
+
+            if (cityMatches && a.status.equals(AccommodationStatusEnum.APPROVED) && guestsInRange) {
+                if (hasAvailableTimeSlot(a, arrivalDate, checkoutDate)) {
+                    retAcc.add(a);
+                }
+            }
+        }
+
+        List<AccommodationDetails> retDet = new ArrayList<>();
+        for (Accommodation a : retAcc)
+            retDet.add(convertToAccommodationDetails(a, arrivalDate, checkoutDate, guests));
+
+        return retDet;
+    }
+    @Override
+    public List<AccommodationDetails> filter(List<AccommodationDetails> searched, List<String> assets, TypeEnum type, double minTotalPrice, double maxTotalPrice){
+        List<AccommodationDetails> ret = new ArrayList<>();
+
+        for (AccommodationDetails ad : searched) {
+            boolean typeCondition = type == null || ad.getAccommodation().getType().equals(type);
+            boolean minPriceCondition = minTotalPrice == -1 || ad.getTotalPrice() >= minTotalPrice;
+            boolean maxPriceCondition = maxTotalPrice == -1 || ad.getTotalPrice() <= maxTotalPrice;
+            boolean assetsCondition = assets == null || ad.getAccommodation().getAssets().containsAll(assets);
+
+            if (typeCondition && minPriceCondition && maxPriceCondition && assetsCondition) {
+                ret.add(ad);
+            }
+        }
+
+        return ret;
+    }
+    private boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
+        for (PriceCard priceCard : accommodation.prices) {
+            if (isWithinTimeSlot(arrival, checkout, priceCard.timeSlot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean isWithinTimeSlot(Date arrival, Date checkout, TimeSlot timeSlot) {
+        Date timeSlotStart = timeSlot.getStartDate();
+        Date timeSlotEnd = timeSlot.getEndDate();
+        return !(arrival.before(timeSlotStart) || checkout.after(timeSlotEnd));
+    }
+    private AccommodationDetails convertToAccommodationDetails(Accommodation accommodation, Date arrival, Date checkout, int guests) {
+        double totalPrice = accommodation.calculateTotalPrice(arrival, checkout, guests);
+        double averageRating = accommodation.calculateAverageRating();
+        double unitPrice = accommodation.calculateUnitPrice(arrival, checkout);
+
+        return new AccommodationDetails(accommodation,totalPrice,unitPrice,averageRating);
+    }
+
+    public Optional<Accommodation> updateStatus(Long accommodationId, AccommodationStatusEnum status) {
+        Optional<Accommodation> accommodation=accommodationRepository.findById(accommodationId);
+        if(!accommodation.isPresent()){
+            return Optional.empty();
+        }
+        int updatedRows = accommodationRepository.updateStatus(accommodationId, status);
+        if (updatedRows > 0) {
+            return accommodationRepository.findById(accommodationId);
+        }
+        return Optional.empty();
+
+    }
+    public Optional<Accommodation> updateImages(Long accommodationId,List<String> newImages){
+        Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);
+        if (optionalAccommodation.isPresent()) {
+            Accommodation accommodation = optionalAccommodation.get();
+            accommodation.getImages().addAll(newImages);
+            return Optional.of(accommodationRepository.save(accommodation));
+
+        }
+        return Optional.empty();
+    }
+    public Optional<Accommodation> addReview(Long accommodationId, Review review){
+        Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);
+        if (optionalAccommodation.isPresent()) {
+            Accommodation accommodation = optionalAccommodation.get();
+            accommodation.getReviews().add(review);
+            return Optional.of(accommodationRepository.save(accommodation));
+
+        }
+        return Optional.empty();
     }
 }

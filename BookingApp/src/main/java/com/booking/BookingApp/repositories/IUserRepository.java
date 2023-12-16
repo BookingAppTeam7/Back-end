@@ -18,5 +18,5 @@ public interface IUserRepository extends JpaRepository<User,String> {
    // User saveAndFlush(User result);
 
    // void deleteById(Long id);
-    Optional<User> findByToken(String token);
+    //Optional<User> findByToken(String token);
 }

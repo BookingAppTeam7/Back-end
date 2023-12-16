@@ -37,22 +37,26 @@ public class UserController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
      @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<List<User>> findAll(){
-        List<User> users=userService.findAll();
+    public ResponseEntity<List<UserGetDTO>> findAll(){
+        List<UserGetDTO> users=userService.findAll();
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 
-    @GetMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/username/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public Optional<User> findById(@PathVariable String username){
+    public Optional<UserGetDTO> findById(@PathVariable String username){
         return userService.findById(username);
     }
 
-
+    @GetMapping(value="/token/{token}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public Optional<User> findByToken(@PathVariable String token){
+        return userService.findByToken(token);
+    }
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<User> create(@RequestBody UserPostDTO newUser) throws Exception {
-        Optional<User> optionalUser=userService.findById(newUser.username);
+        Optional<UserGetDTO> optionalUser=userService.findById(newUser.username);
         if(optionalUser!=null){
             if(optionalUser.isPresent()){
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);//zato sto username mora biti jedinstven
@@ -62,7 +66,6 @@ public class UserController {
         if(result.isPresent()){
             System.out.println("NASAO SALJEM MEJL");
             User createdUser=result.get();
-            //EmailService emailService=new EmailService();
             emailService.send(createdUser.username,generateActivationEmailBody(createdUser.firstName+" "+createdUser.lastName,createdUser.token), "BookingApp - Confirm registration");
         }
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
