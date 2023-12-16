@@ -8,7 +8,18 @@ import com.booking.BookingApp.models.dtos.users.UserPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.repositories.IUserRepository;
+import com.booking.BookingApp.security.jwt.JwtTokenUtil;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,7 +30,24 @@ public class UserService implements IUserService{
     @Autowired
     public IUserRepository userRepository;
     @Autowired
+
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    public UserService(){
+
+    }
+
+    private static final long serialVersionUID = -2550185165626007488L;
+    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+  
+    @Value("${jwt.secret}")
+    private String secret;
+
     public IUserValidatorService userValidatorService;
+
     private static AtomicLong counter=new AtomicLong();
 
     @Override
@@ -52,12 +80,13 @@ public class UserService implements IUserService{
 
     @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
+
+        String token = jwtTokenUtil.generateToken(newUser.getUsername());
         userValidatorService.validatePost(newUser);
-        //Long newId= (Long) counter.incrementAndGet();
-        Map<NotificationTypeEnum,Boolean>notificationSettings=null;
-        String token = UUID.randomUUID().toString();
+        //Long newId= (Long) counter.incrementAndGet()
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
                 newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted);
+        createdUser.setPassword(passwordEncoder.encode(createdUser.password));
         return Optional.of(userRepository.save(createdUser));
     }
 
@@ -67,6 +96,7 @@ public class UserService implements IUserService{
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUser.role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
                 updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);
+        result.setPassword(passwordEncoder.encode(result.password));
         return userRepository.saveAndFlush(result);
     }
 
@@ -91,4 +121,6 @@ public class UserService implements IUserService{
     public Optional<User> save(User user){
         return Optional.of(userRepository.save(user));
     }
+
+
 }

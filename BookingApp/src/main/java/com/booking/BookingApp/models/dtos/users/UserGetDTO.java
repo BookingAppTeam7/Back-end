@@ -2,6 +2,7 @@ package com.booking.BookingApp.models.dtos.users;
 
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
+import jakarta.persistence.Transient;
 
 public class UserGetDTO {  //User model without password
 
@@ -14,97 +15,28 @@ public class UserGetDTO {  //User model without password
     public String phoneNumber;
 
     public StatusEnum status;
-    public Boolean deleted;
-    public Boolean reservationRequestNotification;
-    public Boolean reservationCancellationNotification;
-
-    public Boolean ownerRatingNotification;
-
-    public Boolean accommodationRatingNotification;
-
-    //guest
-    public Boolean ownerRepliedToRequestNotification;
     public String token;
 
-    public UserGetDTO(String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,
-                      StatusEnum status, Boolean deleted, Boolean reservationRequestNotification, Boolean reservationCancellationNotification,
-                      Boolean ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,
-                      String token) {
+    @Transient
+    public String jwt;
+    public UserGetDTO( String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber,StatusEnum status, String token,String jwt) {
+       // this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.role = role;
         this.address = address;
         this.phoneNumber = phoneNumber;
-        this.status = status;
-        this.deleted = deleted;
-        this.reservationRequestNotification = reservationRequestNotification;
-        this.reservationCancellationNotification = reservationCancellationNotification;
-        this.ownerRatingNotification = ownerRatingNotification;
-        this.accommodationRatingNotification = accommodationRatingNotification;
-        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
-        this.token = token;
+        this.status=status;
+        this.token=token;
+        this.jwt=jwt;
     }
 
     public UserGetDTO() {
 
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
 
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Boolean getReservationRequestNotification() {
-        return reservationRequestNotification;
-    }
-
-    public void setReservationRequestNotification(Boolean reservationRequestNotification) {
-        this.reservationRequestNotification = reservationRequestNotification;
-    }
-
-    public Boolean getReservationCancellationNotification() {
-        return reservationCancellationNotification;
-    }
-
-    public void setReservationCancellationNotification(Boolean reservationCancellationNotification) {
-        this.reservationCancellationNotification = reservationCancellationNotification;
-    }
-
-    public Boolean getOwnerRatingNotification() {
-        return ownerRatingNotification;
-    }
-
-    public void setOwnerRatingNotification(Boolean ownerRatingNotification) {
-        this.ownerRatingNotification = ownerRatingNotification;
-    }
-
-    public Boolean getAccommodationRatingNotification() {
-        return accommodationRatingNotification;
-    }
-
-    public void setAccommodationRatingNotification(Boolean accommodationRatingNotification) {
-        this.accommodationRatingNotification = accommodationRatingNotification;
-    }
-
-    public Boolean getOwnerRepliedToRequestNotification() {
-        return ownerRepliedToRequestNotification;
-    }
-
-    public void setOwnerRepliedToRequestNotification(Boolean ownerRepliedToRequestNotification) {
-        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public String getFirstName() {
         return firstName;

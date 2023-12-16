@@ -18,6 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
@@ -111,10 +112,10 @@ public class AccommodationController {
         }
     }
 
-
-       
+    
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation>  create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
         Optional<Accommodation> result = accommodationService.create(newAccommodation);
         if (result.isPresent()) {
@@ -125,6 +126,7 @@ public class AccommodationController {
     }
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation> update(@RequestBody AccommodationPutDTO accommodation, @PathVariable Long id) throws Exception{
         Optional<Accommodation> result = accommodationService.update(accommodation, id);
         if (result.isPresent()) {
@@ -182,9 +184,11 @@ public class AccommodationController {
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
     @DeleteMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation> delete(@PathVariable Long id){
         accommodationService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

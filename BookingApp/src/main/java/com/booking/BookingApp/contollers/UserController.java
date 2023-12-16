@@ -7,17 +7,22 @@ import com.booking.BookingApp.models.dtos.users.UserPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.services.EmailService;
 import com.booking.BookingApp.services.IUserService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.MessagingException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
+
 
 @RestController
 @RequestMapping("/users")
@@ -27,8 +32,11 @@ public class UserController {
     private IUserService userService;
     @Autowired
     private EmailService emailService;
+
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
+     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserGetDTO>> findAll(){
         List<UserGetDTO> users=userService.findAll();
         return new ResponseEntity<>(users,HttpStatus.OK);
@@ -46,7 +54,7 @@ public class UserController {
         return userService.findByToken(token);
     }
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<User> create(@RequestBody UserPostDTO newUser) throws Exception {
         Optional<UserGetDTO> optionalUser=userService.findById(newUser.username);
         if(optionalUser!=null){

@@ -26,6 +26,7 @@ public class User {
     @Id
     public String username;
     public String password;
+
     public RoleEnum role;
 
     public String address;
@@ -46,9 +47,17 @@ public class User {
     //guest
     @Column(nullable = true,columnDefinition = "boolean default false")
     public Boolean ownerRepliedToRequestNotification=false;
+
+
+    @Column(name = "token")
     public String token;
+
+    @Transient
+    private String jwt;
+
     //@OneToMany(cascade=CascadeType.ALL)
     //public List<Reservation> reservations;
+
     public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
                 Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted) {
         this.firstName = firstName;
@@ -67,8 +76,36 @@ public class User {
         //this.reservations=reservations;
         this.token=token;
         this.deleted=deleted;
+
     }
 
+
+    public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
+                Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted,String jwt) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.status = status;
+        this.reservationRequestNotification = reservationRequestNotification;
+        this.reservationCancellationNotification = reservationCancellationNotification;
+        this.ownerRatingNotification = ownerRatingNotification;
+        this.accommodationRatingNotification = accommodationRatingNotification;
+        this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
+        //this.reservations=reservations;
+        this.token=token;
+        this.deleted=deleted;
+        this.jwt=jwt;
+
+    }
+    public User(String username, String password, RoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
     public User() {
 
     }
@@ -201,4 +238,11 @@ public class User {
         this.status = status;
     }
 
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
 }
