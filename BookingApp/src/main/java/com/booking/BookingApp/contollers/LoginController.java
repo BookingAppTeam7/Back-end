@@ -1,10 +1,13 @@
 package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.dtos.users.JwtAuthenticationRequest;
+import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IUserRepository;
 import com.booking.BookingApp.security.jwt.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,7 +30,7 @@ public class LoginController {
 	private IUserRepository userRepository;
 	@PostMapping()
 	@CrossOrigin(origins = "http://localhost:4200")
-	public User login(@RequestBody JwtAuthenticationRequest user) {
+	public ResponseEntity<User> login(@RequestBody JwtAuthenticationRequest user) {
 		System.out.println("USEEER ----> "+ user.getUsername());
 		System.out.println("PASSWORD ----> "+ user.getPassword());
 
@@ -43,12 +46,21 @@ public class LoginController {
 		sc.setAuthentication(auth);
 
 		System.out.println("33 LINIJA LOGIN CONTROLLER username "+user.getUsername());
-		String token = jwtTokenUtil.generateToken(user.getUsername());
-		System.out.println("35 LINIJA LOGIN CONTROLLER");
-		Optional<User> logedInUser=userRepository.findById(user.getUsername());
-		logedInUser.get().setJwt(token);
-		System.out.println("SETTTT ATRIBUTA "+ token);
-		return logedInUser.get();
+		Optional<User> loggedInUserOptional = userRepository.findById(user.getUsername());
+		if (loggedInUserOptional.isPresent()) {
+			User loggedInUser = loggedInUserOptional.get();
+			if (loggedInUser.getStatus() == StatusEnum.ACTIVE) {
+				String token = jwtTokenUtil.generateToken(user.getUsername());
+				System.out.println("35 LINIJA LOGIN CONTROLLER");
+				loggedInUser.setJwt(token);
+				System.out.println("SETTTT ATRIBUTA " + token);
+				return ResponseEntity.ok(loggedInUser);
+			} else {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			}
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 }
