@@ -187,7 +187,7 @@ public class AccommodationService implements IAccommodationService{
 
         return ret;
     }
-    private boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
+    public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
         for (PriceCard priceCard : accommodation.prices) {
             if (isWithinTimeSlot(arrival, checkout, priceCard.timeSlot)) {
                 return true;
