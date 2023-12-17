@@ -57,7 +57,8 @@ public class ReservationService implements IReservationService{
         UserGetDTO user=this.userService.findById(newReservation.getUserId())
                 .orElseThrow(()->new NotFoundException("User not found with id: "+newReservation.getUserId()));
         User foundUser=this.userService.findByToken(user.token).orElseThrow(()->new NotFoundException("User not found with token: "+user.token));
-
+        if(newReservation.timeSlot.startDate.after(newReservation.timeSlot.endDate))
+            throw new ValidationException("Time slot is incorrect!");
         if(!accommodationService.hasAvailableTimeSlot(accommodation,newReservation.timeSlot.getStartDate(),newReservation.timeSlot.getEndDate()))
             throw new ValidationException("Accommodation not available in selected time slot!");
 
