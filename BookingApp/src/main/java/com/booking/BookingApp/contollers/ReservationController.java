@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,14 @@ public class ReservationController {
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
-    public Optional<Reservation> create(@RequestBody ReservationPostDTO newReservation) throws Exception {
-        return reservationService.create(newReservation);
+    public ResponseEntity<?> create(@RequestBody ReservationPostDTO newReservation) throws Exception {
+        try {
+            Optional<Reservation> createdReservation = reservationService.create(newReservation);
+            return ResponseEntity.ok(createdReservation.orElse(null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", e.getMessage()));
+        }
 
     }
 
