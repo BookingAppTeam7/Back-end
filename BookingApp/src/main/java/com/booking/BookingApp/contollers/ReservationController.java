@@ -71,4 +71,12 @@ public class ReservationController {
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK );
     }
+
+    @GetMapping(value="user/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Reservation>> findByGuestId(@PathVariable String username){
+        List<Reservation> result=reservationService.findByGuestId(username);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        return new ResponseEntity<>(result,HttpStatus.OK );
+    }
 }

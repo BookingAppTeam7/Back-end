@@ -25,6 +25,7 @@ public class ReservationService implements IReservationService{
     @Autowired
     public IReservationRepository reservationRepository;
 
+    @Autowired
     private AccommodationService accommodationService=new AccommodationService();
     private UserService userService=new UserService();
     @Autowired
@@ -56,7 +57,8 @@ public class ReservationService implements IReservationService{
                 .orElseThrow(() -> new NotFoundException("Accommodation not found with id: " + newReservation.getAccommodationId()));
         UserGetDTO user=this.userService.findById(newReservation.getUserId())
                 .orElseThrow(()->new NotFoundException("User not found with id: "+newReservation.getUserId()));
-        User foundUser=this.userService.findByToken(user.token).orElseThrow(()->new NotFoundException("User not found with token: "+user.token));
+        User foundUser=this.userService.findUserById(user.username);
+//        .orElseThrow(()->new NotFoundException("User not found with token: "+user.token));
         if(newReservation.timeSlot.startDate.after(newReservation.timeSlot.endDate))
             throw new ValidationException("Time slot is incorrect!");
         if(!accommodationService.hasAvailableTimeSlot(accommodation,newReservation.timeSlot.getStartDate(),newReservation.timeSlot.getEndDate()))
@@ -102,5 +104,10 @@ public class ReservationService implements IReservationService{
     @Override
     public List<Reservation> findByAccommodationId(Long id){
         return reservationRepository.findByAccommodationId(id);
+    }
+
+    @Override
+    public List<Reservation> findByGuestId(String username){
+        return reservationRepository.findByUserUsername(username);
     }
 }

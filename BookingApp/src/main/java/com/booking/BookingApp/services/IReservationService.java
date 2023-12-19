@@ -16,4 +16,6 @@ public interface IReservationService {
     Reservation update(ReservationPutDTO updatedReservation, Long  id) throws  Exception;
     void delete(Long id);
     List<Reservation> findByAccommodationId(Long id);
+
+    List<Reservation> findByGuestId(String username);
 }

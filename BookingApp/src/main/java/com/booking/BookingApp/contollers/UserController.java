@@ -92,7 +92,7 @@ public class UserController {
         if (optionalUser.isPresent()) {
             User user=optionalUser.get();
             user.setStatus(StatusEnum.ACTIVE);
-            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.username,user.password,user.role,user.address,
+            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.username,user.password,user.address,
                     user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
                     user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted());
             userService.update(userPutDTO,user.username);

@@ -10,5 +10,6 @@ import java.util.Optional;
 @Repository
 public interface IReservationRepository extends JpaRepository<Reservation,Long> {
     List<Reservation> findByAccommodationId(Long id);
+    List<Reservation> findByUserUsername(String username);
     List<Reservation> findByStatus(ReservationStatusEnum status);
 }

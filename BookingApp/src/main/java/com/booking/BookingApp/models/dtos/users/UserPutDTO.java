@@ -14,7 +14,7 @@ public class UserPutDTO { //User model without id
     public String lastName;
     public String username;
     public String password;
-    public RoleEnum role;
+   // public RoleEnum role;
 
     public String address;
     public String phoneNumber;
@@ -33,7 +33,7 @@ public class UserPutDTO { //User model without id
     public Boolean deleted;
     public String token;
 
-    public UserPutDTO(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
+    public UserPutDTO(String firstName, String lastName, String username, String password, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
                       Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
                       Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,
                        String token, Boolean deleted) {
@@ -41,7 +41,7 @@ public class UserPutDTO { //User model without id
         this.lastName = lastName;
         this.username = username;
         this.password = password;
-        this.role = role;
+
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.status = status;
@@ -117,10 +117,10 @@ public class UserPutDTO { //User model without id
     public String getPassword() {
         return password;
     }
-
-    public RoleEnum getRole() {
-        return role;
-    }
+//
+// //   public RoleEnum getRole() {
+//        return role;
+//    }
 
     public String getAddress() {
         return address;
@@ -145,10 +145,10 @@ public class UserPutDTO { //User model without id
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public void setRole(RoleEnum role) {
-        this.role = role;
-    }
+//
+//  //  public void setRole(RoleEnum role) {
+//        this.role = role;
+//    }
 
     public void setAddress(String address) {
         this.address = address;
