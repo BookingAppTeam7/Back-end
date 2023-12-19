@@ -16,7 +16,7 @@ public interface IUserService {
 
     Optional<User> create(UserPostDTO newUser) throws Exception;
     User update(UserPutDTO updatedUser,String username) throws  Exception;
-    void delete(String username);
+    void delete(String username) throws Exception;
     Optional<User> findByToken(String token);
     Optional<User> save(User user);
     User findUserById(String username);

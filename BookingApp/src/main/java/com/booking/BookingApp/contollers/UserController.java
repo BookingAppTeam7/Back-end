@@ -17,10 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -82,9 +79,15 @@ public class UserController {
     }
     @DeleteMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<User> delete(@PathVariable String username){
-        userService.delete(username);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> delete(@PathVariable String username) throws Exception {
+       try{
+           userService.delete(username);
+           return ResponseEntity.ok(username);
+       }catch(Exception e){
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                   .body(Collections.singletonMap("error", e.getMessage()));
+       }
+        //return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @GetMapping("/activate/{token}")
     public ResponseEntity<String> activateAccount(@PathVariable String token) throws Exception {

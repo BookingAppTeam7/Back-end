@@ -126,7 +126,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public void delete(String username) {
+    public void delete(String username) throws Exception {
         //proveravamo dal moze
         Optional<UserGetDTO> userToDelete=findById(username);
         System.out.println("USER TO DELEETEEE USERNAMEEEE ---> "+userToDelete.get().username);
@@ -141,7 +141,8 @@ public class UserService implements IUserService{
                 if(res.status.equals( ReservationStatusEnum.APPROVED) ||
                 res.status.equals(ReservationStatusEnum.PENDING) || res.status.equals(ReservationStatusEnum.INPROCESS)){
                     System.out.println("Guest cannot be deleted");
-                    return;
+                    throw new  Exception("Guest cannot be deleted");
+                   // return;
                 }
             }
         }
@@ -156,7 +157,8 @@ public class UserService implements IUserService{
                         res.status.equals(ReservationStatusEnum.PENDING) || res.status.equals(ReservationStatusEnum.INPROCESS))){
                     System.out.println("RESSS STATUS " +res.status);
                     System.out.println("Owner cannot be deleted");
-                    return;
+                    throw new  Exception("Owner cannot be deleted");
+                    //return;
                 }else{
                     //brisemo sve smestaje koje je kreirao owner
                     List<Accommodation> accomodations=accommodationRepository.findAll();
