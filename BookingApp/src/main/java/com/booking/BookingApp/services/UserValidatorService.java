@@ -89,8 +89,8 @@ public class UserValidatorService implements IUserValidatorService{
         if(!Pattern.matches(usernamePattern, user.username) || !Pattern.matches(phoneNumberPattern, user.phoneNumber)){
             throw new IllegalArgumentException("User username or phone number are not valid ");
         }
-        if(user.role ==null){
-            throw new IllegalArgumentException("User role cannot be null ");
-        }
+//        if(user.role ==null){
+//            throw new IllegalArgumentException("User role cannot be null ");
+//        }
     }
 }
