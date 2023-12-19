@@ -10,10 +10,16 @@ import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IAccommodationRequestRepository;
 import com.booking.BookingApp.repositories.ILocationRepository;
 import com.booking.BookingApp.repositories.IUserRepository;
-import io.micrometer.common.util.StringUtils;
+import com.booking.BookingApp.utils.ImageUploadUtil;
+import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,7 +35,8 @@ public class AccommodationService implements IAccommodationService{
     public ILocationRepository locationRepository;
     @Autowired
     public IAccommodationRequestRepository requestRepository;
-
+    @Value("${image-path}")
+    private String imagesDirPath;
     @Override
     public List<Accommodation> findAll() {
         return accommodationRepository.findAll();
@@ -220,15 +227,55 @@ public class AccommodationService implements IAccommodationService{
         return Optional.empty();
 
     }
-    public Optional<Accommodation> updateImages(Long accommodationId,List<String> newImages){
-        Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);
-        if (optionalAccommodation.isPresent()) {
-            Accommodation accommodation = optionalAccommodation.get();
-            accommodation.getImages().addAll(newImages);
-            return Optional.of(accommodationRepository.save(accommodation));
+    //public Optional<Accommodation> updateImages(Long accommodationId,String newImage){
+    //    Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);
+     //   if (optionalAccommodation.isPresent()) {
+     //       Accommodation accommodation = optionalAccommodation.get();
+     ///       byte[] binaryImage = javax.xml.bind.DatatypeConverter.parseBase64Binary(newImage);
+      //      accommodation.getImages().add(binaryImage);
+      //      return Optional.of(accommodationRepository.save(accommodation));
 
+       // }
+       // return Optional.empty();
+    //}
+    public void addNewImage(Long accommodationId, MultipartFile image) throws IOException{
+        Optional<Accommodation> optAccommodation=accommodationRepository.findById(accommodationId);
+        if(optAccommodation.isPresent()){
+            Accommodation accommodation=optAccommodation.get();
+            String fileName=StringUtils.cleanPath(image.getOriginalFilename());
+            String uploadDir=StringUtils.cleanPath(imagesDirPath+accommodation.getId());
+            System.out.println(uploadDir);
+            ImageUploadUtil.saveImage(uploadDir,fileName,image);
+
+            accommodation.getImages().add(fileName);
+            accommodationRepository.save(accommodation);
         }
-        return Optional.empty();
+    }
+    public List<byte[]> getAccommodationImages(Long accommodationId) throws IOException {
+        Optional<Accommodation> optAccommodation = accommodationRepository.findById(accommodationId);
+        if (optAccommodation.isPresent()) {
+            Accommodation accommodation = optAccommodation.get();
+            List<String> imageFileNames = accommodation.getImages();
+            List<byte[]> imageBytesList = getImageBytesList(accommodation.getId(), imageFileNames);
+            return imageBytesList;
+        }
+        return null;
+    }
+
+    private List<byte[]> getImageBytesList(Long accommodationId, List<String> imageFileNames) throws IOException {
+        String accommodationDirPath = StringUtils.cleanPath(imagesDirPath + accommodationId + "/");
+        List<byte[]> imageBytesList = new ArrayList<>();
+
+        for (String imageName : imageFileNames) {
+            String imagePath = StringUtils.cleanPath(accommodationDirPath + imageName);
+            File file = new File(imagePath);
+            if (file.exists()) {
+                byte[] imageBytes = Files.readAllBytes(file.toPath());
+                imageBytesList.add(imageBytes);
+            }
+        }
+
+        return imageBytesList;
     }
     public Optional<Accommodation> addReview(Long accommodationId, Review review){
         Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);

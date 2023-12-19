@@ -20,7 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.Date;
@@ -152,22 +154,32 @@ public class AccommodationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PutMapping(value="/{id}/add-image")
+
+   // @PutMapping(value="/{id}/add-image")
+   // @CrossOrigin(origins="http://localhost:4200")
+   // public ResponseEntity<Accommodation> insertImage(
+   //         @PathVariable("id") Long accommodationId,
+   //         @RequestParam("image") String image){
+   //     try{
+   //         Optional<Accommodation> result=accommodationService.updateImages(accommodationId,image);
+   //         if(result.isPresent()){
+    //            return new ResponseEntity<>(result.get(),HttpStatus.OK);
+    //        }else{
+    //            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+   //         }
+    //    }catch (Exception e){
+    //        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    //    }
+   // }
+
+    @PostMapping(value="/{id}/add-image")
     @CrossOrigin(origins="http://localhost:4200")
-    public ResponseEntity<Accommodation> insertImage(
+    public ResponseEntity<String> addNewImage(
             @PathVariable("id") Long accommodationId,
-            @RequestParam("image") String images){
-        try{
-            List<String> newImages= List.of(images.split(","));
-            Optional<Accommodation> result=accommodationService.updateImages(accommodationId,newImages);
-            if(result.isPresent()){
-                return new ResponseEntity<>(result.get(),HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            @RequestParam("image") MultipartFile imageFile) throws IOException{
+
+        accommodationService.addNewImage(accommodationId,imageFile);
+        return new ResponseEntity<>("Image successfully added!",HttpStatus.OK);
     }
     @PutMapping(value="/{id}/add-review")
     @CrossOrigin(origins="http://localhost:4200")

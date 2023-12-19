@@ -7,8 +7,10 @@ import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.enums.TypeEnum;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,7 @@ public interface IAccommodationService {
     List<AccommodationDetails> search(String city, int guests, Date arrivalDate, Date checkoutDate);
     List<AccommodationDetails> filter(List<AccommodationDetails> searched, List<String> assets, TypeEnum type, double minTotalPrice,double maxTotalPrice);
     Optional<Accommodation> updateStatus(Long accommodationId,AccommodationStatusEnum status);
-    Optional<Accommodation> updateImages(Long accommodationId,List<String> newImages);
+    //Optional<Accommodation> updateImages(Long accommodationId,String images);
     Optional<Accommodation> addReview(Long accommodationId, Review review);
-
+    void addNewImage(Long accommodationId, MultipartFile image) throws IOException;
 }
