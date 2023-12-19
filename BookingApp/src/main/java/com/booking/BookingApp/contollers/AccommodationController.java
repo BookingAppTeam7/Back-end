@@ -181,6 +181,11 @@ public class AccommodationController {
         accommodationService.addNewImage(accommodationId,imageFile);
         return new ResponseEntity<>("Image successfully added!",HttpStatus.OK);
     }
+    @GetMapping(value="/{id}/get-pictures", produces = MediaType.IMAGE_JPEG_VALUE)
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<List<byte[]>> getAccommodationImages(@PathVariable Long accommodationId) throws IOException{
+        return new ResponseEntity<>(accommodationService.getAccommodationImages(accommodationId),HttpStatus.OK);
+    }
     @PutMapping(value="/{id}/add-review")
     @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<Accommodation> insertReview(

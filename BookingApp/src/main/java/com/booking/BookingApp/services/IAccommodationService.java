@@ -30,5 +30,6 @@ public interface IAccommodationService {
     Optional<Accommodation> updateStatus(Long accommodationId,AccommodationStatusEnum status);
     //Optional<Accommodation> updateImages(Long accommodationId,String images);
     Optional<Accommodation> addReview(Long accommodationId, Review review);
+    List<byte[]> getAccommodationImages(Long accommodationId) throws IOException;
     void addNewImage(Long accommodationId, MultipartFile image) throws IOException;
 }
