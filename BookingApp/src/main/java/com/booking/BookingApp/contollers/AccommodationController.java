@@ -30,6 +30,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/accommodations")
 public class AccommodationController {
+
     @Autowired
     private IAccommodationService accommodationService;
 

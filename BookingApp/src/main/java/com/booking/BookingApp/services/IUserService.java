@@ -19,4 +19,5 @@ public interface IUserService {
     void delete(String username);
     Optional<User> findByToken(String token);
     Optional<User> save(User user);
+    User findUserById(String username);
 }

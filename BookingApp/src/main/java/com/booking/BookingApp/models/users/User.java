@@ -245,4 +245,6 @@ public class User {
     public void setJwt(String jwt) {
         this.jwt = jwt;
     }
+
+
 }
