@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface IAccommodationService {
     List<Accommodation> findAll();
-
+    List<Accommodation> findAllApproved();
     Optional<Accommodation> findById(Long id);
     List<Accommodation> findByStatus(AccommodationStatusEnum status);
     List<Accommodation> findByOwnerId(String ownerId);

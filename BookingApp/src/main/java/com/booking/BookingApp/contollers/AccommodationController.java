@@ -40,7 +40,12 @@ public class AccommodationController {
         List<Accommodation> accommodations=accommodationService.findAll();
         return new ResponseEntity<>(accommodations, HttpStatus.OK);
     }
-
+    @GetMapping(value="/approved",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Accommodation>> findAllApproved(){
+        List<Accommodation> accommodations=accommodationService.findAllApproved();
+        return new ResponseEntity<>(accommodations, HttpStatus.OK);
+    }
     
     @GetMapping(value="/search",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")

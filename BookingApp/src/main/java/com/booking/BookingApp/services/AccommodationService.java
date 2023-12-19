@@ -34,7 +34,17 @@ public class AccommodationService implements IAccommodationService{
     public List<Accommodation> findAll() {
         return accommodationRepository.findAll();
     }
+    @Override
+    public List<Accommodation> findAllApproved(){
+        List<Accommodation> all=accommodationRepository.findAll();
+        List<Accommodation> ret=new ArrayList<>();
+        for(Accommodation a:all)
+            if(a.status.equals(AccommodationStatusEnum.APPROVED))
+                ret.add(a);
 
+        return ret;
+
+    }
     @Override
     public Optional<Accommodation> findById(Long id) {
         Optional<Accommodation> res=accommodationRepository.findById(id);
