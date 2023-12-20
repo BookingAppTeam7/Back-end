@@ -14,6 +14,7 @@ import com.booking.BookingApp.repositories.IReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class ReservationService implements IReservationService{
                 .orElseThrow(()->new NotFoundException("User not found with id: "+newReservation.getUserId()));
         User foundUser=this.userService.findUserById(user.username);
 //        .orElseThrow(()->new NotFoundException("User not found with token: "+user.token));
-        if(newReservation.timeSlot.startDate.after(newReservation.timeSlot.endDate))
+        if(newReservation.timeSlot.startDate.after(newReservation.timeSlot.endDate) || newReservation.timeSlot.startDate.before(new Date()) || newReservation.timeSlot.endDate.before(new Date()))
             throw new ValidationException("Time slot is incorrect!");
         if(!accommodationService.hasAvailableTimeSlot(accommodation,newReservation.timeSlot.getStartDate(),newReservation.timeSlot.getEndDate()))
             throw new ValidationException("Accommodation not available in selected time slot!");
