@@ -12,7 +12,7 @@ public class UserPutDTO { //User model without id
 
     public String firstName;
     public String lastName;
-    public String username;
+  //  public String username;
     public String password;
    // public RoleEnum role;
 
@@ -33,13 +33,13 @@ public class UserPutDTO { //User model without id
     public Boolean deleted;
     public String token;
 
-    public UserPutDTO(String firstName, String lastName, String username, String password, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
+    public UserPutDTO(String firstName, String lastName, String password, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
                       Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
                       Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,
                        String token, Boolean deleted) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
+      //  this.username = username;
         this.password = password;
 
         this.address = address;
@@ -110,9 +110,9 @@ public class UserPutDTO { //User model without id
         return lastName;
     }
 
-    public String getUsername() {
-        return username;
-    }
+//    public String getUsername() {
+//        return username;
+//    }
 
     public String getPassword() {
         return password;
@@ -138,9 +138,9 @@ public class UserPutDTO { //User model without id
         this.lastName = lastName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
 
     public void setPassword(String password) {
         this.password = password;

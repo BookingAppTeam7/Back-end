@@ -23,7 +23,7 @@ public class ReservationController {
     private IReservationService reservationService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Reservation>> findAll(){
         List<Reservation> reservations=reservationService.findAll();
         return new ResponseEntity<List<Reservation>>(reservations, HttpStatus.OK);
@@ -31,6 +31,7 @@ public class ReservationController {
 
     @GetMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_GUEST')")
     public Optional<Reservation> findById(@PathVariable Long id){
         return reservationService.findById(id);
     }
@@ -52,6 +53,7 @@ public class ReservationController {
 
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public Reservation update(@RequestBody ReservationPutDTO reservation, @PathVariable Long id) throws Exception {
         return reservationService.update(reservation,id);
 
@@ -66,6 +68,7 @@ public class ReservationController {
 
     @GetMapping(value="accommodation/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_GUEST')")
     public ResponseEntity<List<Reservation>> findByAccommodationId(@PathVariable Long id){
         List<Reservation> result=reservationService.findByAccommodationId(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -74,6 +77,7 @@ public class ReservationController {
 
     @GetMapping(value="user/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_GUEST')")
     public ResponseEntity<List<Reservation>> findByGuestId(@PathVariable String username){
         List<Reservation> result=reservationService.findByGuestId(username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}

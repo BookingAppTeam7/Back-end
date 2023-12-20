@@ -117,7 +117,7 @@ public class UserService implements IUserService{
     @Override
     public User update(UserPutDTO updatedUser, String username) throws Exception {
         userValidatorService.validatePut(updatedUser,username);
-        Optional<UserGetDTO> updatedUserRole=findById(updatedUser.username);
+        Optional<UserGetDTO> updatedUserRole=findById(username);
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUserRole.get().role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
                 updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);

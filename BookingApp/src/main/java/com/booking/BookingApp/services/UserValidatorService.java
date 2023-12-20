@@ -70,7 +70,7 @@ public class UserValidatorService implements IUserValidatorService{
             throw new IllegalArgumentException("User data are not valid");
         }
 
-        if (StringUtils.isEmpty(user.username)) {
+        if (StringUtils.isEmpty(username)) {
             throw new IllegalArgumentException("User  username cannot be empty");
         }
 
@@ -86,7 +86,7 @@ public class UserValidatorService implements IUserValidatorService{
         if (StringUtils.isEmpty(user.address)) {
             throw new IllegalArgumentException("User address cannot be empty");
         }
-        if(!Pattern.matches(usernamePattern, user.username) || !Pattern.matches(phoneNumberPattern, user.phoneNumber)){
+        if(!Pattern.matches(usernamePattern, username) || !Pattern.matches(phoneNumberPattern, user.phoneNumber)){
             throw new IllegalArgumentException("User username or phone number are not valid ");
         }
 //        if(user.role ==null){

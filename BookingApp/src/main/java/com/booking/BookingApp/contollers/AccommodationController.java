@@ -36,6 +36,7 @@ public class AccommodationController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Accommodation>> findAll(){
         List<Accommodation> accommodations=accommodationService.findAll();
         return new ResponseEntity<>(accommodations, HttpStatus.OK);
@@ -109,6 +110,7 @@ public class AccommodationController {
 
     @GetMapping(value="owner/{ownerId}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<List<Accommodation>> findByOwnerId(@PathVariable String ownerId){
         List<Accommodation> accommodations=accommodationService.findByOwnerId(ownerId);
         if (accommodations!=null) {
@@ -143,6 +145,7 @@ public class AccommodationController {
 
     @PutMapping(value = "/{id}/update-status")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Accommodation> updateStatus(
             @PathVariable("id") Long accommodationId,
             @RequestParam("status") AccommodationStatusEnum status) {
@@ -160,6 +163,7 @@ public class AccommodationController {
     }
     @PutMapping(value="/{id}/add-image")
     @CrossOrigin(origins="http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation> insertImage(
             @PathVariable("id") Long accommodationId,
             @RequestParam("image") String images){
@@ -177,6 +181,7 @@ public class AccommodationController {
     }
     @PutMapping(value="/{id}/add-review")
     @CrossOrigin(origins="http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<Accommodation> insertReview(
             @PathVariable("id") Long accommodationId,
             @RequestBody Review review){

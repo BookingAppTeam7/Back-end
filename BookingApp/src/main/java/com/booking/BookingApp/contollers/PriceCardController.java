@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,12 +24,14 @@ public class PriceCardController {
     private IPriceCardService priceCardService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<PriceCard>> findAll(){
         List<PriceCard> result=priceCardService.findAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_OWNER')")
     public ResponseEntity<PriceCard> findById(@PathVariable Long id){
         Optional<PriceCard> result=priceCardService.findById(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -37,6 +40,7 @@ public class PriceCardController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> create(@RequestBody PriceCardPostDTO newPriceCard) throws Exception {
         Optional<PriceCard> result=priceCardService.create(newPriceCard);
         if(result==null){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
@@ -45,6 +49,7 @@ public class PriceCardController {
 
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO accommodation, @PathVariable Long id) throws Exception{
         Optional<PriceCard> result = priceCardService.update(accommodation, id);
         if (result!=null) {
@@ -61,6 +66,7 @@ public class PriceCardController {
 //    }
     @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> delete(@PathVariable Long id){
         priceCardService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

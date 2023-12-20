@@ -41,12 +41,14 @@ public class UserController {
 
     @GetMapping(value="/username/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public Optional<UserGetDTO> findById(@PathVariable String username){
         return userService.findById(username);
     }
 
     @GetMapping(value="/token/{token}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public Optional<User> findByToken(@PathVariable String token){
         return userService.findByToken(token);
     }
@@ -71,6 +73,7 @@ public class UserController {
 
     @PutMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')") //svi ulogovanmi
     public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable String username) throws Exception {
         User result=userService.update(user,username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -79,6 +82,7 @@ public class UserController {
     }
     @DeleteMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public ResponseEntity<?> delete(@PathVariable String username) throws Exception {
        try{
            userService.delete(username);
@@ -95,7 +99,7 @@ public class UserController {
         if (optionalUser.isPresent()) {
             User user=optionalUser.get();
             user.setStatus(StatusEnum.ACTIVE);
-            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.username,user.password,user.address,
+            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
                     user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
                     user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted());
             userService.update(userPutDTO,user.username);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class AccommodationRequestController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<AccommodationRequest>> findAll(){
         List<AccommodationRequest> requests=requestService.findAll();
         return new ResponseEntity<>(requests, HttpStatus.OK);
@@ -30,6 +32,7 @@ public class AccommodationRequestController {
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<AccommodationRequest> findById(@PathVariable Long id){
         Optional<AccommodationRequest> result=requestService.findById(id);
         if(result!=null){return new ResponseEntity<>(result.get(),HttpStatus.OK);}
@@ -38,6 +41,7 @@ public class AccommodationRequestController {
 
     @GetMapping(value="status/{status}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<AccommodationRequest>> findByStatus(@PathVariable AccommodationRequestStatus status){
         List<AccommodationRequest> accommodations=requestService.findByStatus(status);
         return new ResponseEntity<>(accommodations, HttpStatus.OK);
@@ -45,6 +49,7 @@ public class AccommodationRequestController {
 
     @GetMapping(value = "/status/{status1}/{status2}", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<AccommodationRequest>> findByStatus(
             @PathVariable AccommodationRequestStatus status1,
             @PathVariable AccommodationRequestStatus status2) {
@@ -65,6 +70,7 @@ public class AccommodationRequestController {
 
     @PutMapping(value = "/{id}/update-status")
     @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<AccommodationRequest> updateStatus(
             @PathVariable("id") Long requestId,
             @RequestParam("status") AccommodationRequestStatus status) {
