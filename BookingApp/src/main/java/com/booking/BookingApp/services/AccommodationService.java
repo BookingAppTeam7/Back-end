@@ -112,7 +112,7 @@ public class AccommodationService implements IAccommodationService{
             return Optional.empty();
         }
 
-        accommodationRepository.updateStatus(id,AccommodationStatusEnum.PENDING);
+        //accommodationRepository.updateStatus(id,AccommodationStatusEnum.PENDING);
 
         //treba prvo kreirati izmenjeni smestaj
         Location newLocation=new Location(updatedAccommodation.location.getAddress(), updatedAccommodation.location.getCity(), updatedAccommodation.location.getCountry(), updatedAccommodation.location.getX(), updatedAccommodation.location.getY(),false);

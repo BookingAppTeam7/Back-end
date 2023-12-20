@@ -48,7 +48,7 @@ public class UserController {
 
     @GetMapping(value="/token/{token}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
+//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public Optional<User> findByToken(@PathVariable String token){
         return userService.findByToken(token);
     }
@@ -73,7 +73,7 @@ public class UserController {
 
     @PutMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')") //svi ulogovanmi
+//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')") //svi ulogovanmi
     public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable String username) throws Exception {
         User result=userService.update(user,username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}

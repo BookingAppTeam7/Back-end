@@ -163,7 +163,7 @@ public class AccommodationController {
     }
     @PutMapping(value="/{id}/add-image")
     @CrossOrigin(origins="http://localhost:4200")
-    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    //@PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation> insertImage(
             @PathVariable("id") Long accommodationId,
             @RequestParam("image") String images){
