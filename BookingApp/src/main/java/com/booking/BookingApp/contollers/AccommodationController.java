@@ -22,6 +22,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,19 +52,30 @@ public class AccommodationController {
     
     @GetMapping(value="/search",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<List<AccommodationDetails>> search(@RequestParam(required = false) String city,
-                                                             @RequestParam int guests,
-                                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date arrival,
-                                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date checkout){  //treba u get zahtevu za availability podesiti samo one TIMESLOTOVE gde je tip AVAILABILITY
+    public ResponseEntity<List<AccommodationDetails>> search(
+            @RequestParam(required = false) String city,
+            @RequestParam int guests,
+            @RequestParam  String arrivalString,
+            @RequestParam  String checkoutString) {
         System.out.println(city);
         System.out.println(guests);
-        System.out.println(arrival);
-        System.out.println(checkout);
-        if (checkout.before(arrival) || arrival.before(new Date()) || checkout.before(new Date()) || guests<1) {
+        System.out.println(arrivalString);
+        System.out.println(checkoutString);
+
+        try {
+            Date arrival = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(arrivalString);
+            Date checkout = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(checkoutString);
+
+            if (checkout.before(arrival) || arrival.before(new Date()) || checkout.before(new Date()) || guests < 1) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            List<AccommodationDetails> accommodations = accommodationService.search(city, guests, arrival, checkout);
+            return new ResponseEntity<>(accommodations, HttpStatus.OK);
+        } catch (ParseException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        List<AccommodationDetails> accommodations=accommodationService.search(city,guests,arrival,checkout);
-        return new ResponseEntity<>(accommodations, HttpStatus.OK);
     }
     @GetMapping(value="/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
