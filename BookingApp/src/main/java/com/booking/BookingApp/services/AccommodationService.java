@@ -164,7 +164,7 @@ public class AccommodationService implements IAccommodationService{
         List<Accommodation> allAcc = findAll();
 
         for (Accommodation a : allAcc) {
-            boolean cityMatches = city == null || a.location.city.equalsIgnoreCase(city);
+            boolean cityMatches = city == null || city.isEmpty() ||  a.location.city.equalsIgnoreCase(city);
             boolean guestsInRange = guests == -1 || (a.minGuests <= guests && a.maxGuests >= guests);
 
             if (cityMatches && a.status.equals(AccommodationStatusEnum.APPROVED) && guestsInRange) {
