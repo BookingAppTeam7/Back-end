@@ -1,13 +1,20 @@
 package com.booking.BookingApp.models.dtos.accommodations;
 
+import com.booking.BookingApp.models.CustomDateDeserializer;
 import com.booking.BookingApp.models.enums.TimeSlotType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class TimeSlotPostDTO {
 
 
+    //@JsonDeserialize(using = CustomDateDeserializer.class)
     public Date startDate;
+
+    //@JsonDeserialize(using = CustomDateDeserializer.class)
     public Date endDate;
 
 
