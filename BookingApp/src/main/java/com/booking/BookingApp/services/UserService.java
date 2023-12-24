@@ -172,13 +172,13 @@ public class UserService implements IUserService{
             }
 
         }
+        System.out.println("USAO U REPOZITORIJUM");
         userRepository.deleteById(username);
     }
 
     @Override
     public Optional<User> findByToken(String token){
         List<User> userList = userRepository.findAll();
-
         for (User user : userList) {
             if (user.getToken().equals(token)) {
                 return Optional.of(user);
