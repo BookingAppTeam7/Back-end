@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/accommodations")
@@ -36,6 +33,7 @@ public class AccommodationController {
     @Autowired
     private IAccommodationService accommodationService;
 
+    private List<AccommodationDetails> searchedAccommodations=new ArrayList<>();
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -71,6 +69,7 @@ public class AccommodationController {
             }
 
             List<AccommodationDetails> accommodations = accommodationService.search(city, guests, arrival, checkout);
+            searchedAccommodations=accommodationService.search(city, guests, arrival, checkout);
             return new ResponseEntity<>(accommodations, HttpStatus.OK);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -80,23 +79,24 @@ public class AccommodationController {
     @GetMapping(value="/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<AccommodationDetails>> filter(
-            @RequestParam(required = false) String searched,
+            //@RequestParam(required = false) String searched,
             @RequestParam(required = false) String assets,
             @RequestParam(required = false) TypeEnum type,
             @RequestParam(required = false, defaultValue = "-1.0") String minTotalPrice,
             @RequestParam(required = false, defaultValue = "-1.0") String maxTotalPrice) {
 
         List<String> assetSplit = Arrays.asList(assets != null ? assets.split(",") : new String[]{});
-        List<AccommodationDetails> searchedList;
+        //List<AccommodationDetails> searchedList;
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            searchedList = objectMapper.readValue(searched, new TypeReference<List<AccommodationDetails>>() {
-            });
+         //   ObjectMapper objectMapper = new ObjectMapper();
+         //   objectMapper.registerModule(new JavaTimeModule());
+         //   searchedList = objectMapper.readValue(searched, new TypeReference<List<AccommodationDetails>>() {
+         //   });
             double minPrice = Double.parseDouble(minTotalPrice);
             double maxPrice = Double.parseDouble(maxTotalPrice);
-
-            List<AccommodationDetails> accommodations = accommodationService.filter(searchedList, assetSplit, type, minPrice, maxPrice);
+            for(AccommodationDetails ad:searchedAccommodations)
+                System.out.println(ad);
+            List<AccommodationDetails> accommodations = accommodationService.filter(searchedAccommodations, assetSplit, type, minPrice, maxPrice);
             return new ResponseEntity<>(accommodations, HttpStatus.OK);
         } catch (NumberFormatException e) {
             e.printStackTrace();
