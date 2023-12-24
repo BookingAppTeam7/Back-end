@@ -110,7 +110,7 @@ public class UserController {
             return new ResponseEntity<>("Invalid activation token", HttpStatus.NOT_FOUND);
         }
     }
-    public String generateActivationEmailBody(String userName, String activationLink) {
+        public String generateActivationEmailBody(String userName, String activationLink) {
         String fullActivationLink = "http://localhost:4200/activate/" + activationLink;
 
         return "<p>Dear <strong>" + userName + "</strong>,</p>\n" +
@@ -120,6 +120,9 @@ public class UserController {
                 "<p>If you have any questions, feel free to contact our support team.</p>\n" +
                 "<p>Best regards,<br/>ISA project members</p>";
     }
+
+
+
 
     @GetMapping(value="user/username/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
