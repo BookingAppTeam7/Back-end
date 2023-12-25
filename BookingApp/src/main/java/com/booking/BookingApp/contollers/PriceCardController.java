@@ -2,6 +2,7 @@ package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
+import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.dtos.accommodations.*;
 import com.booking.BookingApp.services.IPriceCardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class PriceCardController {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
         Date startDate = sdf.parse(newPriceCardString.getTimeSlot().getStartDate());
-        Date endDate = sdf.parse(newPriceCardString.getTimeSlot().getStartDate());
+        Date endDate = sdf.parse(newPriceCardString.getTimeSlot().getEndDate());
 
         TimeSlotPostDTO newTimeSlot=new TimeSlotPostDTO(startDate,endDate);
 
@@ -76,6 +77,28 @@ public class PriceCardController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @PutMapping(value="StringDates/{id}")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public ResponseEntity<PriceCard> modify(@RequestBody PriceCardStringDTO priceCard, @PathVariable Long id) throws Exception{
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        Date startDate = sdf.parse(priceCard.getTimeSlot().getStartDate());
+        Date endDate = sdf.parse(priceCard.getTimeSlot().getEndDate());
+
+        TimeSlot newTimeSlot=new TimeSlot(startDate,endDate,false);
+
+        PriceCardPutDTO newPriceCard=new PriceCardPutDTO(newTimeSlot, priceCard.price, priceCard.type, priceCard.accommodationId);
+
+        Optional<PriceCard> result = priceCardService.update(newPriceCard, id);
+        if (result!=null) {
+            return new ResponseEntity<>(result.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
 //    @CrossOrigin(origins = "http://localhost:4200")
 //    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO priceCard) throws Exception {

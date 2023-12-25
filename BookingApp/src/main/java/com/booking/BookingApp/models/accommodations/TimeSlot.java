@@ -35,6 +35,7 @@ public class TimeSlot {
         this.deleted=deleted;
     }
 
+
     public Date getStartDate() {
         return startDate;
     }

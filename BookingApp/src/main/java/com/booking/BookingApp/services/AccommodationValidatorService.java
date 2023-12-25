@@ -165,27 +165,32 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
 
         if (!accommodation.isPresent()) {
+            System.out.println("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
             return false;
             //throw new IllegalArgumentException("Not found accommodation with this id." + newPriceCard.accommodationId.toString());
         }
         Date currentDate = new Date();
 
         if (newPriceCard.timeSlot.startDate.before(currentDate) || newPriceCard.timeSlot.endDate.before(currentDate)) {
+            System.out.println("Both start date and end date must be in the future.");
             return false;
             //throw new IllegalArgumentException("Both start date and end date must be in the future.");
         }
 
         if (newPriceCard.timeSlot.startDate.after(newPriceCard.timeSlot.endDate)) {
+            System.out.println("Start date must be before end date.");
             return false;
             //throw new IllegalArgumentException("Start date must be before end date.");
         }
 
         if(newPriceCard.price<=0){
+            System.out.println("Invalid price value.Price must be positive number.");
             return false;
             //throw new IllegalArgumentException("Invalid price value.Price must be positive number.");
         }
 
         if(newPriceCard.type==null){
+            System.out.println("Price type must be defined.");
             return false;
             //throw new IllegalArgumentException("Price type must be defined.");
         }
@@ -193,6 +198,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
         List<PriceCard> existingPrices=accommodation.get().getPrices();
         for (PriceCard existingPrice : existingPrices) {
             if (isTimeSlotOverlap(existingPrice.getTimeSlot(), newPriceCard.getTimeSlot())) {
+                System.out.println("Overlap with an existing PriceCard time slot - price for this period is already defined.");
                 return false;
                 //throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
             }

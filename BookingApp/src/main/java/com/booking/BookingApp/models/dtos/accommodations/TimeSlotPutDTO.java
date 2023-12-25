@@ -1,14 +1,12 @@
 package com.booking.BookingApp.models.dtos.accommodations;
 
-import com.booking.BookingApp.models.enums.TimeSlotType;
-
 import java.util.Date;
 
 public class TimeSlotPutDTO {
     public Date startDate;
     public Date endDate;
 
-    public TimeSlotPutDTO(Date startDate, Date endDate,TimeSlotType type) {
+    public TimeSlotPutDTO(Date startDate, Date endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }
