@@ -43,6 +43,7 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public Optional<UserGetDTO> findById(@PathVariable String username){
+        System.out.println("USAO U FIND USERNAME JE --> " +username);
         return userService.findById(username);
     }
 
@@ -84,6 +85,7 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public ResponseEntity<?> delete(@PathVariable String username) throws Exception {
+        System.out.print("USAO U BRISANJEEE " + username);
        try{
            userService.delete(username);
            return ResponseEntity.ok(username);
@@ -108,7 +110,7 @@ public class UserController {
             return new ResponseEntity<>("Invalid activation token", HttpStatus.NOT_FOUND);
         }
     }
-    public String generateActivationEmailBody(String userName, String activationLink) {
+        public String generateActivationEmailBody(String userName, String activationLink) {
         String fullActivationLink = "http://localhost:4200/activate/" + activationLink;
 
         return "<p>Dear <strong>" + userName + "</strong>,</p>\n" +
@@ -117,5 +119,16 @@ public class UserController {
                 "<p><a href=\"" + fullActivationLink + "\">Activation Link</a></p>\n" +
                 "<p>If you have any questions, feel free to contact our support team.</p>\n" +
                 "<p>Best regards,<br/>ISA project members</p>";
+    }
+
+
+
+
+    @GetMapping(value="user/username/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
+    public User findUserById(@PathVariable String username){
+        //System.out.println("USAO U FIND USERNAME JE --> " +username);
+        return userService.findUserById(username);
     }
 }
