@@ -3,6 +3,7 @@ package com.booking.BookingApp.contollers;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
+import com.booking.BookingApp.services.IAccommodationService;
 import com.booking.BookingApp.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ public class ReservationController {
 
     @Autowired
     private IReservationService reservationService;
+    @Autowired
+    private IAccommodationService accommodationService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -36,7 +39,19 @@ public class ReservationController {
         return reservationService.findById(id);
     }
 
+    @PutMapping(value="/confirm/{id}")
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<?> confirmReservation(@PathVariable Long id) {
+        try{
+            System.out.println("PRE CONFIRM RESERVATION");
+            reservationService.confirmReservation(id);
+            return ResponseEntity.ok("Reservation updated! Check database of accommodation and reservation");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error",e.getMessage()));
+        }
 
+    }
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
