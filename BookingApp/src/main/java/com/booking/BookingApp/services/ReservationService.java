@@ -3,6 +3,7 @@ package com.booking.BookingApp.services;
 import com.booking.BookingApp.exceptions.NotFoundException;
 import com.booking.BookingApp.exceptions.ValidationException;
 import com.booking.BookingApp.models.accommodations.Accommodation;
+import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
@@ -11,6 +12,7 @@ import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IReservationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +53,40 @@ public class ReservationService implements IReservationService{
         return null;
     }
 
+    @Transactional
+    @Override
+    public void confirmReservation(Long reservationId) throws Exception {
+        System.out.println("USAO U CONFIRM RESERVATION");
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
+        Accommodation accommodation=accommodationService.findById(reservation.accommodation.id)
+                .orElseThrow(() -> new Exception("Accommodation not found with id: "+reservation.accommodation.id));
+        if(reservation.status.equals(ReservationStatusEnum.APPROVED))
+            throw new Exception("Reservation already approved!");
+        // Check if the reservation is available in the selected time slot
+        if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
+            reservation.setStatus(ReservationStatusEnum.APPROVED);
+            reservationRepository.save(reservation);
+            System.out.println("SAVEOVAO RESERVACIJE");
+            accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
+            System.out.println("EDITOVAO PRICE CARDS");
+        } else {
+            throw new Exception("Reservation not available in the selected time slot");
+        }
+    }
+    public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
+        for (PriceCard priceCard : accommodation.prices) {
+            if (isWithinTimeSlot(arrival, checkout, priceCard.timeSlot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean isWithinTimeSlot(Date arrival, Date checkout, TimeSlot timeSlot) {
+        Date timeSlotStart = timeSlot.getStartDate();
+        Date timeSlotEnd = timeSlot.getEndDate();
+        return !(arrival.before(timeSlotStart) || checkout.after(timeSlotEnd));
+    }
     @Override
     public Optional<Reservation> create(ReservationPostDTO newReservation) throws NotFoundException, ValidationException {
         Long newId= (Long) counter.incrementAndGet();

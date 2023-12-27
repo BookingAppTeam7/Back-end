@@ -28,5 +28,6 @@ public interface IAccommodationService {
     Optional<Accommodation> updateStatus(Long accommodationId,AccommodationStatusEnum status);
     Optional<Accommodation> updateImages(Long accommodationId,List<String> newImages);
     Optional<Accommodation> addReview(Long accommodationId, Review review);
+    void editPriceCards(Long accommodationId, Date reservationStartDate, Date reservationEndDate);
 
 }
