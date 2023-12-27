@@ -208,7 +208,19 @@ public class AccommodationService implements IAccommodationService{
     }
     private boolean isWithinTimeSlot(Date arrival, Date checkout, TimeSlot timeSlot) {
         Date timeSlotStart = timeSlot.getStartDate();
+        timeSlotStart.setHours(0);
+        timeSlotStart.setMinutes(0);
+        timeSlotStart.setSeconds(0);
         Date timeSlotEnd = timeSlot.getEndDate();
+        timeSlotEnd.setHours(0);
+        timeSlotEnd.setMinutes(0);
+        timeSlotEnd.setSeconds(0);
+        arrival.setHours(0);
+        arrival.setMinutes(0);
+        arrival.setSeconds(0);
+        checkout.setHours(0);
+        checkout.setMinutes(0);
+        checkout.setSeconds(0);
         return !(arrival.before(timeSlotStart) || checkout.after(timeSlotEnd));
     }
     private AccommodationDetails convertToAccommodationDetails(Accommodation accommodation, Date arrival, Date checkout, int guests) {
@@ -259,6 +271,14 @@ public class AccommodationService implements IAccommodationService{
         // Iterate through the existing PriceCards and update them based on the reservation dates
         for (PriceCard priceCard : accommodation.getPrices()) {
             if (isWithinTimeSlot(reservationStartDate, reservationEndDate, priceCard.getTimeSlot())) {
+                if(isSameDay(reservationStartDate,priceCard.timeSlot.startDate)){
+                    priceCard.timeSlot.setStartDate(reservationEndDate);
+                    break;
+                }
+                if(isSameDay(reservationEndDate,priceCard.timeSlot.endDate)){
+                    priceCard.timeSlot.setEndDate(reservationStartDate);
+                    break;
+                }
                 // If there is an overlap, split the existing PriceCard into two PriceCards
                 PriceCard newPriceCard1 = new PriceCard();
                 newPriceCard1.setTimeSlot(new TimeSlot(99L, reservationEndDate, priceCard.getTimeSlot().getEndDate(), false));
@@ -270,11 +290,6 @@ public class AccommodationService implements IAccommodationService{
 
                 // Add the new PriceCard
                 accommodation.getPrices().add(newPriceCard1);
-
-                // Remove the existing PriceCard if it has the same start and end date
-                //if (priceCard.getTimeSlot().getStartDate().equals(priceCard.getTimeSlot().getEndDate())) {
-                //     iterator.remove();
-                // }
 
                 break;
             }
