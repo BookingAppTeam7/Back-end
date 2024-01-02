@@ -1,5 +1,6 @@
 package com.booking.BookingApp.contollers;
 
+import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
@@ -90,11 +91,11 @@ public class ReservationController {
         return new ResponseEntity<>(result,HttpStatus.OK );
     }
 
-    @GetMapping(value="user/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="user/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_GUEST')")
-    public ResponseEntity<List<Reservation>> findByGuestId(@PathVariable String username){
-        List<Reservation> result=reservationService.findByGuestId(username);
+    public ResponseEntity<List<ReservationGetDTO>> findByGuestId(@PathVariable String username){
+        List<ReservationGetDTO> result=reservationService.findByGuestId(username);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK );
     }

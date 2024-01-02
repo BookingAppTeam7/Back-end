@@ -1,5 +1,6 @@
 package com.booking.BookingApp.services;
 
+import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
@@ -17,7 +18,7 @@ public interface IReservationService {
     void delete(Long id);
     List<Reservation> findByAccommodationId(Long id);
     void confirmReservation(Long reservationId) throws Exception;
-    List<Reservation> findByGuestId(String username);
+    List<ReservationGetDTO> findByGuestId(String username);
 
     void rejectReservation(Long reservationId) throws Exception;
 }
