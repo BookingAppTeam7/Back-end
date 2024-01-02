@@ -147,4 +147,19 @@ public class ReservationService implements IReservationService{
     public List<Reservation> findByGuestId(String username){
         return reservationRepository.findByUserUsername(username);
     }
+
+    @Override
+    public void rejectReservation(Long reservationId) throws Exception {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
+        Accommodation accommodation=accommodationService.findById(reservation.accommodation.id)
+                .orElseThrow(() -> new Exception("Accommodation not found with id: "+reservation.accommodation.id));
+        if(reservation.status.equals(ReservationStatusEnum.APPROVED))
+            throw new Exception("Reservation already approved!");
+        if(reservation.status.equals(ReservationStatusEnum.REJECTED))
+            throw new Exception("Reservation already rejected!");
+
+        reservationRepository.updateStatus(reservationId,ReservationStatusEnum.REJECTED);
+
+    }
 }
