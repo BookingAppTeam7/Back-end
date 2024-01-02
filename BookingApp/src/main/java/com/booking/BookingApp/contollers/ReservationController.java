@@ -98,4 +98,17 @@ public class ReservationController {
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
         return new ResponseEntity<>(result,HttpStatus.OK );
     }
+
+    @PutMapping(value="/reject/{id}")
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<?> rejectReservation(@PathVariable Long id) {
+        try{
+            reservationService.rejectReservation(id);
+            return ResponseEntity.ok("Reservation updated! Check database of accommodation and reservation");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error",e.getMessage()));
+        }
+
+    }
 }

@@ -281,7 +281,7 @@ public class AccommodationService implements IAccommodationService{
                 }
                 // If there is an overlap, split the existing PriceCard into two PriceCards
                 PriceCard newPriceCard1 = new PriceCard();
-                newPriceCard1.setTimeSlot(new TimeSlot(99L, reservationEndDate, priceCard.getTimeSlot().getEndDate(), false));
+                newPriceCard1.setTimeSlot(new TimeSlot(null, reservationEndDate, priceCard.getTimeSlot().getEndDate(), false));
                 newPriceCard1.setPrice(priceCard.getPrice());
                 newPriceCard1.setType(priceCard.getType());
                 newPriceCard1.setDeleted(false);

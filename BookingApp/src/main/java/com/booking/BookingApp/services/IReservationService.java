@@ -18,4 +18,6 @@ public interface IReservationService {
     List<Reservation> findByAccommodationId(Long id);
     void confirmReservation(Long reservationId) throws Exception;
     List<Reservation> findByGuestId(String username);
+
+    void rejectReservation(Long reservationId) throws Exception;
 }
