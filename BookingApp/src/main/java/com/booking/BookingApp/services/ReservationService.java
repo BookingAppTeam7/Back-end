@@ -166,4 +166,20 @@ public class ReservationService implements IReservationService{
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.REJECTED);
 
     }
+
+    @Override
+    public void cancelReservation(Long reservationId) throws Exception {
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
+        if(reservation.status.equals(ReservationStatusEnum.CANCELLED))
+            throw new Exception("Reservation already cancelled!");
+        if(reservation.status.equals(ReservationStatusEnum.REJECTED))
+            throw new Exception("Reservation already approved!");
+        if(reservation.status.equals(ReservationStatusEnum.PENDING))
+            throw new Exception("Reservation is not already approved/rejected!");
+
+        reservationRepository.updateStatus(reservationId,ReservationStatusEnum.CANCELLED);
+
+    }
 }

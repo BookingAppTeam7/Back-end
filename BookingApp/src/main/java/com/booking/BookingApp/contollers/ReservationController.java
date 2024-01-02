@@ -112,4 +112,17 @@ public class ReservationController {
         }
 
     }
+
+    @PutMapping(value="/cancel/{id}")
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<?> cancelReservation(@PathVariable Long id) {
+        try{
+            reservationService.cancelReservation(id);
+            return ResponseEntity.ok("Reservation updated! Check database of accommodation and reservation");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error",e.getMessage()));
+        }
+
+    }
 }

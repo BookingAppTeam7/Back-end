@@ -21,4 +21,5 @@ public interface IReservationService {
     List<ReservationGetDTO> findByGuestId(String username);
 
     void rejectReservation(Long reservationId) throws Exception;
+    void cancelReservation(Long reservationId) throws Exception;
 }
