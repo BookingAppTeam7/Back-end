@@ -107,6 +107,8 @@ public class ReservationService implements IReservationService{
             if(r.status.equals(ReservationStatusEnum.APPROVED) && r.accommodation.id.equals(accommodation.id) && timeSlotsOverlap(r.timeSlot,newReservation.timeSlot))
                 throw new ValidationException("There already exists confirmed reservation for that accommodation in selected time slot");
         }
+
+        //ovde treba dodati da se u objektu created reservation cuva i price i priceType
         Reservation createdReservation=new Reservation(newId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests,
                     foundUser);
         return Optional.of(reservationRepository.save(createdReservation));

@@ -2,6 +2,7 @@ package com.booking.BookingApp.models.reservations;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
+import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,6 +36,12 @@ public class Reservation {
     public ReservationStatusEnum status;
 
     public Long numberOfGuests;
+
+//    public double price;
+//    @Enumerated(EnumType.STRING)
+//    public PriceTypeEnum priceType;
+
+
     public Reservation(){}
 
     public Reservation(Long id, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation, Long numberOfGuests, User user) {
@@ -45,6 +52,33 @@ public class Reservation {
         this.numberOfGuests=numberOfGuests;
         this.user=user;
     }
+
+//    public Reservation(Long id, Accommodation accommodation, User user, TimeSlot timeSlot, ReservationStatusEnum status, Long numberOfGuests, double price, PriceTypeEnum priceType) {
+//        this.id = id;
+//        this.accommodation = accommodation;
+//        this.user = user;
+//        this.timeSlot = timeSlot;
+//        this.status = status;
+//        this.numberOfGuests = numberOfGuests;
+//        this.price = price;
+//        this.priceType = priceType;
+//    }
+
+//    public double getPrice() {
+//        return price;
+//    }
+//
+//    public void setPrice(double price) {
+//        this.price = price;
+//    }
+//
+//    public PriceTypeEnum getPriceType() {
+//        return priceType;
+//    }
+//
+//    public void setPriceType(PriceTypeEnum priceType) {
+//        this.priceType = priceType;
+//    }
 
     public User getUser() {
         return user;
