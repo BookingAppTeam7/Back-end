@@ -5,6 +5,7 @@ import com.booking.BookingApp.exceptions.ValidationException;
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
+import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
@@ -16,10 +17,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -109,6 +107,8 @@ public class ReservationService implements IReservationService{
             if(r.status.equals(ReservationStatusEnum.APPROVED) && r.accommodation.id.equals(accommodation.id) && timeSlotsOverlap(r.timeSlot,newReservation.timeSlot))
                 throw new ValidationException("There already exists confirmed reservation for that accommodation in selected time slot");
         }
+
+        //ovde treba dodati da se u objektu created reservation cuva i price i priceType
         Reservation createdReservation=new Reservation(newId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests,
                     foundUser);
         return Optional.of(reservationRepository.save(createdReservation));
@@ -144,8 +144,14 @@ public class ReservationService implements IReservationService{
     }
 
     @Override
-    public List<Reservation> findByGuestId(String username){
-        return reservationRepository.findByUserUsername(username);
+    public List<ReservationGetDTO> findByGuestId(String username){
+        List<Reservation> reservations=reservationRepository.findByUserUsername(username);
+        List<ReservationGetDTO> result=new ArrayList<>();
+
+        for(Reservation r:reservations){
+            result.add(new ReservationGetDTO(r.id,r.accommodation.id,r.timeSlot,r.status,r.numberOfGuests));
+        }
+        return result;
     }
 
     @Override
@@ -160,6 +166,22 @@ public class ReservationService implements IReservationService{
             throw new Exception("Reservation already rejected!");
 
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.REJECTED);
+
+    }
+
+    @Override
+    public void cancelReservation(Long reservationId) throws Exception {
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
+        if(reservation.status.equals(ReservationStatusEnum.CANCELLED))
+            throw new Exception("Reservation already cancelled!");
+        if(reservation.status.equals(ReservationStatusEnum.REJECTED))
+            throw new Exception("Reservation already approved!");
+        if(reservation.status.equals(ReservationStatusEnum.PENDING))
+            throw new Exception("Reservation is not already approved/rejected!");
+
+        reservationRepository.updateStatus(reservationId,ReservationStatusEnum.CANCELLED);
 
     }
 }

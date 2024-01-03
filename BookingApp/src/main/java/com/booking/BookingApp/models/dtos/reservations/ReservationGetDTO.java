@@ -10,12 +10,14 @@ public class ReservationGetDTO {
     public TimeSlot timeSlot;
 
     public ReservationStatusEnum status;
+    public Long numberOfGuests;
 
-    public ReservationGetDTO(Long id, Long accommodationId,TimeSlot timeSlot,ReservationStatusEnum status) {
+    public ReservationGetDTO(Long id, Long accommodationId,TimeSlot timeSlot,ReservationStatusEnum status,Long numberOfGuests) {
         this.id = id;
         this.accommodationId = accommodationId;
         this.timeSlot=timeSlot;
         this.status=status;
+        this.numberOfGuests=numberOfGuests;
     }
 
     public Long getId() {
