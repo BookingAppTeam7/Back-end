@@ -1,5 +1,6 @@
 package com.booking.BookingApp.repositories;
 
+import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,5 @@ public interface IUserRepository extends JpaRepository<User,String> {
 
    // void deleteById(Long id);
     //Optional<User> findByToken(String token);
+    List<User> findByRole(RoleEnum role);
 }
