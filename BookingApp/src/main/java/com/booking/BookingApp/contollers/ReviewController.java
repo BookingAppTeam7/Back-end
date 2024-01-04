@@ -43,6 +43,9 @@ public class ReviewController {
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Review> create(@RequestBody ReviewPostDTO newReview) throws Exception{
         Optional<Review> result=reviewService.create(newReview);
+        if(result==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
     }
     @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
