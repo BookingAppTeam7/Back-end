@@ -3,6 +3,8 @@ package com.booking.BookingApp.contollers;
 import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
+import com.booking.BookingApp.models.dtos.users.UserPutDTO;
+import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.services.IReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,13 +23,14 @@ public class ReviewController {
     private IReviewService reviewService;
 
     @GetMapping(produces= MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<Review>> findAll(){
         List<Review> reviews=reviewService.findAll();
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Review> findById(@PathVariable Long id){
         Optional<Review> result=reviewService.findById(id);
         if(result==null){
@@ -37,22 +40,22 @@ public class ReviewController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Review> create(@RequestBody ReviewPostDTO newReview) throws Exception{
         Optional<Review> result=reviewService.create(newReview);
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
     }
     @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Review> update(@RequestBody ReviewPutDTO review, @PathVariable Long id) throws Exception{
-        Optional<Review> previous=reviewService.findById(id);
-        if(previous.isPresent()){
-            Review result=reviewService.update(review,id,previous.get().userId, previous.get().type);
-            if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-            return new ResponseEntity<>(result,HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Review> update(@RequestBody ReviewPutDTO review, @PathVariable Long id) throws Exception {
+        Review result=reviewService.update(review,id);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        return new ResponseEntity<>(result,HttpStatus.OK);
+
     }
 
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<Review> delete(@PathVariable Long id){
         reviewService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
