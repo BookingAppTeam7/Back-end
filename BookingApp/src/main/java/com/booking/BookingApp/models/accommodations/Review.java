@@ -4,10 +4,17 @@ import com.booking.BookingApp.models.enums.ReviewEnum;
 import com.booking.BookingApp.models.enums.ReviewStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 @Entity
+@SQLDelete(sql
+        = "UPDATE review "
+        + "SET deleted = true "
+        + "WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
