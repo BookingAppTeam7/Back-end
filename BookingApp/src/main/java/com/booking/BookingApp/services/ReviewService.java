@@ -33,7 +33,7 @@ public class ReviewService implements IReviewService{
     
     //public ReservationService reservationService;
   @Autowired
-  public ReservationRepository reservationRepository;
+  public IReservationRepository reservationRepository;
     private static AtomicLong counter=new AtomicLong();
     @Override
     public List<Review> findAll() {
