@@ -109,8 +109,8 @@ public class ReservationService implements IReservationService{
         }
 
         //ovde treba dodati da se u objektu created reservation cuva i price i priceType
-        Reservation createdReservation=new Reservation(newId,newReservation.timeSlot, ReservationStatusEnum.PENDING, accommodation, newReservation.numberOfGuests,
-                    foundUser);
+        Reservation createdReservation=new Reservation(newId,accommodation,foundUser,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
+                    newReservation.price,newReservation.priceType);
         return Optional.of(reservationRepository.save(createdReservation));
     }
     public boolean timeSlotsOverlap(TimeSlot t1,TimeSlot t2){

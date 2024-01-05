@@ -1,5 +1,6 @@
 package com.booking.BookingApp.models.dtos.review;
 
+import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.enums.ReviewEnum;
 import com.booking.BookingApp.models.enums.ReviewStatusEnum;
 import jakarta.persistence.*;
@@ -20,9 +21,10 @@ public class ReviewPostDTO {//Review model without id, and dateTime
     public Long accommodationId;
     public String ownerId;
     public ReviewStatusEnum status;
+    public Long reservationId;
 
     public ReviewPostDTO(String userId, ReviewEnum type, String comment, int grade, LocalDateTime dateTime, Boolean deleted, Boolean reported, Long accommodationId, String ownerId,
-                         ReviewStatusEnum status) {
+                         ReviewStatusEnum status,Long reservationId) {
         this.userId = userId;
         this.type = type;
         this.comment = comment;
@@ -33,6 +35,15 @@ public class ReviewPostDTO {//Review model without id, and dateTime
         this.accommodationId = accommodationId;
         this.ownerId = ownerId;
         this.status=status;
+        this.reservationId=reservationId;
+    }
+
+    public Long getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
     }
 
     public ReviewStatusEnum getStatus() {

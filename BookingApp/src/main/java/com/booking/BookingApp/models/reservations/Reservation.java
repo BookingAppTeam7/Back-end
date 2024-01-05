@@ -37,48 +37,48 @@ public class Reservation {
 
     public Long numberOfGuests;
 
-//    public double price;
-//    @Enumerated(EnumType.STRING)
-//    public PriceTypeEnum priceType;
+    public double price;
+    @Enumerated(EnumType.STRING)
+    public PriceTypeEnum priceType;
 
 
     public Reservation(){}
 
-    public Reservation(Long id, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation, Long numberOfGuests, User user) {
+   // public Reservation(Long id, TimeSlot timeSlot,ReservationStatusEnum status, Accommodation accommodation, Long numberOfGuests, User user) {
+  //      this.id = id;
+  //      this.timeSlot=timeSlot;
+  //      this.status=status;
+   //     this.accommodation=accommodation;
+  //      this.numberOfGuests=numberOfGuests;
+  //      this.user=user;
+  //  }
+
+    public Reservation(Long id, Accommodation accommodation, User user, TimeSlot timeSlot, ReservationStatusEnum status, Long numberOfGuests, double price, PriceTypeEnum priceType) {
         this.id = id;
-        this.timeSlot=timeSlot;
-        this.status=status;
-        this.accommodation=accommodation;
-        this.numberOfGuests=numberOfGuests;
-        this.user=user;
+        this.accommodation = accommodation;
+        this.user = user;
+        this.timeSlot = timeSlot;
+        this.status = status;
+        this.numberOfGuests = numberOfGuests;
+        this.price = price;
+        this.priceType = priceType;
     }
 
-//    public Reservation(Long id, Accommodation accommodation, User user, TimeSlot timeSlot, ReservationStatusEnum status, Long numberOfGuests, double price, PriceTypeEnum priceType) {
-//        this.id = id;
-//        this.accommodation = accommodation;
-//        this.user = user;
-//        this.timeSlot = timeSlot;
-//        this.status = status;
-//        this.numberOfGuests = numberOfGuests;
-//        this.price = price;
-//        this.priceType = priceType;
-//    }
+    public double getPrice() {
+        return price;
+    }
 
-//    public double getPrice() {
-//        return price;
-//    }
-//
-//    public void setPrice(double price) {
-//        this.price = price;
-//    }
-//
-//    public PriceTypeEnum getPriceType() {
-//        return priceType;
-//    }
-//
-//    public void setPriceType(PriceTypeEnum priceType) {
-//        this.priceType = priceType;
-//    }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public PriceTypeEnum getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(PriceTypeEnum priceType) {
+        this.priceType = priceType;
+    }
 
     public User getUser() {
         return user;

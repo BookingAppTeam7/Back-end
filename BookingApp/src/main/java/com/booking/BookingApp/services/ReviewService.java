@@ -7,14 +7,17 @@ import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.ReviewEnum;
+import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IReviewRepository;
+import com.booking.BookingApp.repositories.IReservationRepository;
 import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,6 +30,10 @@ public class ReviewService implements IReviewService{
     public IUserRepository userRepository;
     @Autowired
     public IAccommodationRepository accommodationRepository;
+    
+    //public ReservationService reservationService;
+  @Autowired
+  public ReservationRepository reservationRepository;
     private static AtomicLong counter=new AtomicLong();
     @Override
     public List<Review> findAll() {
@@ -40,10 +47,32 @@ public class ReviewService implements IReviewService{
 
     @Override
     public Optional<Review> create(ReviewPostDTO newReview) throws Exception {
-        Review review=new Review(newReview.userId,newReview.type,newReview.comment,newReview.grade,newReview.dateTime,
-                false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
-        reviewRepository.save(review);
-        return  Optional.of(review);
+        if(newReview.type.equals(ReviewEnum.ACCOMMODATION)){
+            Optional<Reservation> res=reservationRepository.findById(newReview.reservationId);
+            Reservation reservation=res.get();
+            Date endDate = reservation.getTimeSlot().endDate;
+            Date sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+            if (endDate.before(new Date()) && endDate.after(sevenDaysAgo) && newReview.type.equals(ReviewEnum.ACCOMMODATION)) {
+                // Trenutni datum je unutar 7 dana od završetka rezervacije
+                Review review=new Review(newReview.userId,newReview.type,newReview.comment,newReview.grade,newReview.dateTime,
+                        false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
+                reviewRepository.save(review);
+                return  Optional.of(review);
+
+            } else {
+                // Rok za postavljanje komentara i ocene je istekao
+                return null;
+
+            }
+        }else{
+            Review review=new Review(newReview.userId,newReview.type,newReview.comment,newReview.grade,newReview.dateTime,
+                    false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
+            reviewRepository.save(review);
+            return  Optional.of(review);
+        }
+
     }
 
     @Override
