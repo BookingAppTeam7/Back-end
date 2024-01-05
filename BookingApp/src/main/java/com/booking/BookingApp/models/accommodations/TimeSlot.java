@@ -67,4 +67,15 @@ public class TimeSlot {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    public boolean overlapsWith(TimeSlot other) {
+        return (this.startDate.before(other.endDate) || this.startDate.equals(other.endDate)) && (this.endDate.after(other.startDate)|| this.endDate.equals(other.startDate));
+    }
+
+    // Merge two overlapping time slots into a new time slot
+    public TimeSlot mergeWith(TimeSlot other) {
+        Date mergedStart = this.startDate.before(other.startDate) ? this.startDate : other.startDate;
+        Date mergedEnd = this.endDate.after(other.endDate) ? this.endDate : other.endDate;
+        return new TimeSlot(mergedStart, mergedEnd, false);
+    }
 }
