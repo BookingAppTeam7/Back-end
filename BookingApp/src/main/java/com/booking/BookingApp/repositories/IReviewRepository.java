@@ -10,4 +10,7 @@ import java.util.Optional;
 @Repository
 public interface IReviewRepository extends JpaRepository<Review,Long> {
 
+    List<Review> findByOwnerId(String ownerId);
+    List<Review> findByAccommodationId(Long accommodationId);
+
 }

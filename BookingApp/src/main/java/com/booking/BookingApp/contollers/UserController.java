@@ -1,5 +1,6 @@
 package com.booking.BookingApp.contollers;
 
+import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
@@ -131,4 +132,14 @@ public class UserController {
         //System.out.println("USAO U FIND USERNAME JE --> " +username);
         return userService.findUserById(username);
     }
+
+    @GetMapping(value="role/{role}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<User>> findByRole(@PathVariable RoleEnum role){
+        List<User> result=userService.findByRole(role);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+
 }

@@ -63,4 +63,19 @@ public class ReviewController {
         reviewService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping(value="owner/{ownerId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Review>> findByOwnerId(@PathVariable String ownerId){
+        List<Review> result=reviewService.findByOwnerId(ownerId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping(value="accommodation/{accommodationId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<Review>> findByAccommodationId(@PathVariable Long accommodationId){
+        List<Review> result=reviewService.findByAccommodationId(accommodationId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
 }

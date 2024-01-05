@@ -14,4 +14,7 @@ public interface IReviewService {
     Optional<Review> create(ReviewPostDTO newReview) throws Exception;
     Review update(ReviewPutDTO review, Long id);
     void delete(Long id);
+
+    List<Review> findByOwnerId(String ownerId);
+    List<Review> findByAccommodationId(Long accommodationId);
 }

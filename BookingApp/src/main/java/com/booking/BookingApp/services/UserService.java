@@ -103,6 +103,11 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public List<User> findByRole(RoleEnum role) {
+        return userRepository.findByRole(role);
+    }
+
+    @Override
     public Optional<User> create(UserPostDTO newUser) throws Exception {
 
         String token = jwtTokenUtil.generateToken(newUser.getUsername());

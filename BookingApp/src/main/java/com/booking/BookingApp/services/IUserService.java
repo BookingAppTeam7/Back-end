@@ -1,5 +1,6 @@
 package com.booking.BookingApp.services;
 
+import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPostDTO;
@@ -20,4 +21,6 @@ public interface IUserService {
     Optional<User> findByToken(String token);
     Optional<User> save(User user);
     User findUserById(String username);
+
+    List<User> findByRole(RoleEnum role);
 }
