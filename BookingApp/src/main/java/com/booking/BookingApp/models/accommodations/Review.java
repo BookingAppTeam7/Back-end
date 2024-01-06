@@ -53,6 +53,20 @@ public class Review {
         this.reported = reported;
         this.status=status;
     }
+    public Review( Long id,String userId, ReviewEnum type, String comment, int grade, LocalDateTime dateTime, Boolean deleted, Long accommodationId, String ownerId, Boolean reported,
+                   ReviewStatusEnum status) {
+        this.id=id;
+        this.userId = userId;
+        this.type = type;
+        this.comment = comment;
+        this.grade = grade;
+        this.dateTime = dateTime;
+        this.deleted = deleted;
+        this.accommodationId = accommodationId;
+        this.ownerId = ownerId;
+        this.reported = reported;
+        this.status=status;
+    }
 
     public Review() {
 

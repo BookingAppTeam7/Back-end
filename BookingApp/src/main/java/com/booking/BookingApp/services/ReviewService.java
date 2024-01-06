@@ -77,8 +77,7 @@ public class ReviewService implements IReviewService{
 
     @Override
     public Review update(ReviewPutDTO updatedReview, Long id)  {
-
-        Review result=new Review(updatedReview.userId,updatedReview.type,updatedReview.comment,updatedReview.grade,
+        Review result=new Review(id,updatedReview.userId,updatedReview.type,updatedReview.comment,updatedReview.grade,
                 updatedReview.dateTime
         ,updatedReview.deleted,updatedReview.accommodationId, updatedReview.ownerId,updatedReview.reported,updatedReview.status);
 
