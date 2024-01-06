@@ -1,6 +1,7 @@
 package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
+import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
@@ -13,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,5 +128,33 @@ public class ReservationController {
                     .body(Collections.singletonMap("error",e.getMessage()));
         }
 
+    }
+    @GetMapping(value="/searchFilter",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<List<Reservation>> searchFilter(
+            @RequestParam(required = false) String accName,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(required = false) ReservationStatusEnum status
+            ){
+        System.out.println(accName);
+        System.out.println(startDate);
+        System.out.println(endDate);
+        System.out.println(status);
+
+        try{
+            Date arrival = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startDate);
+            Date checkout = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate);
+
+            if (checkout.before(arrival)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            List<Reservation> reservations=reservationService.searchFilter(accName,arrival,checkout,status);
+            return new ResponseEntity<>(reservations,HttpStatus.OK);
+        }catch (ParseException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

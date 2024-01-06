@@ -258,4 +258,17 @@ public class ReservationService implements IReservationService{
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.CANCELLED);
 
     }
+    @Override
+    public List<Reservation> searchFilter(String accName, Date startDate, Date endDate, ReservationStatusEnum status){
+        List<Reservation> ret=new ArrayList<>();
+        List<Reservation> all=findAll();
+        for(Reservation r:all){
+            boolean accNameMatches=accName==null || accName.isEmpty() || r.accommodation.name.equalsIgnoreCase(accName);
+            boolean statusMatches=status==null || r.status.equals(status);
+            if(accNameMatches && statusMatches && !startDate.after(r.timeSlot.startDate) && !endDate.before(r.timeSlot.endDate)){
+                ret.add(r);
+            }
+        }
+        return ret;
+    }
 }
