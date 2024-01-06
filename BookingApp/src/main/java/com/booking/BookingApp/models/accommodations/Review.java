@@ -4,10 +4,17 @@ import com.booking.BookingApp.models.enums.ReviewEnum;
 import com.booking.BookingApp.models.enums.ReviewStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 @Entity
+@SQLDelete(sql
+        = "UPDATE review "
+        + "SET deleted = true "
+        + "WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +42,20 @@ public class Review {
     public Review( String userId, ReviewEnum type, String comment, int grade, LocalDateTime dateTime, Boolean deleted, Long accommodationId, String ownerId, Boolean reported,
                    ReviewStatusEnum status) {
 
+        this.userId = userId;
+        this.type = type;
+        this.comment = comment;
+        this.grade = grade;
+        this.dateTime = dateTime;
+        this.deleted = deleted;
+        this.accommodationId = accommodationId;
+        this.ownerId = ownerId;
+        this.reported = reported;
+        this.status=status;
+    }
+    public Review( Long id,String userId, ReviewEnum type, String comment, int grade, LocalDateTime dateTime, Boolean deleted, Long accommodationId, String ownerId, Boolean reported,
+                   ReviewStatusEnum status) {
+        this.id=id;
         this.userId = userId;
         this.type = type;
         this.comment = comment;
