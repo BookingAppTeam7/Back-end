@@ -149,14 +149,15 @@ public class ReservationService implements IReservationService{
     }
 
     @Override
-    public List<ReservationGetDTO> findByGuestId(String username){
-        List<Reservation> reservations=reservationRepository.findByUserUsername(username);
-        List<ReservationGetDTO> result=new ArrayList<>();
-
-        for(Reservation r:reservations){
-            result.add(new ReservationGetDTO(r.id,r.accommodation.id,r.timeSlot,r.status,r.numberOfGuests));
-        }
-        return result;
+    public List<Reservation> findByGuestId(String username){
+        return reservationRepository.findByUserUsername(username);
+//        List<Reservation> reservations=reservationRepository.findByUserUsername(username);
+//        List<ReservationGetDTO> result=new ArrayList<>();
+//
+//        for(Reservation r:reservations){
+//            result.add(new ReservationGetDTO(r.id,r.accommodation.id,r.timeSlot,r.status,r.numberOfGuests));
+//        }
+//        return result;
     }
 
     @Override

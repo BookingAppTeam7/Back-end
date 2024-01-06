@@ -20,7 +20,7 @@ public interface IReservationService {
     void delete(Long id);
     List<Reservation> findByAccommodationId(Long id);
     void confirmReservation(Long reservationId) throws Exception;
-    List<ReservationGetDTO> findByGuestId(String username);
+    List<Reservation> findByGuestId(String username);
 
     void rejectReservation(Long reservationId) throws Exception;
     void cancelReservation(Long reservationId) throws Exception;
