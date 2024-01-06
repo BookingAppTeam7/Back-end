@@ -5,6 +5,7 @@ import com.booking.BookingApp.exceptions.ValidationException;
 import com.booking.BookingApp.models.accommodations.Accommodation;
 import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
+import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
@@ -12,6 +13,7 @@ import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 import com.booking.BookingApp.models.users.User;
+import com.booking.BookingApp.repositories.IPriceCardRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class ReservationService implements IReservationService{
 
     @Autowired
     private AccommodationService accommodationService=new AccommodationService();
+
+    @Autowired
+    private IPriceCardRepository priceCardRepository;
     private UserService userService=new UserService();
     @Autowired
     public ReservationService(AccommodationService accommodationService,UserService userService) {
@@ -181,6 +186,75 @@ public class ReservationService implements IReservationService{
         if(reservation.status.equals(ReservationStatusEnum.PENDING))
             throw new Exception("Reservation is not already approved/rejected!");
 
+        //oslobadjanje termina
+
+        boolean updatedExistingPriceCard=false;
+
+        Optional<Accommodation> accommodation=accommodationService.findById(reservation.accommodation.id);
+        List<PriceCard> prices=accommodation.get().prices;
+
+        for (PriceCard p : prices) {
+            TimeSlot existingTimeSlot = p.timeSlot;
+
+            if (existingTimeSlot.overlapsWith(reservation.timeSlot)) {
+                // Overlapping time slots, update the existing price card
+                p.timeSlot = existingTimeSlot.mergeWith(reservation.timeSlot);
+                priceCardRepository.saveAndFlush(p);
+                updatedExistingPriceCard = true;
+                break;
+            }
+        }
+
+        if (!updatedExistingPriceCard) {
+            // No overlapping time slots found, create a new price card
+            TimeSlot newTimeSlot = new TimeSlot(reservation.timeSlot.startDate, reservation.timeSlot.endDate, false);
+            PriceCard newPriceCard = new PriceCard(newTimeSlot, reservation.price, reservation.priceType, false);
+            PriceCard savedPriceCard = priceCardRepository.save(newPriceCard);
+            prices.add(savedPriceCard);
+        }
+
+//        for(PriceCard p:prices){
+//            if(p.timeSlot.endDate.equals(reservation.timeSlot.startDate)){
+//                p.timeSlot.endDate=reservation.timeSlot.endDate;
+//                priceCardRepository.saveAndFlush(p);
+//                break;
+//
+//            }
+//
+//            else if(p.timeSlot.startDate.equals(reservation.timeSlot.endDate)){
+//                p.timeSlot.startDate=reservation.timeSlot.startDate;
+//                priceCardRepository.saveAndFlush(p);
+//                break;
+//            }
+//            else if(reservation.timeSlot.startDate.before(p.timeSlot.startDate) && reservation.timeSlot.endDate.before(p.timeSlot.endDate) && reservation.timeSlot.endDate.after(p.timeSlot.startDate)){
+//                p.timeSlot.startDate=reservation.timeSlot.startDate;
+//                priceCardRepository.saveAndFlush(p);
+//                break;
+//
+//            }
+//            else if(reservation.timeSlot.startDate.before(p.timeSlot.startDate) && reservation.timeSlot.endDate.after(p.timeSlot.endDate) && reservation.timeSlot.endDate.after(p.timeSlot.startDate)){
+//                p.timeSlot.startDate=reservation.timeSlot.startDate;
+//                p.timeSlot.endDate=reservation.timeSlot.endDate;
+//                priceCardRepository.saveAndFlush(p);
+//                break;
+//
+//            }
+//            else if(p.timeSlot.startDate.before(reservation.timeSlot.startDate) && p.timeSlot.endDate.after(reservation.timeSlot.endDate) && p.timeSlot.endDate.after(reservation.timeSlot.endDate) && reservation.timeSlot.endDate.after(p.timeSlot.startDate)) {
+//                //datum upada u postojeci
+//                break;
+//
+//            }
+//            else {
+//                TimeSlot timeSlot=new TimeSlot(reservation.timeSlot.startDate,reservation.timeSlot.endDate,false);
+//                PriceCard priceCard=new PriceCard(timeSlot,reservation.price,reservation.priceType,false);
+//                PriceCard newPriceCard=priceCardRepository.save(priceCard);
+//                prices.add(newPriceCard);
+//
+//                break;
+//
+//            }
+
+        //}
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.CANCELLED);
 
     }

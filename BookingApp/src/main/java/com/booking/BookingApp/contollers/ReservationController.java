@@ -82,7 +82,7 @@ public class ReservationController {
         return new ResponseEntity<Reservation>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(value="accommodation/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/accommodation/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_GUEST')")
     public ResponseEntity<List<Reservation>> findByAccommodationId(@PathVariable Long id){
@@ -91,7 +91,7 @@ public class ReservationController {
         return new ResponseEntity<>(result,HttpStatus.OK );
     }
 
-    @GetMapping(value="user/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/user/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_GUEST')")
     public ResponseEntity<List<ReservationGetDTO>> findByGuestId(@PathVariable String username){
@@ -100,7 +100,7 @@ public class ReservationController {
         return new ResponseEntity<>(result,HttpStatus.OK );
     }
 
-    @PutMapping(value="/reject/{id}")
+    @PutMapping(value="reject/{id}")
     @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<?> rejectReservation(@PathVariable Long id) {
         try{
@@ -113,7 +113,7 @@ public class ReservationController {
 
     }
 
-    @PutMapping(value="/cancel/{id}")
+    @PutMapping(value="cancel/{id}")
     @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<?> cancelReservation(@PathVariable Long id) {
         try{
