@@ -1,12 +1,14 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
+import com.booking.BookingApp.models.accommodations.AccommodationRequest;
 import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.ReviewEnum;
+import com.booking.BookingApp.models.enums.ReviewStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IAccommodationRepository;
@@ -125,4 +127,21 @@ public class ReviewService implements IReviewService{
         }
         return  res;
     }
+
+    @Override
+    public List<Review> findByOwnerIdAndStatus(String ownerId, ReviewStatusEnum status) {
+        return reviewRepository.findByOwnerIdAndStatus(ownerId,status);
+    }
+
+    @Override
+    public List<Review> findByAccommodationIdAndStatus(Long accommodationId, ReviewStatusEnum status) {
+        return reviewRepository.findByAccommodationIdAndStatus(accommodationId,status);
+    }
+
+    @Override
+    public int updateStatus(Long reviewId, ReviewStatusEnum status) {
+        return reviewRepository.updateStatus(reviewId,status);
+    }
+
+
 }
