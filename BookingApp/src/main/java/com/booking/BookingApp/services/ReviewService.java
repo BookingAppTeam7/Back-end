@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +99,15 @@ public class ReviewService implements IReviewService{
         if(!user.isPresent()){
             throw new IllegalArgumentException("User not found!");
         }
-        return reviewRepository.findByOwnerId(ownerId);
+       List<Review> reviews=reviewRepository.findByOwnerId(ownerId);
+        List<Review> res=new ArrayList<>();
+        for(Review review: reviews){
+            if(review.type.equals(ReviewEnum.OWNER)){
+                res.add(review);
+            }
+        }
+        return  res;
+
     }
 
     @Override
@@ -107,6 +116,13 @@ public class ReviewService implements IReviewService{
         if(!accommodation.isPresent()){
             throw new IllegalArgumentException("Accommodation not found!");
         }
-        return reviewRepository.findByAccommodationId(accommodationId);
+        List<Review> reviews= reviewRepository.findByAccommodationId(accommodationId);
+        List<Review> res=new ArrayList<>();
+        for(Review review: reviews){
+            if(review.type.equals(ReviewEnum.ACCOMMODATION)){
+                res.add(review);
+            }
+        }
+        return  res;
     }
 }
