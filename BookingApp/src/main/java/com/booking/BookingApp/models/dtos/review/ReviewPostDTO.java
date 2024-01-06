@@ -37,7 +37,9 @@ public class ReviewPostDTO {//Review model without id, and dateTime
         this.status=status;
         this.reservationId=reservationId;
     }
-
+    public ReviewPostDTO(){
+        
+    }
     public Long getReservationId() {
         return reservationId;
     }
