@@ -7,6 +7,7 @@ import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
+import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.enums.ReviewEnum;
 import com.booking.BookingApp.models.enums.ReviewStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
@@ -142,6 +143,5 @@ public class ReviewService implements IReviewService{
     public int updateStatus(Long reviewId, ReviewStatusEnum status) {
         return reviewRepository.updateStatus(reviewId,status);
     }
-
 
 }
