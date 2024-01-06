@@ -18,12 +18,12 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne
     @JoinColumn(name = "accommodation_id")
     public Accommodation accommodation;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     public User user;
