@@ -19,4 +19,6 @@ public interface IUserReportRepository extends JpaRepository<UserReport,Long> {
     @Query("UPDATE UserReport ur SET ur.done = true WHERE ur.id = :reportId")
     int updateDone(@Param("reportId") Long reportId);
 
+    List<UserReport> findByUserThatIsReported(String userId);
+
 }

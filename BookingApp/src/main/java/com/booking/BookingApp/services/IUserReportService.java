@@ -14,4 +14,6 @@ public interface IUserReportService {
 
     UserReport report(Long requestId);
     UserReport ignore(Long requestId);
+
+    List<UserReport> findByUser(String userId);
 }

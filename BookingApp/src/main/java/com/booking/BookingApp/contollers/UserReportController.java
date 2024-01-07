@@ -34,7 +34,7 @@ public class UserReportController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-   //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserReport>> findAll(){
         List<UserReport> requests=userReportService.findAll();
         return new ResponseEntity<>(requests, HttpStatus.OK);
@@ -61,7 +61,7 @@ public class UserReportController {
 
     @PutMapping(value = "/ignore/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserReport> ignoreReport(
             @PathVariable("id") Long requestId) {
         try {
@@ -75,6 +75,14 @@ public class UserReportController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value="user/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<UserReport>> findByUser(@PathVariable ("id") String userId){
+        List<UserReport> requests=userReportService.findByUser(userId);
+        return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
 

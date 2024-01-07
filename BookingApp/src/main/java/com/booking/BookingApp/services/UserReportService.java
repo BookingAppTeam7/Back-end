@@ -104,4 +104,14 @@ public class UserReportService implements  IUserReportService{
         return userReportRepository.getById(requestId);
     }
 
+    @Override
+    public List<UserReport> findByUser(String userId) {
+        Optional<User> user=userRepository.findById(userId);
+        if(!user.isPresent()){
+            return  null;
+        }
+
+        return userReportRepository.findByUserThatIsReported(userId);
+    }
+
 }
