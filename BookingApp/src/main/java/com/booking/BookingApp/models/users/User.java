@@ -35,7 +35,8 @@ public class User {
     public StatusEnum status;
     @Column(name = "deleted",columnDefinition = "boolean default false")
     private Boolean deleted;
-
+    @Column(name = "reported",columnDefinition = "boolean default false")
+    private Boolean reported;
     @Column(nullable = true,columnDefinition = "boolean default false")
     public Boolean reservationRequestNotification=false;
     @Column(nullable = true,columnDefinition = "boolean default false")
@@ -59,7 +60,7 @@ public class User {
     //public List<Reservation> reservations;
 
     public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
-                Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted) {
+                Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted,Boolean reported) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -76,6 +77,7 @@ public class User {
         //this.reservations=reservations;
         this.token=token;
         this.deleted=deleted;
+        this.reported=reported;
 
     }
 
@@ -110,7 +112,14 @@ public class User {
 
     }
 
-   // public Long getId() {
+    public Boolean getReported() {
+        return reported;
+    }
+
+    public void setReported(Boolean reported) {
+        this.reported = reported;
+    }
+// public Long getId() {
        // return id;
     //}
 
