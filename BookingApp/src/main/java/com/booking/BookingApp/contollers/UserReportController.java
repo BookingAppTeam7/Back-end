@@ -79,7 +79,7 @@ public class UserReportController {
 
     @GetMapping(value="user/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserReport>> findByUser(@PathVariable ("id") String userId){
         List<UserReport> requests=userReportService.findByUser(userId);
         return new ResponseEntity<>(requests, HttpStatus.OK);
