@@ -31,7 +31,7 @@ public class ReservationController {
     private IAccommodationService accommodationService;
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_OWNER')")
     public ResponseEntity<List<Reservation>> findAll(){
         List<Reservation> reservations=reservationService.findAll();
         return new ResponseEntity<List<Reservation>>(reservations, HttpStatus.OK);
