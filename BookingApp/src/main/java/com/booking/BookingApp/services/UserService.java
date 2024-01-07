@@ -114,7 +114,7 @@ public class UserService implements IUserService{
         userValidatorService.validatePost(newUser);
         //Long newId= (Long) counter.incrementAndGet()
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
-                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted);
+                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted,false);
         createdUser.setPassword(passwordEncoder.encode(createdUser.password));
         return Optional.of(userRepository.save(createdUser));
     }
@@ -125,7 +125,7 @@ public class UserService implements IUserService{
         Optional<UserGetDTO> updatedUserRole=findById(username);
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUserRole.get().role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
-                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted);
+                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted,updatedUser.reported);
         result.setPassword(passwordEncoder.encode(result.password));
         return userRepository.saveAndFlush(result);
     }

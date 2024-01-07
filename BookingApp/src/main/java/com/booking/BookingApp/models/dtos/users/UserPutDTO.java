@@ -31,12 +31,13 @@ public class UserPutDTO { //User model without id
     //guest
     public Boolean ownerRepliedToRequestNotification;
     public Boolean deleted;
+    public Boolean reported;
     public String token;
 
     public UserPutDTO(String firstName, String lastName, String password, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
                       Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
                       Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,
-                       String token, Boolean deleted) {
+                       String token, Boolean deleted,Boolean reported) {
         this.firstName = firstName;
         this.lastName = lastName;
       //  this.username = username;
@@ -52,6 +53,7 @@ public class UserPutDTO { //User model without id
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
        this.token=token;
         this.deleted=deleted;
+        this.reported=reported;
     }
 
     public Boolean getReservationRequestNotification() {
