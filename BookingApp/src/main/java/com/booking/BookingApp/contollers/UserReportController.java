@@ -44,7 +44,7 @@ public class UserReportController {
     @PutMapping(value = "/report/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<UserReport> reportUser(
+    public ResponseEntity<UserReport> deactivation(
             @PathVariable("id") Long requestId) {
         try {
             Optional<UserReport> result = Optional.ofNullable(userReportService.report(requestId));
