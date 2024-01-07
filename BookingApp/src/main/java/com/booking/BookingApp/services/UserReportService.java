@@ -6,10 +6,12 @@ import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
+import com.booking.BookingApp.models.enums.StatusEnum;
 import com.booking.BookingApp.models.reports.UserReport;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IUserReportRepository;
+import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class UserReportService implements  IUserReportService{
 
     @Autowired
     public IUserReportRepository userReportRepository;
+    @Autowired
+    public IUserRepository userRepository;
     @Autowired
     public IUserService userService;
     @Autowired
@@ -61,4 +65,43 @@ public class UserReportService implements  IUserReportService{
         }
         return  null;
     }
+
+    @Override
+    public List<UserReport> findAll() {
+        return userReportRepository.findAll();
+    }
+
+    @Override
+    public UserReport report(Long requestId) {
+        Optional<UserReport> report=userReportRepository.findById(requestId);
+        if(!report.isPresent()){
+            return null;
+        }
+        Optional<User> userToReport=userRepository.findById(report.get().getUserThatIsReported());
+        if(!userToReport.isPresent()){
+            return null;
+        }
+
+        userRepository.updateStatus(userToReport.get().username,StatusEnum.DEACTIVE);
+        userReportRepository.updateDone(requestId);
+
+        return userReportRepository.getById(requestId);
+    }
+
+    @Override
+    public UserReport ignore(Long requestId) {
+        Optional<UserReport> report=userReportRepository.findById(requestId);
+        if(!report.isPresent()){
+            return null;
+        }
+        Optional<User> userToReport=userRepository.findById(report.get().getUserThatIsReported());
+        if(!userToReport.isPresent()){
+            return null;
+        }
+
+        userReportRepository.updateDone(requestId);
+
+        return userReportRepository.getById(requestId);
+    }
+
 }

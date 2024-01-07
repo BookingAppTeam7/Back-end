@@ -37,6 +37,10 @@ public class UserReport {
         this.done=done;
     }
 
+    public UserReport() {
+
+    }
+
 //    public UserReport() {
 //
 //    }
