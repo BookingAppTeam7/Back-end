@@ -43,7 +43,7 @@ public class UserReportController {
 
     @PutMapping(value = "/report/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-   // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserReport> deactivation(
             @PathVariable("id") Long requestId) {
         try {
