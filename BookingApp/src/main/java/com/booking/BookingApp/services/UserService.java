@@ -75,7 +75,7 @@ public class UserService implements IUserService{
             resultDTO.add(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),
                     u.getPhoneNumber(),u.getStatus(),u.getDeleted(),u.getReservationRequestNotification(),
                     u.getReservationCancellationNotification(),u.getOwnerRatingNotification(),u.getAccommodationRatingNotification()
-                    ,u.getOwnerRepliedToRequestNotification(),u.getToken(),u.getJwt()));
+                    ,u.getOwnerRepliedToRequestNotification(),u.getToken(),u.getJwt(),u.getFavouriteAccommodations()));
         }
         return resultDTO;
     }
@@ -88,7 +88,7 @@ public class UserService implements IUserService{
             return Optional.of(new UserGetDTO(u.getFirstName(),u.getLastName(),u.getUsername(),u.getRole(),u.getAddress(),
                     u.getPhoneNumber(),u.getStatus(),u.getDeleted(),u.getReservationRequestNotification(),
                     u.getReservationCancellationNotification(),u.getOwnerRatingNotification(),u.getAccommodationRatingNotification()
-                    ,u.getOwnerRepliedToRequestNotification(),u.getToken(),u.getJwt()));
+                    ,u.getOwnerRepliedToRequestNotification(),u.getToken(),u.getJwt(),u.getFavouriteAccommodations()));
         }
         return null;
     }
@@ -114,7 +114,7 @@ public class UserService implements IUserService{
         userValidatorService.validatePost(newUser);
         //Long newId= (Long) counter.incrementAndGet()
         User createdUser=new User(newUser.firstName, newUser.lastName,newUser.username, newUser.password, newUser.role,newUser.address,newUser.phoneNumber, StatusEnum.DEACTIVE,newUser.reservationRequestNotification,
-                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted,false);
+                newUser.reservationCancellationNotification,newUser.ownerRatingNotification,newUser.accommodationRatingNotification,newUser.ownerRepliedToRequestNotification, token, newUser.deleted,false,"");
         createdUser.setPassword(passwordEncoder.encode(createdUser.password));
         return Optional.of(userRepository.save(createdUser));
     }
@@ -125,11 +125,48 @@ public class UserService implements IUserService{
         Optional<UserGetDTO> updatedUserRole=findById(username);
         User result=new User(updatedUser.firstName, updatedUser.lastName,username, updatedUser.password, updatedUserRole.get().role,updatedUser.address,updatedUser.phoneNumber, updatedUser.status,
                 updatedUser.reservationRequestNotification,updatedUser.reservationCancellationNotification,updatedUser.ownerRatingNotification,
-                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted,updatedUser.reported);
+                updatedUser.accommodationRatingNotification, updatedUser.ownerRepliedToRequestNotification, updatedUser.token, updatedUser.deleted,updatedUser.reported,updatedUser.favouriteAccommodations);
         result.setPassword(passwordEncoder.encode(result.password));
         return userRepository.saveAndFlush(result);
     }
+    @Override
+    public void addFavouriteAccommodation(String username, Long accId) throws Exception {
+        User user=findUserById(username);
+        if(user==null){
+            throw new Exception("Didn't find user by id");
+        }
+        Accommodation accommodation=accommodationRepository.findById(accId)
+                .orElseThrow(()->new RuntimeException("Accommodation not found with id: " + accId));
+        if(user.favouriteAccommodations.isEmpty()){
+            user.setFavouriteAccommodations(String.valueOf(accId));
+        }else{
+            user.setFavouriteAccommodations(user.favouriteAccommodations+","+ accId);
+        }
+        userRepository.save(user);
+    }
+    @Override
+    public void removeFavouriteAccommodation(String username, Long accId) throws Exception {
+        User user=findUserById(username);
+        if(user==null){
+            throw new Exception("Didn't find user by id");
+        }
+        Accommodation accommodation=accommodationRepository.findById(accId)
+                .orElseThrow(()->new RuntimeException("Accommodation not found with id: " + accId));
+        if(user.favouriteAccommodations.isEmpty()){
+            throw new Exception("User doesn't have any favourite accommodation");
+        }else{
+            String[] accommodations=user.favouriteAccommodations.split(",");
+            List<String> accommodationsList = new ArrayList<>(Arrays.asList(accommodations));
 
+            if (accommodationsList.contains(String.valueOf(accId))) {
+                accommodationsList.remove(String.valueOf(accId));
+            } else {
+                throw new Exception("Selected accommodation isn't in user's favourites");
+            }
+            user.setFavouriteAccommodations(String.join(",", accommodationsList));
+        }
+        userRepository.save(user);
+    }
     @Override
     public void delete(String username) throws Exception {
         //proveravamo dal moze

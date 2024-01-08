@@ -56,11 +56,13 @@ public class User {
     @Transient
     private String jwt;
 
+    public String favouriteAccommodations;
+
     //@OneToMany(cascade=CascadeType.ALL)
     //public List<Reservation> reservations;
 
     public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
-                Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted,Boolean reported) {
+                Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted,Boolean reported,String favouriteAccommodations) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -78,6 +80,7 @@ public class User {
         this.token=token;
         this.deleted=deleted;
         this.reported=reported;
+        this.favouriteAccommodations=favouriteAccommodations;
 
     }
 
@@ -110,6 +113,14 @@ public class User {
     }
     public User() {
 
+    }
+
+    public String getFavouriteAccommodations() {
+        return favouriteAccommodations;
+    }
+
+    public void setFavouriteAccommodations(String favouriteAccommodations) {
+        this.favouriteAccommodations = favouriteAccommodations;
     }
 
     public Boolean getReported() {

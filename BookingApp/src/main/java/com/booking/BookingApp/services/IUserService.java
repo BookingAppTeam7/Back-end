@@ -23,4 +23,6 @@ public interface IUserService {
     User findUserById(String username);
 
     List<User> findByRole(RoleEnum role);
+    void addFavouriteAccommodation(String username, Long accId) throws Exception;
+    void removeFavouriteAccommodation(String username, Long accId) throws Exception;
 }
