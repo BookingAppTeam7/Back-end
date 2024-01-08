@@ -82,6 +82,30 @@ public class UserController {
         return new ResponseEntity<>(result,HttpStatus.OK);
 
     }
+    @PutMapping(value="/addFavourite/{username}/{id}")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+    public ResponseEntity<?> addFavouriteAccommodation(@PathVariable String username, @PathVariable Long id){
+        try{
+            userService.addFavouriteAccommodation(username,id);
+            return  new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", e.getMessage()));
+        }
+    }
+    @PutMapping(value="/removeFavourite/{username}/{id}")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+    public ResponseEntity<?> removeFavouriteAccommodation(@PathVariable String username, @PathVariable Long id){
+        try{
+            userService.removeFavouriteAccommodation(username,id);
+            return  new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", e.getMessage()));
+        }
+    }
     @DeleteMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
@@ -104,7 +128,7 @@ public class UserController {
             user.setStatus(StatusEnum.ACTIVE);
             UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
                     user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
-                    user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false);
+                    user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false,user.getFavouriteAccommodations());
             userService.update(userPutDTO,user.username);
             return new ResponseEntity<>("Account activated successfully", HttpStatus.OK);
         } else {

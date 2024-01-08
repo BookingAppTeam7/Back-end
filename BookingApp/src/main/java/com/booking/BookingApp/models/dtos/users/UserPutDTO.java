@@ -33,11 +33,12 @@ public class UserPutDTO { //User model without id
     public Boolean deleted;
     public Boolean reported;
     public String token;
+    public String favouriteAccommodations;
 
     public UserPutDTO(String firstName, String lastName, String password, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification,
                       Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
                       Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,
-                       String token, Boolean deleted,Boolean reported) {
+                       String token, Boolean deleted,Boolean reported, String favouriteAccommodations) {
         this.firstName = firstName;
         this.lastName = lastName;
       //  this.username = username;
@@ -54,6 +55,15 @@ public class UserPutDTO { //User model without id
        this.token=token;
         this.deleted=deleted;
         this.reported=reported;
+        this.favouriteAccommodations=favouriteAccommodations;
+    }
+
+    public String getFavouriteAccommodations() {
+        return favouriteAccommodations;
+    }
+
+    public void setFavouriteAccommodations(String favouriteAccommodations) {
+        this.favouriteAccommodations = favouriteAccommodations;
     }
 
     public Boolean getReservationRequestNotification() {

@@ -14,7 +14,7 @@ public class Guest extends User{
 
     public Guest(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean
             ownerRatingNotification, Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification, String token,Boolean deleted, List<Accommodation> favoriteAccomodations) {
-        super(firstName, lastName, username, password, role, address, phoneNumber, status, reservationRequestNotification, reservationCancellationNotification, ownerRatingNotification, accommodationRatingNotification, ownerRepliedToRequestNotification,token,deleted,false);
+        super(firstName, lastName, username, password, role, address, phoneNumber, status, reservationRequestNotification, reservationCancellationNotification, ownerRatingNotification, accommodationRatingNotification, ownerRepliedToRequestNotification,token,deleted,false,"");
         this.favoriteAccomodations = favoriteAccomodations;
     }
 

@@ -44,10 +44,10 @@ public class UserGetDTO {  //User model without password
 //        this.token=token;
 //        this.jwt=jwt;
 //    }
-
+    public String favouriteAccommodations;
 
     public UserGetDTO(String firstName, String lastName, String username, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean deleted, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification, Boolean accommodationRatingNotification,
-                      Boolean ownerRepliedToRequestNotification,String token, String jwt) {
+                      Boolean ownerRepliedToRequestNotification,String token, String jwt, String favouriteAccommodations) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -64,6 +64,7 @@ public class UserGetDTO {  //User model without password
         this.ownerRepliedToRequestNotification = ownerRepliedToRequestNotification;
 
         this.jwt = jwt;
+        this.favouriteAccommodations=favouriteAccommodations;
     }
 
     public UserGetDTO() {
@@ -71,7 +72,13 @@ public class UserGetDTO {  //User model without password
     }
 
 
+    public String getFavouriteAccommodations() {
+        return favouriteAccommodations;
+    }
 
+    public void setFavouriteAccommodations(String favouriteAccommodations) {
+        this.favouriteAccommodations = favouriteAccommodations;
+    }
 
     public String getFirstName() {
         return firstName;
