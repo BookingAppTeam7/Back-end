@@ -72,7 +72,7 @@ public class UserReportService implements  IUserReportService{
     }
 
     @Override
-    public UserReport report(Long requestId) {
+    public UserReport report(Long requestId) throws Exception {
         Optional<UserReport> report=userReportRepository.findById(requestId);
         if(!report.isPresent()){
             return null;
@@ -80,6 +80,22 @@ public class UserReportService implements  IUserReportService{
         Optional<User> userToReport=userRepository.findById(report.get().getUserThatIsReported());
         if(!userToReport.isPresent()){
             return null;
+        }
+
+
+        //cancelling reservations for guest
+
+        if(userToReport.get().getRole()==RoleEnum.GUEST) {
+
+            List<Reservation> reservations = reservationService.findByGuestId(report.get().getUserThatIsReported());
+
+            if (!reservations.isEmpty()) {
+                for (Reservation r : reservations) {
+                    if (r.status == ReservationStatusEnum.APPROVED) {
+                        reservationService.cancelReservation(r.id);
+                    }
+                }
+            }
         }
 
         userRepository.updateStatus(userToReport.get().username,StatusEnum.DEACTIVE);

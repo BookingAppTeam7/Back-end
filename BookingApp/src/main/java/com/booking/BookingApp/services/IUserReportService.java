@@ -12,7 +12,7 @@ public interface IUserReportService {
     Optional<UserReport> create(UserReportPostDTO newUserReport) throws Exception;
     List<UserReport> findAll();
 
-    UserReport report(Long requestId);
+    UserReport report(Long requestId) throws Exception;
     UserReport ignore(Long requestId);
 
     List<UserReport> findByUser(String userId);
