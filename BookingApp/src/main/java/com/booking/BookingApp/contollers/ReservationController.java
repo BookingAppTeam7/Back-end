@@ -92,6 +92,7 @@ public class ReservationController {
     public ResponseEntity<List<Reservation>> findByAccommodationId(@PathVariable Long id){
         List<Reservation> result=reservationService.findByAccommodationId(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        System.out.println(result);
         return new ResponseEntity<>(result,HttpStatus.OK );
     }
 

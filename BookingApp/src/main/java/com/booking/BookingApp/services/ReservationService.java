@@ -187,6 +187,21 @@ public class ReservationService implements IReservationService{
         if(reservation.status.equals(ReservationStatusEnum.PENDING))
             throw new Exception("Reservation is not already approved/rejected!");
 
+        Date startDate = reservation.getTimeSlot().getStartDate();
+
+        if (startDate != null) {
+            Date currentDate = new Date();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startDate);
+            calendar.add(Calendar.DAY_OF_YEAR, -reservation.getAccommodation().getCancellationDeadline());
+            Date cancellationAllowedDate = calendar.getTime();
+
+            if (currentDate.after(cancellationAllowedDate)) {
+                throw new Exception("Cancellation deadline is passed!");
+            }
+        }
+
         //oslobadjanje termina
 
         boolean updatedExistingPriceCard=false;
