@@ -71,6 +71,11 @@ public class ReviewService implements IReviewService{
 
             }
         }else{
+            Optional<User> user=userRepository.findById(newReview.ownerId);
+
+            if(!user.isPresent()){
+                return  null;
+            }
             Review review=new Review(newReview.userId,newReview.type,newReview.comment,newReview.grade,newReview.dateTime,
                     false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
             reviewRepository.save(review);
