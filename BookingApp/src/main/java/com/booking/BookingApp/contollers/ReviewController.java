@@ -3,6 +3,8 @@ package com.booking.BookingApp.contollers;
 import com.booking.BookingApp.models.accommodations.AccommodationRequest;
 import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
+import com.booking.BookingApp.models.dtos.review.ReviewPostMobileAccommodationDTO;
+import com.booking.BookingApp.models.dtos.review.ReviewPostMobileDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.AccommodationRequestStatus;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,6 +146,34 @@ public class ReviewController {
     public ResponseEntity<Double> findAverageGradeByOwnerId(@PathVariable String username){
         double result=reviewService.findAverageGradeByOnwerId(username);
         return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+
+
+    @PostMapping(value="reviewsMobileApp",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Review> createMobileAppsOwner(@RequestBody ReviewPostMobileDTO newReviewMobile) throws Exception{
+        ReviewPostDTO newReview=new ReviewPostDTO(newReviewMobile.userId,newReviewMobile.type, newReviewMobile.comment,
+                newReviewMobile.grade, LocalDateTime.now(),false,false, newReviewMobile.accommodationId, newReviewMobile.ownerId,
+                newReviewMobile.status,0L);
+        Optional<Review> result=reviewService.create(newReview);
+        if(result==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
+    }
+
+    @PostMapping(value="accommodations/reviewsMobileApp",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Review> createMobileAppsAccommodation(@RequestBody ReviewPostMobileAccommodationDTO newReviewMobile) throws Exception{
+        ReviewPostDTO newReview=new ReviewPostDTO(newReviewMobile.userId,newReviewMobile.type, newReviewMobile.comment,
+                newReviewMobile.grade, LocalDateTime.now(),false,false, newReviewMobile.accommodationId, newReviewMobile.ownerId,
+                newReviewMobile.status,newReviewMobile.reservationId);
+        Optional<Review> result=reviewService.create(newReview);
+        if(result==null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
     }
 
 }

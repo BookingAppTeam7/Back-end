@@ -52,6 +52,7 @@ public class ReviewService implements IReviewService{
     @Override
     public Optional<Review> create(ReviewPostDTO newReview) throws Exception {
         if(newReview.type.equals(ReviewEnum.ACCOMMODATION)){
+            System.out.println("RES IDDDDD     "+ newReview.reservationId);
             Optional<Reservation> res=reservationRepository.findById(newReview.reservationId);
             Reservation reservation=res.get();
             Date endDate = reservation.getTimeSlot().endDate;
