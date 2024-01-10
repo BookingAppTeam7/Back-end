@@ -177,7 +177,6 @@ public class ReservationService implements IReservationService{
 
     @Override
     public void cancelReservation(Long reservationId) throws Exception {
-
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
         if(reservation.status.equals(ReservationStatusEnum.CANCELLED))
@@ -197,10 +196,13 @@ public class ReservationService implements IReservationService{
             calendar.add(Calendar.DAY_OF_YEAR, -reservation.getAccommodation().getCancellationDeadline());
             Date cancellationAllowedDate = calendar.getTime();
 
+
             if (currentDate.after(cancellationAllowedDate)) {
-                throw new Exception("Cancellation deadline is passed!");
+                return;
+//                throw new Exception("Cancellation deadline is passed!");
             }
         }
+
 
         //oslobadjanje termina
 

@@ -73,10 +73,12 @@ public class UserReportService implements  IUserReportService{
 
     @Override
     public UserReport report(Long requestId) throws Exception {
+
         Optional<UserReport> report=userReportRepository.findById(requestId);
         if(!report.isPresent()){
             return null;
         }
+
         Optional<User> userToReport=userRepository.findById(report.get().getUserThatIsReported());
         if(!userToReport.isPresent()){
             return null;
@@ -96,7 +98,8 @@ public class UserReportService implements  IUserReportService{
                     }
                 }
             }
-        }
+
+}
 
         userRepository.updateStatus(userToReport.get().username,StatusEnum.DEACTIVE);
         userReportRepository.updateDone(requestId);
