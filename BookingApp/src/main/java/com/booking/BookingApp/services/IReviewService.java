@@ -24,4 +24,6 @@ public interface IReviewService {
     List<Review> findByOwnerIdAndStatus(String ownerId, ReviewStatusEnum status);
     List<Review> findByAccommodationIdAndStatus(Long accommodationId, ReviewStatusEnum status);
     int updateStatus(Long reviewId, ReviewStatusEnum status);
+    double findAverageGradeByAccommodationId(Long accommodationId);
+    double findAverageGradeByOnwerId(String ownerUsername);
 }
