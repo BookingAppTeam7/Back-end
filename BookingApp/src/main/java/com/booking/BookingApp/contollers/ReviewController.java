@@ -2,6 +2,7 @@ package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.accommodations.AccommodationRequest;
 import com.booking.BookingApp.models.accommodations.Review;
+import com.booking.BookingApp.models.dtos.review.ReviewGetDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
@@ -16,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +132,58 @@ public class ReviewController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value="mobile/owner/{ownerId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<ReviewGetDTO>> getByOwnerId(@PathVariable String ownerId){
+        List<Review> result=reviewService.findByOwnerId(ownerId);
+        List<ReviewGetDTO>reviews=new ArrayList<ReviewGetDTO>();
+
+        for(Review r:result){
+            ReviewGetDTO newReview=new ReviewGetDTO();
+            newReview.setId(r.getId());
+            newReview.setDateTime(r.getDateTime().toString());
+            newReview.setComment(r.getComment());
+            newReview.setGrade(r.getGrade());
+            newReview.setUserId(r.getUserId());
+            newReview.setType(r.getType());
+            newReview.setOwnerId(r.getOwnerId());
+            newReview.setReported(r.getReported());
+            newReview.setAccommodationId(r.getAccommodationId());
+            newReview.setStatus(r.getStatus());
+
+            reviews.add(newReview);
+
+        }
+
+        return new ResponseEntity<>(reviews,HttpStatus.OK);
+    }
+
+    @GetMapping(value="mobile/accommodation/{accommodationId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<List<ReviewGetDTO>> getByAccommodationId(@PathVariable Long accommodationId){
+        List<Review> result=reviewService.findByAccommodationId(accommodationId);
+        List<ReviewGetDTO>reviews=new ArrayList<ReviewGetDTO>();
+
+        for(Review r:result){
+            ReviewGetDTO newReview=new ReviewGetDTO();
+            newReview.setId(r.getId());
+            newReview.setDateTime(r.getDateTime().toString());
+            newReview.setComment(r.getComment());
+            newReview.setGrade(r.getGrade());
+            newReview.setUserId(r.getUserId());
+            newReview.setType(r.getType());
+            newReview.setOwnerId(r.getOwnerId());
+            newReview.setReported(r.getReported());
+            newReview.setAccommodationId(r.getAccommodationId());
+            newReview.setStatus(r.getStatus());
+
+            reviews.add(newReview);
+
+        }
+
+        return new ResponseEntity<>(reviews,HttpStatus.OK);
     }
 
     @GetMapping(value="averageGradesAccommodations/{accommodationId}",produces = MediaType.APPLICATION_JSON_VALUE)
