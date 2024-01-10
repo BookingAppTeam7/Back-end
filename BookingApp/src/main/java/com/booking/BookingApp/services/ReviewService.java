@@ -144,4 +144,32 @@ public class ReviewService implements IReviewService{
         return reviewRepository.updateStatus(reviewId,status);
     }
 
+    @Override
+    public double findAverageGradeByAccommodationId(Long accommodationId) {
+        List<Review> reviews=reviewRepository.findByAccommodationIdAndStatus(accommodationId,ReviewStatusEnum.APPROVED);
+        double averageGrade=0.0;
+        int sum=0;
+        int numOfGrades=0;
+        for(Review rew:reviews){
+            sum+=rew.grade;
+            numOfGrades++;
+        }
+        averageGrade=sum/numOfGrades;
+        return  averageGrade;
+    }
+
+    @Override
+    public double findAverageGradeByOnwerId(String ownerUsername) {
+        List<Review> reviews=reviewRepository.findByOwnerIdAndStatus(ownerUsername,ReviewStatusEnum.APPROVED);
+        double averageGrade=0.0;
+        int sum=0;
+        int numOfGrades=0;
+        for(Review rew:reviews){
+            sum+=rew.grade;
+            numOfGrades++;
+        }
+        averageGrade=sum/numOfGrades;
+        return  averageGrade;
+    }
+
 }

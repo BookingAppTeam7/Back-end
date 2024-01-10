@@ -186,4 +186,19 @@ public class ReviewController {
         return new ResponseEntity<>(reviews,HttpStatus.OK);
     }
 
+    @GetMapping(value="averageGradesAccommodations/{accommodationId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Double> findAverageGradeByAccommodationId(@PathVariable Long accommodationId){
+        double result=reviewService.findAverageGradeByAccommodationId(accommodationId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+
+    @GetMapping(value="averageGradesOwners/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Double> findAverageGradeByOwnerId(@PathVariable String username){
+        double result=reviewService.findAverageGradeByOnwerId(username);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
 }
