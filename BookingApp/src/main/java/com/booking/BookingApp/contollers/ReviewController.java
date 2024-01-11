@@ -2,11 +2,7 @@ package com.booking.BookingApp.contollers;
 
 import com.booking.BookingApp.models.accommodations.AccommodationRequest;
 import com.booking.BookingApp.models.accommodations.Review;
-import com.booking.BookingApp.models.dtos.review.ReviewGetDTO;
-import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
-import com.booking.BookingApp.models.dtos.review.ReviewPostMobileAccommodationDTO;
-import com.booking.BookingApp.models.dtos.review.ReviewPostMobileDTO;
-import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
+import com.booking.BookingApp.models.dtos.review.*;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.AccommodationRequestStatus;
 import com.booking.BookingApp.models.enums.ReviewStatusEnum;
@@ -232,6 +228,17 @@ public class ReviewController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
+    }
+
+    @PutMapping(value="mobileApps/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<Review> update(@RequestBody ReviewPutMobileAppsDTO reviewMobile, @PathVariable Long id) throws Exception {
+        ReviewPutDTO review=new ReviewPutDTO(reviewMobile.userId,reviewMobile.type, reviewMobile.comment, reviewMobile.grade,
+                LocalDateTime.now(),reviewMobile.deleted,reviewMobile.reported, reviewMobile.accommodationId, reviewMobile.ownerId,reviewMobile.status);
+        Review result=reviewService.update(review,id);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        return new ResponseEntity<>(result,HttpStatus.OK);
+
     }
 
 }
