@@ -17,6 +17,7 @@ import com.booking.BookingApp.repositories.IPriceCardRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -34,6 +35,10 @@ public class ReservationService implements IReservationService{
     @Autowired
     private IPriceCardRepository priceCardRepository;
     private UserService userService=new UserService();
+
+    @Autowired
+
+    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     public ReservationService(AccommodationService accommodationService,UserService userService) {
         this.accommodationService = accommodationService;
@@ -59,6 +64,14 @@ public class ReservationService implements IReservationService{
     @Transactional
     @Override
     public void confirmReservation(Long reservationId) throws Exception {
+
+
+        this.simpMessagingTemplate.convertAndSend( "/socket-publisher/GOST@gmail.com","Successfully approved reservation in "+"reservation.accommodation.name"+" accommodation!");
+        System.out.println("***********************************************************************************************************************************************************************************************************");
+   //     System.out.println("/socket-publisher/"+reservation.user.username);
+        System.out.println("***********************************************************************************************************************************************************************************************************");
+        System.out.println("***********************************************************************************************************************************************************************************************************");
+
         System.out.println("USAO U CONFIRM RESERVATION");
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
@@ -67,15 +80,22 @@ public class ReservationService implements IReservationService{
         if(reservation.status.equals(ReservationStatusEnum.APPROVED))
             throw new Exception("Reservation already approved!");
         // Check if the reservation is available in the selected time slot
-        if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
-            reservation.setStatus(ReservationStatusEnum.APPROVED);
-            reservationRepository.save(reservation);
-            System.out.println("SAVEOVAO RESERVACIJE");
-            accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
-            System.out.println("EDITOVAO PRICE CARDS");
-        } else {
-            throw new Exception("Reservation not available in the selected time slot");
-        }
+//        if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
+//            reservation.setStatus(ReservationStatusEnum.APPROVED);
+//            reservationRepository.save(reservation);
+//            System.out.println("SAVEOVAO RESERVACIJE");
+//            accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
+//            System.out.println("EDITOVAO PRICE CARDS");
+//        } else {
+//            throw new Exception("Accommodation not available in the selected time slot");
+//        }
+
+      //  this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + reservation.user.username,"Successfully approved reservation in "+reservation.accommodation.name+" accommodation!");
+        System.out.println("***********************************************************************************************************************************************************************************************************");
+        System.out.println("/socket-publisher/"+reservation.user.username);
+        System.out.println("***********************************************************************************************************************************************************************************************************");
+        System.out.println("***********************************************************************************************************************************************************************************************************");
+
     }
     public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
         for (PriceCard priceCard : accommodation.prices) {

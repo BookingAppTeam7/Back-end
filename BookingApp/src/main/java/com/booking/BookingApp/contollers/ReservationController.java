@@ -5,12 +5,15 @@ import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
+import com.booking.BookingApp.models.users.Notification;
 import com.booking.BookingApp.services.IAccommodationService;
 import com.booking.BookingApp.services.IReservationService;
+import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ public class ReservationController {
     private IReservationService reservationService;
     @Autowired
     private IAccommodationService accommodationService;
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_OWNER')")
