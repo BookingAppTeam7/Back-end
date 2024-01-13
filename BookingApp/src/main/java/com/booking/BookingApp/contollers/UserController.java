@@ -8,7 +8,6 @@ import com.booking.BookingApp.models.dtos.users.UserPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.services.EmailService;
 import com.booking.BookingApp.services.IUserService;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,8 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
-import java.util.logging.Logger;
 
 
 @RestController
@@ -31,17 +31,16 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200") // Postavite odgovarajuću putanju do vaše Angular aplikacije
-     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    //@CrossOrigin(origins = "*") // Postavite odgovarajuću putanju do vaše Angular aplikacije
+    // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserGetDTO>> findAll(){
         List<UserGetDTO> users=userService.findAll();
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 
     @GetMapping(value="/username/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public Optional<UserGetDTO> findById(@PathVariable String username){
         System.out.println("USAO U FIND USERNAME JE --> " +username);
@@ -49,13 +48,15 @@ public class UserController {
     }
 
     @GetMapping(value="/token/{token}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "*")
 //    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public Optional<User> findByToken(@PathVariable String token){
+        System.out.println("USAO U FIND BY TOKEN");
         return userService.findByToken(token);
     }
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "*")
     public ResponseEntity<User> create(@RequestBody UserPostDTO newUser) throws Exception {
         Optional<UserGetDTO> optionalUser=userService.findById(newUser.username);
         if(optionalUser!=null){
@@ -74,7 +75,7 @@ public class UserController {
     }
 
     @PutMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "http://localhost:4200")
 //    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')") //svi ulogovanmi
     public ResponseEntity<User> update(@RequestBody UserPutDTO user, @PathVariable String username) throws Exception {
         User result=userService.update(user,username);
@@ -83,7 +84,7 @@ public class UserController {
 
     }
     @PutMapping(value="/addFavourite/{username}/{id}")
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<?> addFavouriteAccommodation(@PathVariable String username, @PathVariable Long id){
         try{
@@ -95,7 +96,7 @@ public class UserController {
         }
     }
     @PutMapping(value="/removeFavourite/{username}/{id}")
-    @CrossOrigin(origins = "http://localhost:4200")
+   // @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<?> removeFavouriteAccommodation(@PathVariable String username, @PathVariable Long id){
         try{
@@ -107,7 +108,7 @@ public class UserController {
         }
     }
     @DeleteMapping(value="/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public ResponseEntity<?> delete(@PathVariable String username) throws Exception {
         System.out.print("USAO U BRISANJEEE " + username);
@@ -121,22 +122,39 @@ public class UserController {
         //return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @GetMapping("/activate/{token}")
-    public ResponseEntity<String> activateAccount(@PathVariable String token) throws Exception {
-        Optional<User> optionalUser = userService.findByToken(token);
-        if (optionalUser.isPresent()) {
-            User user=optionalUser.get();
-            user.setStatus(StatusEnum.ACTIVE);
-            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
-                    user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
-                    user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false,user.getFavouriteAccommodations());
-            userService.update(userPutDTO,user.username);
-            return new ResponseEntity<>("Account activated successfully", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Invalid activation token", HttpStatus.NOT_FOUND);
+    //@CrossOrigin(origins = "*")//* znaci da dozvoljava sa svih stranica
+    public ResponseEntity<Map<String,String>> activateAccount(@PathVariable String token) throws Exception {
+        List<UserGetDTO> allUsers=userService.findAll();
+        for(UserGetDTO u:allUsers){
+            if(u.token.equals(token)){
+                User user=userService.findUserById(u.username);
+                user.setStatus(StatusEnum.ACTIVE);
+                UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
+                        user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
+                        user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false,user.getFavouriteAccommodations());
+                userService.update(userPutDTO,user.username);
+                return new ResponseEntity<>(Collections.singletonMap("message", "Account activated successfully"), HttpStatus.OK);
+            }
         }
+        return new ResponseEntity<>(Collections.singletonMap("message", "Invalid  token!"), HttpStatus.NOT_FOUND);
+
+//        Optional<User> optionalUser = userService.findByToken(token);
+//        System.out.println(token);
+//        if (optionalUser.isPresent()) {
+//            User user=optionalUser.get();
+//            user.setStatus(StatusEnum.ACTIVE);
+//            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
+//                    user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
+//                    user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false,user.getFavouriteAccommodations());
+//            userService.update(userPutDTO,user.username);
+//            return new ResponseEntity<>("Account activated successfully", HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("Invalid activation token", HttpStatus.NOT_FOUND);
+//        }
     }
-        public String generateActivationEmailBody(String userName, String activationLink) {
-        String fullActivationLink = "http://localhost:4200/activate/" + activationLink;
+    public String generateActivationEmailBody(String userName, String activationLink) throws UnknownHostException {
+        String hostAdress= InetAddress.getLocalHost().getHostAddress();
+        String fullActivationLink = "http://192.168.1.8:4200/activate/"+activationLink;////OVDE STAVITE SVOJU IP ADRESU
 
         return "<p>Dear <strong>" + userName + "</strong>,</p>\n" +
                 "<p>Thank you for choosing our service! We're excited to have you on board.</p>\n" +
@@ -150,7 +168,7 @@ public class UserController {
 
 
     @GetMapping(value="user/username/{username}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+    //@CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_GUEST','ROLE_OWNER')")
     public User findUserById(@PathVariable String username){
         //System.out.println("USAO U FIND USERNAME JE --> " +username);
@@ -158,7 +176,7 @@ public class UserController {
     }
 
     @GetMapping(value="role/{role}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @CrossOrigin(origins = "http://localhost:4200")
+   // @CrossOrigin(origins = "http://localhost:4200")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<User>> findByRole(@PathVariable RoleEnum role){
         List<User> result=userService.findByRole(role);
