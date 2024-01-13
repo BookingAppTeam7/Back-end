@@ -5,6 +5,7 @@ import com.booking.BookingApp.models.accommodations.AccommodationRequest;
 import com.booking.BookingApp.models.accommodations.Review;
 import com.booking.BookingApp.models.dtos.review.ReviewPostDTO;
 import com.booking.BookingApp.models.dtos.review.ReviewPutDTO;
+import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.dtos.users.UserPutDTO;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
@@ -17,6 +18,7 @@ import com.booking.BookingApp.repositories.IReviewRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import com.booking.BookingApp.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,6 +40,10 @@ public class ReviewService implements IReviewService{
     //public ReservationService reservationService;
   @Autowired
   public IReservationRepository reservationRepository;
+
+    @Autowired
+
+    private SimpMessagingTemplate simpMessagingTemplate;
     private static AtomicLong counter=new AtomicLong();
     @Override
     public List<Review> findAll() {
@@ -64,6 +70,14 @@ public class ReviewService implements IReviewService{
                 Review review=new Review(newReview.userId,newReview.type,newReview.comment,newReview.grade,newReview.dateTime,
                         false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
                 reviewRepository.save(review);
+
+                NotificationPostDTO not=new NotificationPostDTO();
+                not.setUserId(reservation.user.username);
+                not.setType("CREATED_REVIEW");
+                not.setTime(LocalDateTime.now());
+                not.setContent("User :"+review.userId+" created review for accommodation "+review.accommodationId+"!  Comment : "+review.comment+" Grade : "+review.grade+" When admin approve this review,it will be visible for all users!");
+                this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+review.ownerId,not);
+
                 return  Optional.of(review);
 
             } else {

@@ -5,31 +5,36 @@ import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import java.time.LocalDateTime;
 
 public class NotificationPostDTO { //Notification model without id and date time
-    public Long userId;
-    public NotificationTypeEnum type;
+    public String userId;
+    public String type;
     public String content;
 
+    public LocalDateTime time;
 
-    public NotificationPostDTO(Long userId, NotificationTypeEnum type, String content) {
+
+    public NotificationPostDTO(String userId, String type, String content, LocalDateTime time) {
         this.userId = userId;
         this.type = type;
         this.content = content;
+        this.time = time;
     }
 
+    public NotificationPostDTO() {
+    }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public NotificationTypeEnum getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(NotificationTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -41,4 +46,11 @@ public class NotificationPostDTO { //Notification model without id and date time
         this.content = content;
     }
 
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
 }
