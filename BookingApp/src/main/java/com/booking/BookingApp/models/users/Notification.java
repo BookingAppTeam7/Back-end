@@ -1,11 +1,18 @@
 package com.booking.BookingApp.models.users;
 
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
+@Entity
 public class Notification {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     public String userId;
     public String type;
@@ -14,6 +21,13 @@ public class Notification {
 
     public Notification(Long id, String userId, String type, String content, LocalDateTime dateTime) {
         this.id = id;
+        this.userId = userId;
+        this.type = type;
+        this.content = content;
+        this.dateTime = dateTime;
+    }
+
+    public Notification(String userId, String type, String content, LocalDateTime dateTime) {
         this.userId = userId;
         this.type = type;
         this.content = content;

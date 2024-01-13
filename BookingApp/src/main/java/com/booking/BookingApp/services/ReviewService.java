@@ -13,10 +13,7 @@ import com.booking.BookingApp.models.enums.ReviewEnum;
 import com.booking.BookingApp.models.enums.ReviewStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
-import com.booking.BookingApp.repositories.IAccommodationRepository;
-import com.booking.BookingApp.repositories.IReviewRepository;
-import com.booking.BookingApp.repositories.IReservationRepository;
-import com.booking.BookingApp.repositories.IUserRepository;
+import com.booking.BookingApp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -36,8 +33,10 @@ public class ReviewService implements IReviewService{
     public IUserRepository userRepository;
     @Autowired
     public IAccommodationRepository accommodationRepository;
-    
-    //public ReservationService reservationService;
+    @Autowired
+    public INotificationService notificationService;
+
+
   @Autowired
   public IReservationRepository reservationRepository;
 
@@ -71,13 +70,20 @@ public class ReviewService implements IReviewService{
                         false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
                 reviewRepository.save(review);
 
+
+                //slanje notifikacije
                 NotificationPostDTO not=new NotificationPostDTO();
-                not.setUserId(reservation.user.username);
+                not.setUserId(reservation.accommodation.ownerId);
                 not.setType("CREATED_REVIEW");
                 not.setTime(LocalDateTime.now());
                 not.setContent("User :"+review.userId+" created review for accommodation "+review.accommodationId+"!  Comment : "+review.comment+" Grade : "+review.grade+" When admin approve this review,it will be visible for all users!");
-                this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+review.ownerId,not);
 
+
+                Optional<User> user=userRepository.findById(review.ownerId);
+                if(user.get().accommodationRatingNotification) {
+                    this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+review.ownerId,not);
+                }
+                notificationService.create(not);
                 return  Optional.of(review);
 
             } else {
@@ -89,6 +95,21 @@ public class ReviewService implements IReviewService{
             Review review=new Review(newReview.userId,newReview.type,newReview.comment,newReview.grade,newReview.dateTime,
                     false,newReview.accommodationId,newReview.ownerId,false,newReview.status);
             reviewRepository.save(review);
+
+            //slanje notifikacije
+            NotificationPostDTO not=new NotificationPostDTO();
+            not.setUserId(newReview.ownerId);
+            not.setType("CREATED_REVIEW");
+            not.setTime(LocalDateTime.now());
+            not.setContent("User :"+review.userId+" created review for you !  Comment : "+review.comment+" Grade : "+review.grade+" When admin approve this review,it will be visible for all users!");
+
+            Optional<User> user=userRepository.findById(review.ownerId);
+            if(user.get().ownerRatingNotification) {
+                this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+review.ownerId,not);
+            }
+
+            notificationService.create(not);
+
             return  Optional.of(review);
         }
 

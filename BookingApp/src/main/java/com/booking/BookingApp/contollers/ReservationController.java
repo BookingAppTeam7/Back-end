@@ -30,8 +30,6 @@ public class ReservationController {
 
     @Autowired
     private IReservationService reservationService;
-    @Autowired
-    private IAccommodationService accommodationService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin(origins = "http://localhost:4200")
