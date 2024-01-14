@@ -1,8 +1,10 @@
 package com.booking.BookingApp.web_sockets.controllers;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,12 +16,14 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestController
+@Controller
 public class WebSocketController {
 	@Autowired
 
 	private SimpMessagingTemplate simpMessagingTemplate;
 
+	@Autowired
+	private HttpSession httpSession;
 	// REST enpoint
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value="/sendMessageRest", method = RequestMethod.POST)
@@ -48,6 +52,8 @@ public class WebSocketController {
 	 * Na ovaj endpoint klijenti salju poruke, ruta na koju klijenti salju poruke je /send/message (parametar @MessageMapping anotacije)
 	 * 
 	 */
+	//@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true", allowedOriginPatterns = "*")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@MessageMapping("/send/message")
 	public Map<String, String> broadcastNotification(String message) {
 		Map<String, String> messageConverted = parseMessage(message);
@@ -80,4 +86,5 @@ public class WebSocketController {
 
 		return retVal;
 	}
+
 }

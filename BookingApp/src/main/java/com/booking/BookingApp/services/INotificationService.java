@@ -15,4 +15,5 @@ public interface INotificationService {
     Optional<Notification> create(NotificationPostDTO newNotification) throws Exception;
     Notification update(NotificationPutDTO updatedNotification, Long  id) throws  Exception;
     void delete(Long id);
+    List<Notification> findByUserId(String userId);
 }

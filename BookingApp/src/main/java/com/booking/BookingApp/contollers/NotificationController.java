@@ -20,13 +20,16 @@ public class NotificationController {
 
     @Autowired
     private INotificationService notificationService;
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<List<Notification>> findAll(){
         List<Notification> result=notificationService.findAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins="http://localhost:4200")
     public ResponseEntity<Notification> findById(@PathVariable Long id){
         Optional<Notification> result=notificationService.findById(id);
         if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
@@ -34,6 +37,15 @@ public class NotificationController {
     }
 
 
+    @GetMapping(value="/user/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins="http://localhost:4200")
+    public ResponseEntity<List<Notification>> findByUserId(@PathVariable String id){
+        List<Notification> result=notificationService.findByUserId(id);
+        if(result==null){return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+        return new ResponseEntity<>(result,HttpStatus.OK );
+    }
+
+    @CrossOrigin(origins="http://localhost:4200")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Notification> create(@RequestBody NotificationPostDTO newNotification) throws Exception {
         Optional<Notification> result=notificationService.create(newNotification);
@@ -41,6 +53,7 @@ public class NotificationController {
 
     }
 
+    @CrossOrigin(origins="http://localhost:4200")
     @PutMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Notification> update(@RequestBody NotificationPutDTO notification, @PathVariable Long id) throws Exception {
         Notification result=notificationService.update(notification,id);
@@ -48,6 +61,7 @@ public class NotificationController {
         return new ResponseEntity<>(result,HttpStatus.OK);
 
     }
+    @CrossOrigin(origins="http://localhost:4200")
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Notification> delete(@PathVariable Long id){
         notificationService.delete(id);

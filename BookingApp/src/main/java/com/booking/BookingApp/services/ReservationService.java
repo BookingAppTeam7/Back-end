@@ -7,18 +7,23 @@ import com.booking.BookingApp.models.accommodations.PriceCard;
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
+import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
+import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
+import com.booking.BookingApp.models.users.Notification;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IPriceCardRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -34,6 +39,13 @@ public class ReservationService implements IReservationService{
     @Autowired
     private IPriceCardRepository priceCardRepository;
     private UserService userService=new UserService();
+
+
+    @Autowired
+
+    private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private INotificationService notificationService;
     @Autowired
     public ReservationService(AccommodationService accommodationService,UserService userService) {
         this.accommodationService = accommodationService;
@@ -59,14 +71,16 @@ public class ReservationService implements IReservationService{
     @Transactional
     @Override
     public void confirmReservation(Long reservationId) throws Exception {
-        System.out.println("USAO U CONFIRM RESERVATION");
+
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
         Accommodation accommodation=accommodationService.findById(reservation.accommodation.id)
                 .orElseThrow(() -> new Exception("Accommodation not found with id: "+reservation.accommodation.id));
         if(reservation.status.equals(ReservationStatusEnum.APPROVED))
             throw new Exception("Reservation already approved!");
+
         // Check if the reservation is available in the selected time slot
+
         if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
             reservation.setStatus(ReservationStatusEnum.APPROVED);
             reservationRepository.save(reservation);
@@ -74,8 +88,24 @@ public class ReservationService implements IReservationService{
             accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
             System.out.println("EDITOVAO PRICE CARDS");
         } else {
-            throw new Exception("Reservation not available in the selected time slot");
+            throw new Exception("Accommodation not available in the selected time slot");
         }
+
+
+
+        NotificationPostDTO not=new NotificationPostDTO();
+        not.setUserId(reservation.user.username);
+        not.setType("RESERVATION_APPROVED");
+        not.setTime(LocalDateTime.now());
+        not.setContent("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!");
+
+        User user=userService.findUserById(reservation.user.username);
+        if(user.ownerRepliedToRequestNotification) {
+            this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
+        }
+
+        notificationService.create(not);
+
     }
     public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
         for (PriceCard priceCard : accommodation.prices) {
@@ -91,7 +121,7 @@ public class ReservationService implements IReservationService{
         return !(arrival.before(timeSlotStart) || checkout.after(timeSlotEnd));
     }
     @Override
-    public Optional<Reservation> create(ReservationPostDTO newReservation) throws NotFoundException, ValidationException {
+    public Optional<Reservation> create(ReservationPostDTO newReservation) throws Exception {
         Long newId= (Long) counter.incrementAndGet();
         Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
                 .orElseThrow(() -> new NotFoundException("Accommodation not found with id: " + newReservation.getAccommodationId()));
@@ -116,6 +146,19 @@ public class ReservationService implements IReservationService{
         //ovde treba dodati da se u objektu created reservation cuva i price i priceType
         Reservation createdReservation=new Reservation(newId,accommodation,foundUser,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
                     newReservation.price,newReservation.priceType);
+
+        NotificationPostDTO not=new NotificationPostDTO();
+        not.setUserId(accommodation.ownerId);
+        not.setType("RESERVATION_CREATED");
+        not.setTime(LocalDateTime.now());
+        not.setContent("Created reservation for your accommodation : "+accommodation.name.toUpperCase()+"  by guest "+createdReservation.user.username+"!");
+
+        if(foundUser.reservationRequestNotification) {
+            this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+accommodation.ownerId,not);
+        }
+
+        notificationService.create(not);
+
         return Optional.of(reservationRepository.save(createdReservation));
     }
     public boolean timeSlotsOverlap(TimeSlot t1,TimeSlot t2){
@@ -173,6 +216,18 @@ public class ReservationService implements IReservationService{
 
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.REJECTED);
 
+
+        NotificationPostDTO not=new NotificationPostDTO();
+        not.setUserId(reservation.user.username);
+        not.setType("RESERVATION_REJECTED");
+        not.setTime(LocalDateTime.now());
+        not.setContent("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" REJECTED by owner "+reservation.accommodation.ownerId+"!");
+
+        User user=userService.findUserById(reservation.user.username);
+        if(user.ownerRepliedToRequestNotification) {
+            this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + reservation.user.username, not);
+        }
+        notificationService.create(not);
     }
 
     @Override
@@ -202,7 +257,6 @@ public class ReservationService implements IReservationService{
 //                throw new Exception("Cancellation deadline is passed!");
             }
         }
-
 
         //oslobadjanje termina
 
@@ -273,6 +327,21 @@ public class ReservationService implements IReservationService{
 //            }
 
         //}
+
+        NotificationPostDTO not=new NotificationPostDTO();
+        not.setUserId(reservation.accommodation.ownerId);
+        not.setType("RESERVATION_CANCELLED");
+        not.setTime(LocalDateTime.now());
+        not.setContent("Reservation with id : "+reservation.id+" in accommodation :"+reservation.accommodation.name.toUpperCase()+" CANCELLED !");
+
+        User user=userService.findUserById(reservation.accommodation.ownerId);
+        if(user.reservationCancellationNotification) {
+            this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + reservation.user.username, not);
+        }
+
+        this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
+
+        notificationService.create(not);
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.CANCELLED);
 
     }

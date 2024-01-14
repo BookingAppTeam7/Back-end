@@ -48,6 +48,7 @@ public class WebSecurityConfiguration {
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/**").permitAll()
+						.requestMatchers("/socket/**").permitAll()
 						.anyRequest().authenticated()
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

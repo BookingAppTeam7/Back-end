@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,9 +35,9 @@ public class NotificationService implements INotificationService {
 
     @Override
     public Optional<Notification> create(NotificationPostDTO newNotification) throws Exception {
-        Long newId= (Long) counter.incrementAndGet();
-        Notification createdNotification=new Notification(newId,newNotification.userId,newNotification.type, newNotification.content, LocalDateTime.now());
-        return notificationRepository.save(createdNotification);
+        Notification createdNotification=new Notification(newNotification.userId,newNotification.type, newNotification.content, LocalDateTime.now());
+        Notification result=notificationRepository.save(createdNotification);
+        return Optional.of(result);
     }
 
     @Override
@@ -47,5 +49,12 @@ public class NotificationService implements INotificationService {
     @Override
     public void delete(Long id) {
         notificationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Notification> findByUserId(String userId) {
+        List<Notification>result=notificationRepository.findByUserId(userId);
+        Collections.sort(result, Comparator.comparing(Notification::getDateTime).reversed());
+        return result;
     }
 }

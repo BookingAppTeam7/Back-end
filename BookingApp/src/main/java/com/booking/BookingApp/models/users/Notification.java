@@ -1,23 +1,40 @@
 package com.booking.BookingApp.models.users;
 
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
+@Entity
 public class Notification {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    public Long userId;
-    public NotificationTypeEnum type;
+    public String userId;
+    public String type;
     public String content;
     public LocalDateTime dateTime;
 
-    public Notification(Long id, Long userId, NotificationTypeEnum type, String content, LocalDateTime dateTime) {
+    public Notification(Long id, String userId, String type, String content, LocalDateTime dateTime) {
         this.id = id;
         this.userId = userId;
         this.type = type;
         this.content = content;
         this.dateTime = dateTime;
+    }
+
+    public Notification(String userId, String type, String content, LocalDateTime dateTime) {
+        this.userId = userId;
+        this.type = type;
+        this.content = content;
+        this.dateTime = dateTime;
+    }
+
+    public Notification() {
     }
 
     public Long getId() {
@@ -28,19 +45,19 @@ public class Notification {
         this.id = id;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public NotificationTypeEnum getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(NotificationTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
 
