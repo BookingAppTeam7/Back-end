@@ -174,15 +174,16 @@ public class AccommodationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PutMapping(value="/{id}/add-image")
+    @PutMapping(value="/{id}/update-images")
     @CrossOrigin(origins="http://localhost:4200")
     //@PreAuthorize("hasAuthority('ROLE_OWNER')")
-    public ResponseEntity<Accommodation> insertImage(
+    public ResponseEntity<Accommodation> updateImages(
             @PathVariable("id") Long accommodationId,
-            @RequestParam("image") String images){
+            @RequestParam("image") String image){
+        System.out.println(accommodationId);
+        System.out.println(image);
         try{
-            List<String> newImages= List.of(images.split(","));
-            Optional<Accommodation> result=accommodationService.updateImages(accommodationId,newImages);
+            Optional<Accommodation> result=accommodationService.updateImages(accommodationId,image);
             if(result.isPresent()){
                 return new ResponseEntity<>(result.get(),HttpStatus.OK);
             }else{
