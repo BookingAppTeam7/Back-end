@@ -18,23 +18,34 @@ public class Notification {
     public String type;
     public String content;
     public LocalDateTime dateTime;
+    public Boolean read;
 
-    public Notification(Long id, String userId, String type, String content, LocalDateTime dateTime) {
+    public Notification(Long id, String userId, String type, String content, LocalDateTime dateTime, Boolean read) {
         this.id = id;
         this.userId = userId;
         this.type = type;
         this.content = content;
         this.dateTime = dateTime;
+        this.read=read;
     }
 
-    public Notification(String userId, String type, String content, LocalDateTime dateTime) {
+    public Notification(String userId, String type, String content, LocalDateTime dateTime, boolean read) {
         this.userId = userId;
         this.type = type;
         this.content = content;
         this.dateTime = dateTime;
+        this.read=read;
     }
 
     public Notification() {
+    }
+
+    public Boolean isRead() {
+        return read;
+    }
+
+    public void setRead(Boolean read) {
+        this.read = read;
     }
 
     public Long getId() {

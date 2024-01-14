@@ -35,14 +35,14 @@ public class NotificationService implements INotificationService {
 
     @Override
     public Optional<Notification> create(NotificationPostDTO newNotification) throws Exception {
-        Notification createdNotification=new Notification(newNotification.userId,newNotification.type, newNotification.content, LocalDateTime.now());
+        Notification createdNotification=new Notification(newNotification.userId,newNotification.type, newNotification.content, LocalDateTime.now(),false);
         Notification result=notificationRepository.save(createdNotification);
         return Optional.of(result);
     }
 
     @Override
     public Notification update(NotificationPutDTO updatedNotification, Long id) throws Exception {
-        Notification result=new Notification(id, updatedNotification.userId, updatedNotification.type, updatedNotification.content, updatedNotification.dateTime);
+        Notification result=new Notification(id, updatedNotification.userId, updatedNotification.type, updatedNotification.content, updatedNotification.dateTime, updatedNotification.read);
         return notificationRepository.saveAndFlush(result);
     }
 
@@ -56,5 +56,12 @@ public class NotificationService implements INotificationService {
         List<Notification>result=notificationRepository.findByUserId(userId);
         Collections.sort(result, Comparator.comparing(Notification::getDateTime).reversed());
         return result;
+    }
+
+    @Override
+    public void read(Long id) throws Exception {
+        Notification notification=findById(id).orElseThrow(()->new Exception("Notification not found"));
+        notification.setRead(true);
+        notificationRepository.saveAndFlush(notification);
     }
 }
