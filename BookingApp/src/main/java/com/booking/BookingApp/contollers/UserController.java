@@ -154,7 +154,7 @@ public class UserController {
     }
     public String generateActivationEmailBody(String userName, String activationLink) throws UnknownHostException {
         String hostAdress= InetAddress.getLocalHost().getHostAddress();
-        String fullActivationLink = "http://192.168.1.8:4200/activate/"+activationLink;////OVDE STAVITE SVOJU IP ADRESU
+        String fullActivationLink = "http://192.168.1.26:4200/activate/"+activationLink;////OVDE STAVITE SVOJU IP ADRESU
 
         return "<p>Dear <strong>" + userName + "</strong>,</p>\n" +
                 "<p>Thank you for choosing our service! We're excited to have you on board.</p>\n" +
