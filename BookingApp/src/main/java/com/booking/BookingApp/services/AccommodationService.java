@@ -243,11 +243,11 @@ public class AccommodationService implements IAccommodationService{
         return Optional.empty();
 
     }
-    public Optional<Accommodation> updateImages(Long accommodationId,List<String> newImages){
+    public Optional<Accommodation> updateImages(Long accommodationId,String newImage){
         Optional<Accommodation> optionalAccommodation = accommodationRepository.findById(accommodationId);
         if (optionalAccommodation.isPresent()) {
             Accommodation accommodation = optionalAccommodation.get();
-            accommodation.getImages().addAll(newImages);
+            accommodation.getImages().add(newImage);
             return Optional.of(accommodationRepository.save(accommodation));
 
         }
