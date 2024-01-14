@@ -79,19 +79,14 @@ public class ReservationService implements IReservationService{
         if(reservation.status.equals(ReservationStatusEnum.APPROVED))
             throw new Exception("Reservation already approved!");
 
-        // Check if the reservation is available in the selected time slot
 
         if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
             reservation.setStatus(ReservationStatusEnum.APPROVED);
             reservationRepository.save(reservation);
-            System.out.println("SAVEOVAO RESERVACIJE");
             accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
-            System.out.println("EDITOVAO PRICE CARDS");
         } else {
             throw new Exception("Accommodation not available in the selected time slot");
         }
-
-
 
         NotificationPostDTO not=new NotificationPostDTO();
         not.setUserId(reservation.user.username);
@@ -103,9 +98,7 @@ public class ReservationService implements IReservationService{
         if(user.ownerRepliedToRequestNotification) {
             this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
         }
-
         notificationService.create(not);
-
     }
     public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
         for (PriceCard priceCard : accommodation.prices) {
