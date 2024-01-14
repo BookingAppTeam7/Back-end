@@ -122,7 +122,4 @@ public class PriceCardController {
 //        return new ResponseEntity<>(result,HttpStatus.OK );
 //    }
 
-
-
-
 }

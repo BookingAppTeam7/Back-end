@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         //try {
             registry.addMapping("/**")
-                    .allowedOriginPatterns("http://192.168.1.8:4200","http://localhost:4200")////OVDE STAVITE SVOJU IP ADRESU
+                    .allowedOriginPatterns("http://192.168.1.36:4200","http://localhost:4200")////OVDE STAVITE SVOJU IP ADRESU
                     .allowedMethods("GET", "POST", "PUT", "DELETE")
                     .allowCredentials(true)
                     .maxAge(3600);
