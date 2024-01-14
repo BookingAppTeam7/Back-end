@@ -9,12 +9,14 @@ public class NotificationPutDTO { //Notification model without id
     public String type;
     public String content;
     public LocalDateTime dateTime;
+    public boolean read;
 
-    public NotificationPutDTO(String userId, String type, String content, LocalDateTime dateTime) {
+    public NotificationPutDTO(String userId, String type, String content, LocalDateTime dateTime, boolean read) {
         this.userId = userId;
         this.type = type;
         this.content = content;
         this.dateTime = dateTime;
+        this.read=read;
     }
 
     public NotificationPutDTO() {

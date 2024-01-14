@@ -62,6 +62,16 @@ public class NotificationController {
 
     }
     @CrossOrigin(origins="http://localhost:4200")
+    @PutMapping(value="read/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Notification> readNotification(@PathVariable Long id) {
+        try {
+            notificationService.read(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @CrossOrigin(origins="http://localhost:4200")
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Notification> delete(@PathVariable Long id){
         notificationService.delete(id);
