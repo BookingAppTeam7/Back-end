@@ -1,7 +1,6 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.Accommodation;
-import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.enums.RoleEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
@@ -14,20 +13,11 @@ import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import com.booking.BookingApp.repositories.IUserRepository;
 import com.booking.BookingApp.security.jwt.JwtTokenUtil;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
