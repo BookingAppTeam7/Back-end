@@ -18,9 +18,6 @@ import java.util.Map;
 @Where(clause = "deleted = false")
 @Entity
 public class User {
-    //@Id
-    //public Long id;
-
     public String firstName;
     public String lastName;
     @Id
@@ -58,8 +55,6 @@ public class User {
 
     public String favouriteAccommodations;
 
-    //@OneToMany(cascade=CascadeType.ALL)
-    //public List<Reservation> reservations;
 
     public User(String firstName, String lastName, String username, String password, RoleEnum role, String address, String phoneNumber, StatusEnum status, Boolean reservationRequestNotification, Boolean reservationCancellationNotification, Boolean ownerRatingNotification,
                 Boolean accommodationRatingNotification, Boolean ownerRepliedToRequestNotification,String token,Boolean deleted,Boolean reported,String favouriteAccommodations) {
