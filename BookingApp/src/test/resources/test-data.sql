@@ -1,37 +1,44 @@
--- INSERT INTO users (firstName, lastName, username, password, role, address, phoneNumber, status, reservationRequestNotification, reservationCancellationNotification, ownerRatingNotification, accommodationRatingNotification, ownerRepliedToRequestNotification, token, deleted, reported, favouriteAccommodations)
--- VALUES ('Luka123', 'LastName', 'luka@gmail.com', 'password', 'USER', 'Address', 'PhoneNumber', 'ACTIVE', false, false, false, false, false, 'token', false, false, null);
--- Insert test data for the Review entity
-INSERT INTO review (user_id, type, comment, grade, date_time, deleted, accommodation_id, owner_id, reported, status)
-VALUES (null, null, 'Great experience!', 5, '2024-01-13T12:30:00', false, null, null, false, null);
 
--- INSERT INTO accommodation_photos (accommodation_accommodation_id, photo)
--- VALUES (2,'assets/images/apartment1.png'),
---        (2,'assets/images/apartment2.png'),
---        (2,'assets/images/apartment3.png'),
---        (2,'assets/images/apartment4.png'),
---        (2,'assets/images/apartment5.png'),
---        (3,'assets/images/apartment6.png'),
---        (3,'assets/images/apartment7.png');
+INSERT INTO users (`first_name`, `last_name`, `username`, `password`, `role`, `address`, `phone_number`, `status`,
+                   `reservation_request_notification`, `reservation_cancellation_notification`, `owner_rating_notification`,
+                   `accommodation_rating_notification`, `owner_replied_to_request_notification`, `token`, `deleted`, `reported`, `favourite_accommodations`)
+VALUES
+    ('GuestFirstName', 'GuestLastName', 'TESTGOST1@gmail.com', 'guest', 2, 'Test adresa gost', '123456789', 0,
+     false, false, false, false, true, ' ', false, false, ' ');
 
 
--- INSERT INTO accommodation_taken_dates (accommodation_id, first_date, last_date)
--- VALUES (2, '2023-01-01', '2023-01-05'),
---        (2, '2023-02-01', '2023-02-05');
---
--- INSERT INTO accommodation_amenity (accommodation_id,amenity_name)
--- VALUES (2,'WIFI'),
---        (2, 'Parking');
---
--- INSERT INTO reservations (total_price, reservation_status, start_date, end_date, number_of_nights, accommodation_id, guest_id)
--- VALUES (200, 'CANCELLED', '2022-12-12', '2022-12-15', 3, 2, null),
---        (200, 'WAITING', '2023-10-10', '2023-10-15', 5, 2, null),
---        (100, 'REJECTED', '2023-01-01', '2023-01-03', 3, 2, null),
---        (50, 'ACCEPTED', '2024-01-10', '2024-01-12', 1, 2, null),
---        (150, 'ACCEPTED', '2024-01-25', '2024-01-28', 2, 2, null);
---
--- INSERT INTO accommodation_price (accommodation_id, price, start_date, end_date)
--- VALUES
---     (2, 3000, '2001-01-01', '2001-07-01'),
---     (2, 2000, '2001-01-01', '2001-08-01'),
---     (2, 4000, '2001-01-01', '2001-09-01');
+INSERT INTO accommodations (`id`, `name`, `description`, `location_id`, `min_guests`, `max_guests`, `type`, `owner_id`, `status`, `cancellation_deadline`, `reservation_confirmation`, `deleted`) VALUES
+    (1,'ime1', 'opis1',  NULL, 2, 5, 'ROOM', 'OWNER@gmail.com', 'APPROVED', 5, 'MANUAL',false),
+    (2,'ime2', 'opis3',  NULL, 2, 5, 'APARTMENT', 'OWNER@gmail.com', 'APPROVED', 5, 'MANUAL',false);
+
+
+INSERT INTO time_slot (`id`, `start_date`, `end_date`, `deleted`)
+VALUES
+    (1,'2024-01-27', '2024-02-15', false),
+    (2,'2024-01-29', '2024-02-10', false),
+    (3,'2024-02-28', '2024-03-30', false),
+    (4,'2024-02-28', '2024-03-30', false),
+    (5,'2024-01-26', '2024-01-29', false),
+    (6,'2024-02-08', '2024-02-18', false),
+    (7,'2024-02-08', '2024-02-18', false);
+
+INSERT INTO price_card (`id`,`time_slot_id`, `price`, `type`, `deleted`)
+VALUES (1,1, 150.0, 'PERGUEST',false);
+
+INSERT INTO accommodations_prices (`accommodation_id`,`prices_id`)
+VALUES (2,1);
+
+
+INSERT INTO reservations
+(`id`, `accommodation_id`, `user_id`, `time_slot_id`, `status`, `number_of_guests`, `price`, `price_type`)
+VALUES
+    (1, 2, 'TESTGOST1@gmail.com', 2, 'PENDING', 2, 100.0, 'PERUNIT'),
+    (2, NULL, NULL, NULL, 'PENDING', 2, 100.0, 'PERGUEST'),
+    (3, NULL, NULL, NULL, 'APPROVED', 2, 100.0, 'PERGUEST'),
+    (4, 2, NULL, NULL, 'APPROVED', 2, 100.0, 'PERGUEST'),
+    (5, 2, 'TESTGOST1@gmail.com', 3, 'APPROVED', 2, 100.0, 'PERGUEST'),
+    (6, 2, 'TESTGOST1@gmail.com', 4, 'APPROVED', 2, 100.0, 'PERGUEST'),
+    (7, 2, 'TESTGOST1@gmail.com', 5, 'PENDING', 2, 100.0, 'PERGUEST'),
+    (8, 2, 'TESTGOST1@gmail.com', 6, 'PENDING', 2, 100.0, 'PERGUEST'),
+    (9, 1, 'TESTGOST1@gmail.com', 7, 'PENDING', 2, 100.0, 'PERGUEST');
 

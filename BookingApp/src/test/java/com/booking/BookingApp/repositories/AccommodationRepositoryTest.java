@@ -25,28 +25,6 @@ public class AccommodationRepositoryTest {
     @Autowired
     private IAccommodationRepository accommodationRepository;
 
-//    @Test
-//    public void shouldSaveAccommodation(){
-//
-//        Location loc=new Location();
-//        List<String> assets=new ArrayList<>();
-//        assets.add("klima");
-//        List<PriceCard>prices=new ArrayList<>();
-////
-//        Date startDate = new Date(2023,2,10,10,57);
-//        Date endDate = new Date(2023,2,15,10,57);
-//        Boolean deleted = false;
-//        TimeSlot timeSlot = new TimeSlot(startDate, endDate, deleted);
-//
-//
-//        prices.add(new PriceCard(1L,timeSlot,2000, PriceTypeEnum.PERGUEST));
-//        Accommodation accommodation=new Accommodation(1L,"ime","opis",loc,2,5, TypeEnum.APARTMENT,
-//                assets,prices,"owner",5, ReservationConfirmationEnum.MANUAL,new ArrayList<Review>(),new ArrayList<String>(),false,AccommodationStatusEnum.PENDING);
-//        Accommodation savedAccommodation=accommodationRepository.save(accommodation);
-//        assertThat(savedAccommodation).usingRecursiveComparison().ignoringFields("id").isEqualTo(accommodation);
-
-    //}
-
     @Test
     public void shouldSaveAccommodation() {
         Location loc = new Location("LocationAddress", "LocationCity", "LocationCountry", 1.234, 5.678, false);
@@ -71,9 +49,8 @@ public class AccommodationRepositoryTest {
     }
 
     @Test
-    @Sql("classpath:test-data-accommodation.sql")
     public void shouldSaveAccommodationThroughSqlFile() {
-        Optional<Accommodation> test = accommodationRepository.findById(1L);
+        Optional<Accommodation> test = accommodationRepository.findById(2L);
         assertThat(test).isNotEmpty();
     }
 }
