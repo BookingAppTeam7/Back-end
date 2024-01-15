@@ -74,6 +74,10 @@ public class ReservationControllerIntegrationTest {
                 reservationId);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+//        System.out.println(responseEntity.getBody().toString());
+//        String actualErrorMessage = responseEntity.getBody().toString();
+//        assertTrue(actualErrorMessage.startsWith("Cannot read field \"id\" because \"reservation.accommodation\" is null"));
+
     }
 
     @Test
