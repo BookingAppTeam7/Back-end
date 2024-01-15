@@ -36,6 +36,8 @@ public class AccommodationPostDTO { //Accommodation model without id,status and 
         this.images=images;
     }
 
+
+
     public String getName() {
         return name;
     }
