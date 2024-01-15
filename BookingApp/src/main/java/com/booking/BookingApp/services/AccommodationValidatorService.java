@@ -29,13 +29,12 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
     public IUserRepository userRepository;
     public boolean validatePost(AccommodationPostDTO accommodation) {
         if (accommodation == null) {
-            return false;
-            //throw new IllegalArgumentException("Accommodation data is null");
+           return false;
         }
         Optional<User> owner=userRepository.findById(accommodation.ownerId);
         if(!owner.isPresent()){
             return false;
-            //throw new IllegalArgumentException("Owner not found");
+           // throw new IllegalArgumentException("Owner not found " + accommodation.ownerId + "owner " + owner.get());
         }
 
         if (StringUtils.isEmpty(accommodation.getName())) {
@@ -174,7 +173,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
         if (newPriceCard.timeSlot.startDate.before(currentDate) || newPriceCard.timeSlot.endDate.before(currentDate)) {
             System.out.println("Both start date and end date must be in the future.");
             return false;
-            //throw new IllegalArgumentException("Both start date and end date must be in the future.");
+          //  throw new IllegalArgumentException("Both start date and end date must be in the future.");
         }
 
         if (newPriceCard.timeSlot.startDate.after(newPriceCard.timeSlot.endDate)) {
@@ -200,7 +199,7 @@ public class AccommodationValidatorService implements IAccommodationValidatorSer
             if (isTimeSlotOverlap(existingPrice.getTimeSlot(), newPriceCard.getTimeSlot())) {
                 System.out.println("Overlap with an existing PriceCard time slot - price for this period is already defined.");
                 return false;
-                //throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
+              //  throw new IllegalArgumentException("Overlap with an existing PriceCard time slot - price for this period is already defined.");
             }
         }
 

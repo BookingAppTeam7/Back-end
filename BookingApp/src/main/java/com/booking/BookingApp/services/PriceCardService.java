@@ -43,19 +43,71 @@ public class PriceCardService implements IPriceCardService{
         return null;
     }
 
-    @Override
+
+        @Override
     public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
         if(!validatorService.validatePriceCardPost(newPriceCard)){return Optional.empty();};
         TimeSlot timeSlot=new TimeSlot(newPriceCard.timeSlot.startDate,newPriceCard.timeSlot.endDate,false);
-        TimeSlot newTimeSlot=timeSlotRepository.save(timeSlot);
-        PriceCard createdPriceCard=new PriceCard(newTimeSlot,newPriceCard.price,newPriceCard.type,false);
-        createdPriceCard.timeSlot=newTimeSlot;
+        timeSlotRepository.save(timeSlot);
+
+        PriceCard createdPriceCard=new PriceCard(timeSlot,newPriceCard.price,newPriceCard.type,false);
+
         Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
         accommodation.get().prices.add(createdPriceCard);
-        //accommodationRepository.saveAndFlush(accommodation.get());
-        return Optional.of(priceCardRepository.save(createdPriceCard));
+
+        priceCardRepository.save(createdPriceCard);
+
+        return Optional.of(createdPriceCard);
     }
 
+//    @Override
+//    public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
+//        if(!validatorService.validatePriceCardPost(newPriceCard)){return Optional.empty();};
+//        TimeSlot timeSlot=new TimeSlot(newPriceCard.timeSlot.startDate,newPriceCard.timeSlot.endDate,false);
+//        TimeSlot newTimeSlot=timeSlotRepository.save(timeSlot);
+//
+//                if (newTimeSlot == null) {
+//            // Dodajte odgovarajući kod ili bacanje izuzetka ako čuvanje TimeSlot-a nije uspelo.
+//            throw new Exception("Failed to save TimeSlot:  " + newPriceCard.timeSlot.startDate);
+//        }
+//
+//        PriceCard createdPriceCard=new PriceCard(newTimeSlot,newPriceCard.price,newPriceCard.type,false);
+//        createdPriceCard.timeSlot=newTimeSlot;
+//        Optional<Accommodation> accommodation=accommodationRepository.findById(newPriceCard.accommodationId);
+//        accommodation.get().prices.add(createdPriceCard);
+//        //accommodationRepository.saveAndFlush(accommodation.get());
+//        return Optional.of(priceCardRepository.save(createdPriceCard));
+//    }
+
+//    @Override
+//    public Optional<PriceCard> create(PriceCardPostDTO newPriceCard) throws Exception {
+//        if (!validatorService.validatePriceCardPost(newPriceCard)) {
+//            return Optional.empty();
+//        }
+//
+//        TimeSlot timeSlot = new TimeSlot(newPriceCard.timeSlot.startDate, newPriceCard.timeSlot.endDate, false);
+//        //TimeSlot newTimeSlot = timeSlotRepository.save(timeSlot);
+////
+////        if (newTimeSlot == null) {
+////            // Dodajte odgovarajući kod ili bacanje izuzetka ako čuvanje TimeSlot-a nije uspelo.
+////            throw new Exception("Failed to save TimeSlot:  " + newPriceCard.timeSlot.startDate);
+////        }
+//
+//        PriceCard createdPriceCard = new PriceCard(timeSlot, newPriceCard.price, newPriceCard.type, false);
+//        //createdPriceCard.timeSlot = newTimeSlot;
+//
+//        Optional<Accommodation> accommodation = accommodationRepository.findById(newPriceCard.accommodationId);
+//        accommodation.ifPresent(acc -> acc.prices.add(createdPriceCard));
+//
+//        PriceCard savedPriceCard = priceCardRepository.save(createdPriceCard);
+//
+//        if (savedPriceCard == null) {
+//            // Dodajte odgovarajući kod ili bacanje izuzetka ako čuvanje PriceCard-a nije uspelo.
+//            throw new Exception("Failed to save PriceCard , timeslot: " + savedPriceCard.timeSlot +"  id  "+savedPriceCard.id );
+//        }
+//
+//        return Optional.of(createdPriceCard);
+//    }
 
     @Override
     public Optional<PriceCard> update(PriceCardPutDTO updatedPriceCard,@PathVariable Long id) throws Exception {

@@ -64,7 +64,7 @@ public class PriceCardRepositoryTest {
 //            this.type = type;
 //            this.deleted=deleted;
 //        }
-        PriceCard priceCard=new PriceCard(1L,timeSlot,2000,PriceTypeEnum.PERGUEST,false);
+        PriceCard priceCard=new PriceCard(0L,timeSlot,2000,PriceTypeEnum.PERGUEST,false);
 
         PriceCard savedPriceCard = priceCardRepository.save(priceCard);
 
@@ -73,8 +73,8 @@ public class PriceCardRepositoryTest {
 
     @Test
     @Sql("classpath:test-data-accommodation.sql")
-    public void shouldSaveAccommodationThroughSqlFile() {
-        Optional<PriceCard> test =priceCardRepository.findById(1L);
+    public void shouldSavePriceCardThroughSqlFile() {
+        Optional<PriceCard> test =priceCardRepository.findById(0L);
         assertThat(test).isNotEmpty();
     }
 }
