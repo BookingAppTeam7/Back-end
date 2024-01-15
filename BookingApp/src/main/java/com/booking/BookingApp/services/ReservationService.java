@@ -72,8 +72,9 @@ public class ReservationService implements IReservationService{
 
     @Transactional
     @Override
-    public void confirmReservation(Long reservationId) throws Exception {
+    public Reservation confirmReservation(Long reservationId) throws Exception {
 
+        Reservation result=new Reservation();
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
         Accommodation accommodation=accommodationService.findById(reservation.accommodation.id)
@@ -88,7 +89,7 @@ public class ReservationService implements IReservationService{
 
         if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
             reservation.setStatus(ReservationStatusEnum.APPROVED);
-            reservationRepository.save(reservation);
+           result=reservationRepository.save(reservation);
             accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
         } else {
             throw new Exception("Accommodation not available in the selected time slot");
@@ -105,6 +106,8 @@ public class ReservationService implements IReservationService{
             this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
         }
         notificationService.create(not);
+
+        return result;
     }
 
     public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {

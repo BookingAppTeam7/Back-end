@@ -4,11 +4,9 @@ import com.booking.BookingApp.models.accommodations.*;
 import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.enums.*;
 import com.booking.BookingApp.models.reservations.Reservation;
-import com.booking.BookingApp.models.users.Notification;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IReservationRepository;
-import jakarta.persistence.Column;
-import org.assertj.core.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -50,7 +48,6 @@ public class ReservationServiceTest {
 
     @MockBean
     private INotificationService notificationService;
-
     @Captor
     private ArgumentCaptor<NotificationPostDTO> notificationPostArgumentCaptor;
     @Captor
@@ -417,7 +414,7 @@ public class ReservationServiceTest {
 
 
     @Test
-    public void confirmReservation_WhenHasAvailableTimeSlotsSendingNotification_ShouldThrowException() throws Exception {
+    public void confirmReservation_WhenHasAvailableTimeSlotsSendingNotification() throws Exception {
 
         Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
         List<String> assets=new ArrayList<>();
@@ -465,16 +462,24 @@ public class ReservationServiceTest {
         when(reservationRepository.save(reservation)).thenReturn(approvedReservation);
 
 
-        assertDoesNotThrow(() -> reservationService.confirmReservation(1L));
-        assertEquals(ReservationStatusEnum.APPROVED,reservationRepository.findById(1L).get().getStatus());
+        Reservation result=reservationService.confirmReservation(1L);
 
-        verify(reservationRepository,times(2)).findById(1L);
-        verify(accommodationService).findById(0L);
+        assertEquals(reservation.getId(),result.getId());
+        assertEquals(ReservationStatusEnum.APPROVED,result.getStatus());
+
+        verify(reservationRepository,times(1)).findById(1L);
+        verify(accommodationService,times(1)).findById(0L);
         verify(userService, times(2)).findUserById("GUEST@gmail.com"); //kasnije je pozvana i za slanje notifikacije
         verify(accommodationService).editPriceCards(0L,startDateAsDate,endDateAsDate);
         verify(reservationRepository).save(reservation);
+        verify(notificationService).create(
+                argThat(argument ->
+                        argument.getUserId().equals(reservation.user.username) &&
+                                argument.getType().equals("RESERVATION_APPROVED") &&
+                                argument.getContent().equals("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!")
+                )
+        );
         verify(simpMessagingTemplate).convertAndSend(eq("/socket-publisher/" + reservation.user.username), any(NotificationPostDTO.class));
-        verify(notificationService).create(notificationPostArgumentCaptor.capture());
         verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
@@ -482,7 +487,7 @@ public class ReservationServiceTest {
 
 
     @Test
-    public void confirmReservation_WhenHasAvailableTimeSlotsNotSendingNotification_ShouldThrowException() throws Exception {
+    public void confirmReservation_WhenHasAvailableTimeSlotsNotSendingNotification() throws Exception {
 
         Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
         List<String> assets=new ArrayList<>();
@@ -529,27 +534,29 @@ public class ReservationServiceTest {
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
         when(reservationRepository.save(reservation)).thenReturn(approvedReservation);
 
+        Reservation result=reservationService.confirmReservation(1L);
 
-        assertDoesNotThrow(() -> reservationService.confirmReservation(1L));
-        assertEquals(ReservationStatusEnum.APPROVED,reservationRepository.findById(1L).get().getStatus());
+        assertEquals(reservation.getId(),result.getId());
+        assertEquals(ReservationStatusEnum.APPROVED,result.getStatus());
 
-        Assertions.assertThat(notificationPostArgumentCaptor.getValue().getContent()).isEqualTo("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!");
-
-        verify(reservationRepository,times(2)).findById(1L);
+        verify(reservationRepository,times(1)).findById(1L);
         verify(accommodationService).findById(0L);
         verify(userService, times(2)).findUserById("GUEST@gmail.com"); //kasnije je pozvana i za slanje notifikacije
         verify(accommodationService).editPriceCards(0L,startDateAsDate,endDateAsDate);
         verify(reservationRepository).save(reservation);
-
         verifyNoInteractions(simpMessagingTemplate);
-        verify(notificationService).create(notificationPostArgumentCaptor.capture());
+        verify(notificationService).create(
+                argThat(argument ->
+                        argument.getUserId().equals(reservation.user.username) &&
+                                argument.getType().equals("RESERVATION_APPROVED") &&
+                                argument.getContent().equals("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!")
+                )
+        );
+
         verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
     }
-
-//treba proveriti cuvanje notifikacija!
-
 
 }
 
