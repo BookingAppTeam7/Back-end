@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static javax.management.Query.eq;
+
 @Service
 public class ReservationService implements IReservationService{
 
@@ -70,19 +72,24 @@ public class ReservationService implements IReservationService{
 
     @Transactional
     @Override
-    public void confirmReservation(Long reservationId) throws Exception {
+    public Reservation confirmReservation(Long reservationId) throws Exception {
 
+        Reservation result=new Reservation();
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
         Accommodation accommodation=accommodationService.findById(reservation.accommodation.id)
                 .orElseThrow(() -> new Exception("Accommodation not found with id: "+reservation.accommodation.id));
+        User user=userService.findUserById(reservation.getUser().username);
+        if(user==null){
+            throw new Exception("User not found with id: "+reservation.getUser().username);
+        }
         if(reservation.status.equals(ReservationStatusEnum.APPROVED))
             throw new Exception("Reservation already approved!");
 
 
         if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
             reservation.setStatus(ReservationStatusEnum.APPROVED);
-            reservationRepository.save(reservation);
+           result=reservationRepository.save(reservation);
             accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
         } else {
             throw new Exception("Accommodation not available in the selected time slot");
@@ -94,12 +101,15 @@ public class ReservationService implements IReservationService{
         not.setTime(LocalDateTime.now());
         not.setContent("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!");
 
-        User user=userService.findUserById(reservation.user.username);
-        if(user.ownerRepliedToRequestNotification) {
+        User guest=userService.findUserById(reservation.user.username);
+        if(guest.ownerRepliedToRequestNotification) {
             this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
         }
         notificationService.create(not);
+
+        return result;
     }
+
     public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
         for (PriceCard priceCard : accommodation.prices) {
             if (isWithinTimeSlot(arrival, checkout, priceCard.timeSlot)) {
