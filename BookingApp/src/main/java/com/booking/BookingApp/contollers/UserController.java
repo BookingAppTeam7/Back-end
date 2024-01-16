@@ -121,7 +121,7 @@ public class UserController {
        }
         //return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    @GetMapping("/activate/{token}")
+    @PutMapping("/activate/{token}")
     //@CrossOrigin(origins = "*")//* znaci da dozvoljava sa svih stranica
     public ResponseEntity<?> activateAccount(@PathVariable String token) {
         try {
