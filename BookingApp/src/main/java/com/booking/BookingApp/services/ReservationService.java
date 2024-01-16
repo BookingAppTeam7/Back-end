@@ -9,6 +9,7 @@ import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
@@ -132,10 +133,13 @@ public class ReservationService implements IReservationService{
         Long newId= (Long) counter.incrementAndGet();
         Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
                 .orElseThrow(() -> new NotFoundException("Accommodation not found with id: " + newReservation.getAccommodationId()));
-        UserGetDTO user=this.userService.findById(newReservation.getUserId())
-                .orElseThrow(()->new NotFoundException("User not found with id: "+newReservation.getUserId()));
-        User foundUser=this.userService.findUserById(user.username);
-//        .orElseThrow(()->new NotFoundException("User not found with token: "+user.token));
+        if(!accommodation.status.equals(AccommodationStatusEnum.APPROVED)){
+            throw new ValidationException("Accommodation not approved!");
+        }
+        User user=this.userService.findUserById(newReservation.getUserId());
+        if(user==null){
+            throw new Exception("User not found with id: "+newReservation.getUserId());
+        }
         if(newReservation.timeSlot.startDate.after(newReservation.timeSlot.endDate) || newReservation.timeSlot.startDate.before(new Date()) || newReservation.timeSlot.endDate.before(new Date()))
             throw new ValidationException("Time slot is incorrect!");
         if(!accommodationService.hasAvailableTimeSlot(accommodation,newReservation.timeSlot.getStartDate(),newReservation.timeSlot.getEndDate()))
@@ -151,7 +155,7 @@ public class ReservationService implements IReservationService{
         }
 
         //ovde treba dodati da se u objektu created reservation cuva i price i priceType
-        Reservation createdReservation=new Reservation(newId,accommodation,foundUser,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
+        Reservation createdReservation=new Reservation(newId,accommodation,user,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
                     newReservation.price,newReservation.priceType);
 
         NotificationPostDTO not=new NotificationPostDTO();
@@ -160,7 +164,7 @@ public class ReservationService implements IReservationService{
         not.setTime(LocalDateTime.now());
         not.setContent("Created reservation for your accommodation : "+accommodation.name.toUpperCase()+"  by guest "+createdReservation.user.username+"!");
 
-        if(foundUser.reservationRequestNotification) {
+        if(user.reservationRequestNotification) {
             this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+accommodation.ownerId,not);
         }
 
