@@ -7,8 +7,12 @@ import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
 import com.booking.BookingApp.repositories.IReservationRepository;
 
+import jakarta.validation.constraints.Null;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -56,6 +61,11 @@ public class ReservationServiceTest {
     @Autowired
     private ReservationService reservationService;
 
+    public  Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+    public  List<String> assets=new ArrayList<>();
+    public List<Review> reviews=new ArrayList<>();
+    public List<String>images=new ArrayList<>();
+
     @Test
     public void confirmReservation_WhenReservationNotFound_ShouldThrowException() {
         // Arrange
@@ -63,7 +73,11 @@ public class ReservationServiceTest {
         when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(reservationId));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(reservationId));
+
+        assertAll(
+                () -> assertEquals("Reservation not found with id: " + reservationId,exception.getMessage())
+        );
 
         verify(reservationRepository).findById(reservationId);
         verifyNoMoreInteractions(reservationRepository);
@@ -76,32 +90,19 @@ public class ReservationServiceTest {
     @Test
     public void confirmReservation_WhenAccommodation_NotFound_ShouldThrowException() {
 
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-        List<PriceCard>prices=new ArrayList<>();
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",this.location,2,5, TypeEnum.APARTMENT,this.assets,null,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,this.images,false, AccommodationStatusEnum.APPROVED);
 
-        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
-
-        LocalDate startDate = LocalDate.now().plusDays(1);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        LocalDate endDate = LocalDate.now().plusDays(5);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
+        Reservation reservation=new Reservation(1L,accommodation, null,null,ReservationStatusEnum.PENDING,3L,15000,PriceTypeEnum.PERGUEST);
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
         when(accommodationService.findById(0L)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+
+        assertAll(
+                () -> assertEquals("Accommodation not found with id: "+reservation.accommodation.id, exception.getMessage())
+        );
 
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
@@ -115,33 +116,22 @@ public class ReservationServiceTest {
     @Test
     public void confirmReservation_WhenUser_NotFound_ShouldThrowException() {
 
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-        List<PriceCard>prices=new ArrayList<>();
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",this.location,2,5, TypeEnum.APARTMENT,this.assets,null,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,this.reviews,this.images,false, AccommodationStatusEnum.APPROVED);
 
         User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
 
-        LocalDate startDate = LocalDate.now().plusDays(1);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        LocalDate endDate = LocalDate.now().plusDays(5);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
+        Reservation reservation=new Reservation(1L,accommodation,user,null,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
         when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(null);
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+
+        assertAll(
+                () -> assertEquals("User not found with id: "+reservation.getUser().username, exception.getMessage())
+        );
 
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
@@ -156,33 +146,22 @@ public class ReservationServiceTest {
     @Test
     public void confirmReservation_WhenAlreadyApproved_ShouldThrowException() {
 
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-        List<PriceCard>prices=new ArrayList<>();
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",this.location,2,5, TypeEnum.APARTMENT,assets,null,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,this.reviews,this.images,false, AccommodationStatusEnum.APPROVED);
 
         User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
 
-        LocalDate startDate = LocalDate.now().plusDays(1);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        LocalDate endDate = LocalDate.now().plusDays(5);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
+        Reservation reservation=new Reservation(1L,accommodation,user,null,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
         when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+
+        assertAll(
+                () -> assertEquals("Reservation already approved!", exception.getMessage())
+        );
 
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
@@ -197,13 +176,8 @@ public class ReservationServiceTest {
     @Test
     public void confirmReservation_WhenPricesNotFound_ShouldThrowException() {
 
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-
         List<PriceCard>prices=new ArrayList<>();
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",this.location,2,5, TypeEnum.APARTMENT,this.assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,this.reviews,this.images,false, AccommodationStatusEnum.APPROVED);
 
         User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
 
@@ -224,7 +198,11 @@ public class ReservationServiceTest {
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+
+        assertAll(
+                () -> assertEquals("Accommodation not available in the selected time slot", exception.getMessage())
+        );
 
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
@@ -237,7 +215,7 @@ public class ReservationServiceTest {
     }
 
 
-    @Test
+    @Test  //no overlap with existing price cards
     public void confirmReservation_WhenInvalidPricesTimeSlots_ShouldThrowException() {  //nema preklapanja timeSlota rezervacije ni sa jednim cenovnikom
 
         Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
@@ -283,7 +261,11 @@ public class ReservationServiceTest {
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+
+        assertAll(
+                () -> assertEquals("Accommodation not available in the selected time slot", exception.getMessage())
+        );
 
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
@@ -296,111 +278,90 @@ public class ReservationServiceTest {
     }
 
 
-    @Test
-    public void confirmReservation_WhenPartialOverlapStart_ShouldThrowException() {  //delimicno preklapanje - slucaj 1
+    private static Stream<Arguments> provideTestDataForPartialOverlapExceptions() {
+        return Stream.of(
+                Arguments.of(  //overlap with start
+                        LocalDate.now().plusDays(3),  // priceCard startDate
+                        LocalDate.now().plusDays(5),  // priceCard endDate
+                        LocalDate.now().plusDays(2),             // reservation StartDate
+                        LocalDate.now().plusDays(5),  // reservationEndDate
+                        "Accommodation not available in the selected time slot"
+                ),
+                Arguments.of( //overlap with end
+                        LocalDate.now().plusDays(1),  // priceCard startDate
+                        LocalDate.now().plusDays(3),  // priceCard endDate
+                        LocalDate.now().plusDays(2),             // reservation StartDate
+                        LocalDate.now().plusDays(5),  // reservationEndDate
+                        "Accommodation not available in the selected time slot"
+                )
+        );
+    }
 
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
+    private static Stream<Arguments> provideValidTestData() {
+        return Stream.of(
+                Arguments.of(  //overlap with start
+                        LocalDate.now().plusDays(-3),  // priceCard startDate
+                        LocalDate.now().plusDays(6),  // priceCard endDate
+                        LocalDate.now().plusDays(2),             // reservation StartDate
+                        LocalDate.now().plusDays(5),  // reservationEndDate
+                        false  //without sending notification
+                ),
+                Arguments.of( //overlap with end
+                        LocalDate.now().plusDays(-1),  // priceCard startDate
+                        LocalDate.now().plusDays(10),  // priceCard endDate
+                        LocalDate.now().plusDays(2),             // reservation StartDate
+                        LocalDate.now().plusDays(5),  // reservationEndDate
+                        true  //sending notification
+                )
+        );
+    }
 
-        LocalDate startDate = LocalDate.now().plusDays(1);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+    @ParameterizedTest
+    @MethodSource("provideTestDataForPartialOverlapExceptions")
+    public void confirmReservation_WhenPartialOverlap_ShouldThrowException(
+            LocalDate accommodationStartDate,
+            LocalDate accommodationEndDate,
+            LocalDate reservationStartDate,
+            LocalDate reservationEndDate,
+            String expectedErrorMessage
+    ) {
+        LocalDateTime startDateTime = LocalDateTime.of(reservationStartDate, LocalTime.MIN);
         Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
-        LocalDate endDate = LocalDate.now().plusDays(3);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        LocalDateTime endDateTime = LocalDateTime.of(reservationEndDate, LocalTime.MAX);
         Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
+        TimeSlot reservationTimeSlot = new TimeSlot(0L, startDateAsDate, endDateAsDate, false);
 
-        TimeSlot invalidTimeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-
-        PriceCard priceCard=new PriceCard(0L,invalidTimeSlot,15000,PriceTypeEnum.PERGUEST);
-
-        List<PriceCard>prices=new ArrayList<>();
-        prices.add(priceCard);
-
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
-
-        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
-
-
-        startDate = LocalDate.now().plusDays(1);
-        startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        startDateTime = LocalDateTime.of(accommodationStartDate, LocalTime.MIN);
         startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
-        endDate = LocalDate.now().plusDays(5);
-        endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        endDateTime = LocalDateTime.of(accommodationEndDate, LocalTime.MAX);
         endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
+        TimeSlot accommodationTimeSlot = new TimeSlot(0L, startDateAsDate, endDateAsDate, false);
 
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.PENDING,3L,15000,PriceTypeEnum.PERGUEST);
+        PriceCard priceCard = new PriceCard(0L, accommodationTimeSlot, 15000, PriceTypeEnum.PERGUEST);
+
+        List<PriceCard> prices = new ArrayList<>();
+        prices.add(priceCard);
+
+        Accommodation accommodation = new Accommodation(0L, "TestIme", "TestOpis", this.location, 2, 5, TypeEnum.APARTMENT, assets, prices, "OWNER@gmail.com", 30, ReservationConfirmationEnum.MANUAL, this.reviews, this.images, false, AccommodationStatusEnum.APPROVED);
+
+        User user = new User("TestIme", "TestPrezime", "GUEST@gmail.com", "test", RoleEnum.GUEST, "TestAdresa", "123456789", StatusEnum.ACTIVE, false, false, false, false, true, " ", false, " ");
+
+        Reservation reservation = new Reservation(1L, accommodation, user, reservationTimeSlot, ReservationStatusEnum.PENDING, 3L, 15000, PriceTypeEnum.PERGUEST);
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
         when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
 
         // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
 
-        verify(reservationRepository).findById(1L);
-        verify(accommodationService).findById(0L);
-        verify(userService).findUserById("GUEST@gmail.com");
-        verifyNoMoreInteractions(reservationRepository);
-        verifyNoMoreInteractions(accommodationService);
-        verifyNoMoreInteractions(userService);
-        verifyNoInteractions(simpMessagingTemplate);
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
-    public void confirmReservation_WhenPartialOverlapEnd_ShouldThrowException() {  //delimicno preklapanje - slucaj 2
-
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-
-        LocalDate startDate = LocalDate.now().plusDays(3);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        LocalDate endDate = LocalDate.now().plusDays(7);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot invalidTimeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-
-        PriceCard priceCard=new PriceCard(0L,invalidTimeSlot,15000,PriceTypeEnum.PERGUEST);
-
-        List<PriceCard>prices=new ArrayList<>();
-        prices.add(priceCard);
-
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
-
-        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
-
-
-        startDate = LocalDate.now().plusDays(1);
-        startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        endDate = LocalDate.now().plusDays(5);
-        endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.PENDING,3L,15000,PriceTypeEnum.PERGUEST);
-
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
-        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
-        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
-
-        // Act and Assert
-        assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+        assertAll(
+                () -> assertEquals(expectedErrorMessage, exception.getMessage())
+        );
 
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
@@ -413,47 +374,44 @@ public class ReservationServiceTest {
     }
 
 
-    @Test
-    public void confirmReservation_WhenHasAvailableTimeSlotsSendingNotification() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideValidTestData")
+    public void confirmReservation_WhenHasAvailableTimeSlots(
+            LocalDate accommodationStartDate,
+            LocalDate accommodationEndDate,
+            LocalDate reservationStartDate,
+            LocalDate reservationEndDate,
+            boolean sendNotification
+    ) throws Exception {
 
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-
-        LocalDate startDate = LocalDate.now().plusDays(-1);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        LocalDateTime startDateTime = LocalDateTime.of(reservationStartDate, LocalTime.MIN);
         Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
-        LocalDate endDate = LocalDate.now().plusDays(10);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        LocalDateTime endDateTime = LocalDateTime.of(reservationEndDate, LocalTime.MAX);
         Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
+        TimeSlot reservationTimeSlot = new TimeSlot(0L, startDateAsDate, endDateAsDate, false);
 
-        TimeSlot invalidTimeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-
-        PriceCard priceCard=new PriceCard(0L,invalidTimeSlot,15000,PriceTypeEnum.PERGUEST);
-
-        List<PriceCard>prices=new ArrayList<>();
-        prices.add(priceCard);
-
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
-
-        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
-
-
-        startDate = LocalDate.now().plusDays(1);
-        startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        startDateTime = LocalDateTime.of(accommodationStartDate, LocalTime.MIN);
         startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
-        endDate = LocalDate.now().plusDays(5);
-        endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        endDateTime = LocalDateTime.of(accommodationEndDate, LocalTime.MAX);
         endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
+        TimeSlot accommodationTimeSlot = new TimeSlot(0L, startDateAsDate, endDateAsDate, false);
 
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.PENDING,3L,15000,PriceTypeEnum.PERGUEST);
-        Reservation approvedReservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
+        PriceCard priceCard = new PriceCard(0L, accommodationTimeSlot, 15000, PriceTypeEnum.PERGUEST);
+
+        List<PriceCard> prices = new ArrayList<>();
+        prices.add(priceCard);
+
+        Accommodation accommodation = new Accommodation(0L, "TestIme", "TestOpis", this.location, 2, 5, TypeEnum.APARTMENT, assets, prices, "OWNER@gmail.com", 30, ReservationConfirmationEnum.MANUAL, this.reviews, this.images, false, AccommodationStatusEnum.APPROVED);
+
+        User user = new User("TestIme", "TestPrezime", "GUEST@gmail.com", "test", RoleEnum.GUEST, "TestAdresa", "123456789", StatusEnum.ACTIVE, false, false, false, false, true, " ", false, " ");
+
+        Reservation reservation = new Reservation(1L, accommodation, user, reservationTimeSlot, ReservationStatusEnum.PENDING, 3L, 15000, PriceTypeEnum.PERGUEST);
+
+        Reservation approvedReservation=new Reservation(1L,accommodation,user,reservationTimeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
 
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
@@ -470,7 +428,7 @@ public class ReservationServiceTest {
         verify(reservationRepository,times(1)).findById(1L);
         verify(accommodationService,times(1)).findById(0L);
         verify(userService, times(2)).findUserById("GUEST@gmail.com"); //kasnije je pozvana i za slanje notifikacije
-        verify(accommodationService).editPriceCards(0L,startDateAsDate,endDateAsDate);
+        verify(accommodationService).editPriceCards(0L,reservationTimeSlot.startDate,reservationTimeSlot.endDate);
         verify(reservationRepository).save(reservation);
         verify(notificationService).create(
                 argThat(argument ->
@@ -479,84 +437,13 @@ public class ReservationServiceTest {
                                 argument.getContent().equals("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!")
                 )
         );
-        verify(simpMessagingTemplate).convertAndSend(eq("/socket-publisher/" + reservation.user.username), any(NotificationPostDTO.class));
+        if(sendNotification) {
+            verify(simpMessagingTemplate).convertAndSend(eq("/socket-publisher/" + reservation.user.username), any(NotificationPostDTO.class));
+        }
         verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(notificationService);
     }
-
-
-    @Test
-    public void confirmReservation_WhenHasAvailableTimeSlotsNotSendingNotification() throws Exception {
-
-        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
-        List<String> assets=new ArrayList<>();
-
-        LocalDate startDate = LocalDate.now().plusDays(-1);
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        LocalDate endDate = LocalDate.now().plusDays(10);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot invalidTimeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-
-        PriceCard priceCard=new PriceCard(0L,invalidTimeSlot,15000,PriceTypeEnum.PERGUEST);
-
-        List<PriceCard>prices=new ArrayList<>();
-        prices.add(priceCard);
-
-        List<Review> reviews=new ArrayList<>();
-        List<String>images=new ArrayList<>();
-        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
-
-        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,false," ",false," ");
-
-
-        startDate = LocalDate.now().plusDays(1);
-        startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
-        startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-        endDate = LocalDate.now().plusDays(5);
-        endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-        endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
-
-
-        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
-        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.PENDING,3L,15000,PriceTypeEnum.PERGUEST);
-        Reservation approvedReservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
-
-
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
-        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
-        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
-        when(reservationRepository.save(reservation)).thenReturn(approvedReservation);
-
-        Reservation result=reservationService.confirmReservation(1L);
-
-        assertEquals(reservation.getId(),result.getId());
-        assertEquals(ReservationStatusEnum.APPROVED,result.getStatus());
-
-        verify(reservationRepository,times(1)).findById(1L);
-        verify(accommodationService).findById(0L);
-        verify(userService, times(2)).findUserById("GUEST@gmail.com"); //kasnije je pozvana i za slanje notifikacije
-        verify(accommodationService).editPriceCards(0L,startDateAsDate,endDateAsDate);
-        verify(reservationRepository).save(reservation);
-        verifyNoInteractions(simpMessagingTemplate);
-        verify(notificationService).create(
-                argThat(argument ->
-                        argument.getUserId().equals(reservation.user.username) &&
-                                argument.getType().equals("RESERVATION_APPROVED") &&
-                                argument.getContent().equals("Reservation in accommodation :"+reservation.accommodation.name.toUpperCase()+" APPROVED by owner "+reservation.accommodation.ownerId+"!")
-                )
-        );
-
-        verifyNoMoreInteractions(reservationRepository);
-        verifyNoMoreInteractions(accommodationService);
-        verifyNoMoreInteractions(userService);
-    }
-
 }
 

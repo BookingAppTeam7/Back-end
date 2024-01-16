@@ -24,7 +24,7 @@ public class ReservationRepositoryTest {
 
     @Test
     public void updateStatusTest() {
-        Long reservationId = 2L;
+        Long reservationId = 6L;
         ReservationStatusEnum newStatus = ReservationStatusEnum.APPROVED;
 
         int affectedRows = reservationRepository.updateStatus(reservationId, newStatus);
