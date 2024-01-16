@@ -25,4 +25,6 @@ public interface IReservationService {
     void rejectReservation(Long reservationId) throws Exception;
     void cancelReservation(Long reservationId) throws Exception;
     List<Reservation> searchFilter(String accName, Date startDate, Date endDate, ReservationStatusEnum status);
+
+    void editPriceCards(Long accommodationId, Date reservationStartDate, Date reservationEndDate);
 }
