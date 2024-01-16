@@ -119,6 +119,20 @@ public class UserService implements IUserService{
         result.setPassword(passwordEncoder.encode(result.password));
         return userRepository.saveAndFlush(result);
     }
+    public void activateUser(String token) throws Exception {
+        List<User> allUsers=userRepository.findAll();
+        for(User u:allUsers){
+            if(u.token.equals(token)){
+                System.out.println(u.username);
+                User user=findUserById(u.username);
+                if(user==null){
+                    throw new Exception("User not found");
+                }
+                user.setStatus(StatusEnum.ACTIVE);
+                userRepository.save(user);
+            }
+        }
+    }
     @Override
     public void addFavouriteAccommodation(String username, Long accId) throws Exception {
         User user=findUserById(username);
