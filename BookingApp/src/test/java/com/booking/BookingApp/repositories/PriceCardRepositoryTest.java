@@ -42,7 +42,7 @@ public class PriceCardRepositoryTest {
 
     @Test
     public void shouldSavePriceCardThroughSqlFile() {
-        Optional<PriceCard> test =priceCardRepository.findById(2L);
+        Optional<PriceCard> test =priceCardRepository.findById(1L);
         assertThat(test).isNotEmpty();
     }
 }
