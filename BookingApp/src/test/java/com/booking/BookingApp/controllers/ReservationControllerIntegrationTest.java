@@ -113,7 +113,7 @@ public class ReservationControllerIntegrationTest {
                 arguments(0L,"Reservation not found with id: " + 0L ),  //reservation not found
                 arguments(3L, "Cannot read field \\\"id\\\" because \\\"reservation.accommodation\\\" is null"), //not found accommodation
                 arguments(4L, "Cannot read field \\\"username\\\"")  //not found user
-        );
-    }
+        );
+    }
 
 }

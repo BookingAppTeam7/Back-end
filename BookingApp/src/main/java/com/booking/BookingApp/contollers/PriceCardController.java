@@ -42,10 +42,10 @@ public class PriceCardController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+   // @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> create(@RequestBody PriceCardPostDTO newPriceCard) throws Exception {
         Optional<PriceCard> result=priceCardService.create(newPriceCard);
-        if(result==null){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
+        if(!result.isPresent()){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
     }
 
@@ -63,13 +63,13 @@ public class PriceCardController {
         PriceCardPostDTO newPriceCard=new PriceCardPostDTO(newTimeSlot, newPriceCardString.price, newPriceCardString.type, newPriceCardString.accommodationId);
 
         Optional<PriceCard> result=priceCardService.create(newPriceCard);
-        if(result==null){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
+        if(!result.isPresent()){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
         return new ResponseEntity<>(result.get(),HttpStatus.CREATED);
     }
 
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+  //  @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO accommodation, @PathVariable Long id) throws Exception{
         Optional<PriceCard> result = priceCardService.update(accommodation, id);
         if (result!=null) {

@@ -136,7 +136,7 @@ public class AccommodationController {
     
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+   // @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<Accommodation>  create(@RequestBody AccommodationPostDTO newAccommodation) throws Exception{
         Optional<Accommodation> result = accommodationService.create(newAccommodation);
         if (result.isPresent()) {
