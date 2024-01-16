@@ -11,6 +11,7 @@ import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
 import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
+import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
@@ -296,6 +297,18 @@ public class ReservationService implements IReservationService{
             prices.add(savedPriceCard);
         }
 
+        //ako je za smestaj podesena automatska potvrda zahteva , prihvata se prvi u tom terminu koji je pending
+
+        if(accommodation.get().reservationConfirmation== ReservationConfirmationEnum.AUTOMATIC){
+            List<Reservation> reservations=reservationRepository.findByAccommodationId(accommodation.get().id);
+
+            for(Reservation r:reservations){
+                if(r.status==ReservationStatusEnum.PENDING && (r.timeSlot.startDate.equals(reservation.timeSlot.startDate) || r.timeSlot.startDate.after(reservation.timeSlot.startDate)) && (r.timeSlot.endDate.equals(reservation.timeSlot.endDate) ||r.timeSlot.endDate.before(reservation.timeSlot.endDate))){
+                    confirmReservation(r.id);
+                    break;
+                }
+            }
+        }
 
         NotificationPostDTO not=new NotificationPostDTO();
         not.setUserId(reservation.accommodation.ownerId);
