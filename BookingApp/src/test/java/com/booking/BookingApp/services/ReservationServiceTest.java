@@ -1,6 +1,7 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.*;
+import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.enums.*;
 import com.booking.BookingApp.models.reservations.Reservation;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -55,6 +57,442 @@ public class ReservationServiceTest {
 
     @Autowired
     private ReservationService reservationService;
+    private static AtomicLong counter=new AtomicLong();
+
+    @Test
+    public void createReservation_WhenAccommodation_NotFound_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.empty());
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verifyNoInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenAccommodation_NotApproved_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.PENDING);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verifyNoInteractions(userService);
+        verifyNoInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenUser_NotFound_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(null);
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verifyNoInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenTimeSlot_Invalid_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(5);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(1);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verifyNoInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenAccommodation_NotAvailable_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+
+        LocalDate startDateAcc = LocalDate.now().plusDays(7);
+        LocalDateTime startDateTimeAcc = LocalDateTime.of(startDateAcc, LocalTime.MIN);
+        Date startDateAsDateAcc = java.util.Date.from(startDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateAcc = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTimeAcc = LocalDateTime.of(endDateAcc, LocalTime.MAX);
+        Date endDateAsDateAcc = java.util.Date.from(endDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+        TimeSlot timeSlotAcc=new TimeSlot(0L,startDateAsDateAcc,endDateAsDateAcc,false);
+        prices.add(new PriceCard(0L,timeSlotAcc,1000,PriceTypeEnum.PERGUEST,false));
+
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(1L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verify(accommodationService).hasAvailableTimeSlot(accommodation,newReservation.timeSlot.startDate, newReservation.timeSlot.endDate);
+        verifyNoInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenGuestNumber_Invalid_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+
+        LocalDate startDateAcc = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTimeAcc = LocalDateTime.of(startDateAcc, LocalTime.MIN);
+        Date startDateAsDateAcc = java.util.Date.from(startDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateAcc = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTimeAcc = LocalDateTime.of(endDateAcc, LocalTime.MAX);
+        Date endDateAsDateAcc = java.util.Date.from(endDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+        TimeSlot timeSlotAcc=new TimeSlot(0L,startDateAsDateAcc,endDateAsDateAcc,false);
+        prices.add(new PriceCard(0L,timeSlotAcc,1000,PriceTypeEnum.PERGUEST,false));
+
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(3);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(1L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,7L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verify(accommodationService).hasAvailableTimeSlot(accommodation,newReservation.timeSlot.startDate, newReservation.timeSlot.endDate);
+        verifyNoInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenAlreadyExists_ApprovedReservation_ShouldThrowException(){
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        List<Reservation> allReservations=new ArrayList<>();
+
+        LocalDate startDateAcc = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTimeAcc = LocalDateTime.of(startDateAcc, LocalTime.MIN);
+        Date startDateAsDateAcc = java.util.Date.from(startDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateAcc = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTimeAcc = LocalDateTime.of(endDateAcc, LocalTime.MAX);
+        Date endDateAsDateAcc = java.util.Date.from(endDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+        TimeSlot timeSlotAcc=new TimeSlot(0L,startDateAsDateAcc,endDateAsDateAcc,false);
+        prices.add(new PriceCard(0L,timeSlotAcc,1000,PriceTypeEnum.PERGUEST,false));
+
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(3);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(7);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        TimeSlot timeSlot=new TimeSlot(1L,startDateAsDate,endDateAsDate,false);
+
+
+        LocalDate startDateRes = LocalDate.now().plusDays(5);
+        LocalDateTime startDateTimeRes = LocalDateTime.of(startDateRes, LocalTime.MIN);
+        Date startDateAsDateRes = java.util.Date.from(startDateTimeRes.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateRes = LocalDate.now().plusDays(9);
+        LocalDateTime endDateTimeRes = LocalDateTime.of(endDateRes, LocalTime.MAX);
+        Date endDateAsDateRes = java.util.Date.from(endDateTimeRes.atZone(java.time.ZoneId.systemDefault()).toInstant());
+        TimeSlot timeSlotRes=new TimeSlot(3L,startDateAsDateRes,endDateAsDateRes,false);
+
+        allReservations.add(new Reservation(3L,accommodation,user,timeSlotRes,ReservationStatusEnum.APPROVED,3L,1000,PriceTypeEnum.PERUNIT));
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+        when(accommodationService.hasAvailableTimeSlot(any(), any(), any())).thenReturn(true);
+        when(reservationRepository.findAll()).thenReturn(allReservations);
+
+        assertThrows(Exception.class, () -> reservationService.create(newReservation));
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verify(accommodationService).hasAvailableTimeSlot(accommodation,newReservation.timeSlot.startDate, newReservation.timeSlot.endDate);
+        verify(reservationRepository).findAll();
+
+        verifyNoMoreInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+    @Test
+    public void createReservation_WhenEverythingOk_SendingNotification() throws Exception {
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        List<Reservation> allReservations=new ArrayList<>();
+
+        LocalDate startDateAcc = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTimeAcc = LocalDateTime.of(startDateAcc, LocalTime.MIN);
+        Date startDateAsDateAcc = java.util.Date.from(startDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateAcc = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTimeAcc = LocalDateTime.of(endDateAcc, LocalTime.MAX);
+        Date endDateAsDateAcc = java.util.Date.from(endDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+        TimeSlot timeSlotAcc=new TimeSlot(0L,startDateAsDateAcc,endDateAsDateAcc,false);
+        prices.add(new PriceCard(0L,timeSlotAcc,1000,PriceTypeEnum.PERGUEST,false));
+
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,true,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(3);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(1L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+        Long newId= (Long) counter.incrementAndGet();
+        Reservation createdReservation=new Reservation(newId,accommodation,user,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
+                newReservation.price,newReservation.priceType);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+        when(reservationRepository.findAll()).thenReturn(allReservations);
+        when(accommodationService.hasAvailableTimeSlot(any(), any(), any())).thenReturn(true);
+        when(reservationRepository.save(any())).thenReturn(createdReservation);
+
+        Optional<Reservation> result=reservationService.create(newReservation);
+        if(result.isPresent()){
+            assertEquals(ReservationStatusEnum.PENDING,result.get().getStatus());
+            assertEquals(newReservation.getAccommodationId(),result.get().accommodation.id);
+            assertEquals(newReservation.getUserId(),result.get().getUser().username);
+        }
+
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verify(accommodationService).hasAvailableTimeSlot(accommodation,newReservation.timeSlot.startDate, newReservation.timeSlot.endDate);
+        verify(reservationRepository).findAll();
+        verify(reservationRepository).save(any());
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verify(simpMessagingTemplate).convertAndSend(eq("/socket-publisher/" + createdReservation.accommodation.ownerId), any(NotificationPostDTO.class));
+        verify(notificationService).create(any());
+        verifyNoMoreInteractions(simpMessagingTemplate);
+    }
+    @Test
+    public void createReservation_WhenEverythingOk_NotSendingNotification() throws Exception {
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+        List<PriceCard>prices=new ArrayList<>();
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        List<Reservation> allReservations=new ArrayList<>();
+
+        LocalDate startDateAcc = LocalDate.now().plusDays(1);
+        LocalDateTime startDateTimeAcc = LocalDateTime.of(startDateAcc, LocalTime.MIN);
+        Date startDateAsDateAcc = java.util.Date.from(startDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateAcc = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTimeAcc = LocalDateTime.of(endDateAcc, LocalTime.MAX);
+        Date endDateAsDateAcc = java.util.Date.from(endDateTimeAcc.atZone(java.time.ZoneId.systemDefault()).toInstant());
+        TimeSlot timeSlotAcc=new TimeSlot(0L,startDateAsDateAcc,endDateAsDateAcc,false);
+        prices.add(new PriceCard(0L,timeSlotAcc,1000,PriceTypeEnum.PERGUEST,false));
+
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+        LocalDate startDate = LocalDate.now().plusDays(3);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(5);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(1L,startDateAsDate,endDateAsDate,false);
+
+        ReservationPostDTO newReservation=new ReservationPostDTO(0L,"GUEST@gmail.com",timeSlot,3L,15000,PriceTypeEnum.PERGUEST);
+        Long newId= (Long) counter.incrementAndGet();
+        Reservation createdReservation=new Reservation(newId,accommodation,user,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
+                newReservation.price,newReservation.priceType);
+
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+        when(reservationRepository.findAll()).thenReturn(allReservations);
+        when(accommodationService.hasAvailableTimeSlot(any(), any(), any())).thenReturn(true);
+        when(reservationRepository.save(any())).thenReturn(createdReservation);
+
+        Optional<Reservation> result=reservationService.create(newReservation);
+        if(result.isPresent()){
+            assertEquals(ReservationStatusEnum.PENDING,result.get().getStatus());
+            assertEquals(newReservation.getAccommodationId(),result.get().accommodation.id);
+            assertEquals(newReservation.getUserId(),result.get().getUser().username);
+        }
+
+
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verify(accommodationService).hasAvailableTimeSlot(accommodation,newReservation.timeSlot.startDate, newReservation.timeSlot.endDate);
+        verify(reservationRepository).findAll();
+        verify(reservationRepository).save(any());
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verify(notificationService).create(any());
+    }
 
     @Test
     public void confirmReservation_WhenReservationNotFound_ShouldThrowException() {
