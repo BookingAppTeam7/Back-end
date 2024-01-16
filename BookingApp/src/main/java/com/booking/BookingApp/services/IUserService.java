@@ -21,6 +21,7 @@ public interface IUserService {
     Optional<User> findByToken(String token);
     Optional<User> save(User user);
     User findUserById(String username);
+    void activateUser(String token) throws Exception;
 
     List<User> findByRole(RoleEnum role);
     void addFavouriteAccommodation(String username, Long accId) throws Exception;

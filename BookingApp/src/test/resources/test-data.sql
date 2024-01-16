@@ -1,4 +1,3 @@
-
 INSERT INTO users (`first_name`, `last_name`, `username`, `password`, `role`, `address`, `phone_number`, `status`,
                    `reservation_request_notification`, `reservation_cancellation_notification`, `owner_rating_notification`,
                    `accommodation_rating_notification`, `owner_replied_to_request_notification`, `token`, `deleted`, `reported`, `favourite_accommodations`)
@@ -20,7 +19,8 @@ VALUES
     (4,'2024-02-28', '2024-03-30', false),
     (5,'2024-01-26', '2024-01-29', false),
     (6,'2024-02-08', '2024-02-18', false),
-    (7,'2024-02-08', '2024-02-18', false);
+    (7,'2024-02-08', '2024-02-18', false),
+    (8,'2024-02-08', '2024-02-18', false);
 
 INSERT INTO price_card (`id`,`time_slot_id`, `price`, `type`, `deleted`)
 VALUES (1,1, 150.0, 'PERGUEST',false);
@@ -36,7 +36,7 @@ VALUES
     (2, NULL, NULL, NULL, 'PENDING', 2, 100.0, 'PERGUEST'),
     (3, NULL, NULL, NULL, 'APPROVED', 2, 100.0, 'PERGUEST'),
     (4, 2, NULL, NULL, 'APPROVED', 2, 100.0, 'PERGUEST'),
-    (5, 2, 'TESTGOST1@gmail.com', 3, 'APPROVED', 2, 100.0, 'PERGUEST'),
+    (5, 2, 'TESTGOST1@gmail.com', 3, 'PENDING', 2, 100.0, 'PERGUEST'),
     (6, 2, 'TESTGOST1@gmail.com', 4, 'APPROVED', 2, 100.0, 'PERGUEST'),
     (7, 2, 'TESTGOST1@gmail.com', 5, 'PENDING', 2, 100.0, 'PERGUEST'),
     (8, 2, 'TESTGOST1@gmail.com', 6, 'PENDING', 2, 100.0, 'PERGUEST'),

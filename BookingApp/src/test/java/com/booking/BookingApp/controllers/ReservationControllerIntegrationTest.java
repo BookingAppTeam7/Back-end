@@ -1,8 +1,10 @@
 package com.booking.BookingApp.controllers;
 
-import com.booking.BookingApp.services.ReservationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -10,10 +12,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -40,12 +44,10 @@ public class ReservationControllerIntegrationTest {
 
     }
 
-
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_InvalidReservation() {
-
-        Long reservationId = 0L;
+    @ParameterizedTest
+    @MethodSource("provideTestDataForInvalidData")
+    @DisplayName("Confirm Reservation with invalid data - invalid reservation/accommodation/user - /reservations/confirm/{id}")
+    public void shouldConfirmReservation_InvalidData(Long reservationId,String expectedMessageError) {
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 "/reservations/confirm/{id}",
@@ -55,125 +57,63 @@ public class ReservationControllerIntegrationTest {
                 reservationId);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-        String expectedErrorMessage = "Reservation not found with id: " + reservationId;
+        System.out.println(responseEntity.getBody().toString());
+        String actualErrorMessage = responseEntity.getBody().toString();
+        assertTrue(actualErrorMessage.contains(expectedMessageError));
+    }
+
+    @Test
+    @DisplayName("Confirm Reservation Already Approved - /reservations/confirm/{id}")
+    public void shouldConfirmReservation_AlreadyApproved() {
+        Long reservationId = 6L;
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/reservations/confirm/{id}",
+                HttpMethod.PUT,
+                null,
+                String.class,
+                reservationId);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        System.out.println(responseEntity.getBody().toString());
+        String actualErrorMessage = responseEntity.getBody().toString();
+        assertTrue(actualErrorMessage.contains("Reservation already approved!"));
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("provideTestDataForNotDefinedPrices")
+    @DisplayName("Confirm Reservation with Undefined Prices - /reservations/confirm/{id}")
+    public void shouldConfirmReservation_UndefinedPrices(Long reservationId, String expectedErrorMessage) {
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/reservations/confirm/{id}",
+                HttpMethod.PUT,
+                null,
+                String.class,
+                reservationId);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        System.out.println(responseEntity.getBody().toString());
         String actualErrorMessage = responseEntity.getBody().toString();
         assertTrue(actualErrorMessage.contains(expectedErrorMessage));
     }
 
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_InvalidAccommodation() {
 
-        Long reservationId = 3L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-//        System.out.println(responseEntity.getBody().toString());
-//        String actualErrorMessage = responseEntity.getBody().toString();
-//        assertTrue(actualErrorMessage.startsWith("Cannot read field \"id\" because \"reservation.accommodation\" is null"));
-
+    private static Stream<Arguments> provideTestDataForNotDefinedPrices() {
+        return Stream.of(
+                arguments(7L, "Accommodation not available in the selected time slot"),  //partial overlap start date
+                arguments(8L, "Accommodation not available in the selected time slot"), //partial overlap end date
+                arguments(5L, "Accommodation not available in the selected time slot"),  //undefined prices
+                arguments(9L, "Accommodation not available in the selected time slot") //no overlaps with existing price cards time slots
+        );
     }
 
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_InvalidUser() {
-
-        Long reservationId = 4L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_EmptyPrices() {
-
-        Long reservationId = 9L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_UndefinedPrice() {
-
-        Long reservationId = 5L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_AlreadyApproved() {
-
-        Long reservationId = 6L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_PartialOverlapStart() {
-
-        Long reservationId = 7L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Should Confirm Reservation When making PUT request to endpoint - /reservations/confirm/{id}")
-    public void shouldConfirmReservation_PartialOverlapEnd() {
-
-        Long reservationId = 8L;
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "/reservations/confirm/{id}",
-                HttpMethod.PUT,
-                null,
-                String.class,
-                reservationId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-    }
+    private static Stream<Arguments> provideTestDataForInvalidData() {
+        return Stream.of(
+                arguments(0L,"Reservation not found with id: " + 0L ),  //reservation not found
+                arguments(3L, "Cannot read field \\\"id\\\" because \\\"reservation.accommodation\\\" is null"), //not found accommodation
+                arguments(4L, "Cannot read field \\\"username\\\"")  //not found user
+        );
+    }
 
 }

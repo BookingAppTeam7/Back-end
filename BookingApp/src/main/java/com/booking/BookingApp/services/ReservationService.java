@@ -9,6 +9,7 @@ import com.booking.BookingApp.models.dtos.accommodations.AccommodationPutDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationGetDTO;
 import com.booking.BookingApp.models.dtos.users.NotificationPostDTO;
 import com.booking.BookingApp.models.dtos.users.UserGetDTO;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.NotificationTypeEnum;
 import com.booking.BookingApp.models.enums.ReservationStatusEnum;
 import com.booking.BookingApp.models.reservations.Reservation;
@@ -16,6 +17,7 @@ import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPutDTO;
 import com.booking.BookingApp.models.users.Notification;
 import com.booking.BookingApp.models.users.User;
+import com.booking.BookingApp.repositories.IAccommodationRepository;
 import com.booking.BookingApp.repositories.IPriceCardRepository;
 import com.booking.BookingApp.repositories.IReservationRepository;
 import jakarta.transaction.Transactional;
@@ -40,6 +42,9 @@ public class ReservationService implements IReservationService{
 
     @Autowired
     private IPriceCardRepository priceCardRepository;
+
+    @Autowired
+    private IAccommodationRepository accommodationRepository;
     private UserService userService=new UserService();
 
 
@@ -89,8 +94,8 @@ public class ReservationService implements IReservationService{
 
         if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
             reservation.setStatus(ReservationStatusEnum.APPROVED);
-           result=reservationRepository.save(reservation);
-            accommodationService.editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
+            result=reservationRepository.save(reservation);
+            editPriceCards(accommodation.id,reservation.timeSlot.startDate,reservation.timeSlot.endDate);
         } else {
             throw new Exception("Accommodation not available in the selected time slot");
         }
@@ -128,10 +133,13 @@ public class ReservationService implements IReservationService{
         Long newId= (Long) counter.incrementAndGet();
         Accommodation accommodation = this.accommodationService.findById(newReservation.getAccommodationId())
                 .orElseThrow(() -> new NotFoundException("Accommodation not found with id: " + newReservation.getAccommodationId()));
-        UserGetDTO user=this.userService.findById(newReservation.getUserId())
-                .orElseThrow(()->new NotFoundException("User not found with id: "+newReservation.getUserId()));
-        User foundUser=this.userService.findUserById(user.username);
-//        .orElseThrow(()->new NotFoundException("User not found with token: "+user.token));
+        if(!accommodation.status.equals(AccommodationStatusEnum.APPROVED)){
+            throw new ValidationException("Accommodation not approved!");
+        }
+        User user=this.userService.findUserById(newReservation.getUserId());
+        if(user==null){
+            throw new Exception("User not found with id: "+newReservation.getUserId());
+        }
         if(newReservation.timeSlot.startDate.after(newReservation.timeSlot.endDate) || newReservation.timeSlot.startDate.before(new Date()) || newReservation.timeSlot.endDate.before(new Date()))
             throw new ValidationException("Time slot is incorrect!");
         if(!accommodationService.hasAvailableTimeSlot(accommodation,newReservation.timeSlot.getStartDate(),newReservation.timeSlot.getEndDate()))
@@ -147,7 +155,7 @@ public class ReservationService implements IReservationService{
         }
 
         //ovde treba dodati da se u objektu created reservation cuva i price i priceType
-        Reservation createdReservation=new Reservation(newId,accommodation,foundUser,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
+        Reservation createdReservation=new Reservation(newId,accommodation,user,newReservation.timeSlot, ReservationStatusEnum.PENDING, newReservation.numberOfGuests,
                     newReservation.price,newReservation.priceType);
 
         NotificationPostDTO not=new NotificationPostDTO();
@@ -156,7 +164,7 @@ public class ReservationService implements IReservationService{
         not.setTime(LocalDateTime.now());
         not.setContent("Created reservation for your accommodation : "+accommodation.name.toUpperCase()+"  by guest "+createdReservation.user.username+"!");
 
-        if(foundUser.reservationRequestNotification) {
+        if(user.reservationRequestNotification) {
             this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+accommodation.ownerId,not);
         }
 
@@ -288,48 +296,6 @@ public class ReservationService implements IReservationService{
             prices.add(savedPriceCard);
         }
 
-//        for(PriceCard p:prices){
-//            if(p.timeSlot.endDate.equals(reservation.timeSlot.startDate)){
-//                p.timeSlot.endDate=reservation.timeSlot.endDate;
-//                priceCardRepository.saveAndFlush(p);
-//                break;
-//
-//            }
-//
-//            else if(p.timeSlot.startDate.equals(reservation.timeSlot.endDate)){
-//                p.timeSlot.startDate=reservation.timeSlot.startDate;
-//                priceCardRepository.saveAndFlush(p);
-//                break;
-//            }
-//            else if(reservation.timeSlot.startDate.before(p.timeSlot.startDate) && reservation.timeSlot.endDate.before(p.timeSlot.endDate) && reservation.timeSlot.endDate.after(p.timeSlot.startDate)){
-//                p.timeSlot.startDate=reservation.timeSlot.startDate;
-//                priceCardRepository.saveAndFlush(p);
-//                break;
-//
-//            }
-//            else if(reservation.timeSlot.startDate.before(p.timeSlot.startDate) && reservation.timeSlot.endDate.after(p.timeSlot.endDate) && reservation.timeSlot.endDate.after(p.timeSlot.startDate)){
-//                p.timeSlot.startDate=reservation.timeSlot.startDate;
-//                p.timeSlot.endDate=reservation.timeSlot.endDate;
-//                priceCardRepository.saveAndFlush(p);
-//                break;
-//
-//            }
-//            else if(p.timeSlot.startDate.before(reservation.timeSlot.startDate) && p.timeSlot.endDate.after(reservation.timeSlot.endDate) && p.timeSlot.endDate.after(reservation.timeSlot.endDate) && reservation.timeSlot.endDate.after(p.timeSlot.startDate)) {
-//                //datum upada u postojeci
-//                break;
-//
-//            }
-//            else {
-//                TimeSlot timeSlot=new TimeSlot(reservation.timeSlot.startDate,reservation.timeSlot.endDate,false);
-//                PriceCard priceCard=new PriceCard(timeSlot,reservation.price,reservation.priceType,false);
-//                PriceCard newPriceCard=priceCardRepository.save(priceCard);
-//                prices.add(newPriceCard);
-//
-//                break;
-//
-//            }
-
-        //}
 
         NotificationPostDTO not=new NotificationPostDTO();
         not.setUserId(reservation.accommodation.ownerId);
@@ -360,5 +326,49 @@ public class ReservationService implements IReservationService{
             }
         }
         return ret;
+    }
+
+    @Override
+    @Transactional
+    public void editPriceCards(Long accommodationId, Date reservationStartDate, Date reservationEndDate) {
+        Optional<Accommodation> accommodation = accommodationService.findById(accommodationId);
+        // Iterate through the existing PriceCards and update them based on the reservation dates
+        for (PriceCard priceCard : accommodation.get().getPrices()) {
+            if (isWithinTimeSlot(reservationStartDate, reservationEndDate, priceCard.getTimeSlot())) {
+                if(isSameDay(reservationStartDate,priceCard.timeSlot.startDate)){
+                    priceCard.timeSlot.setStartDate(reservationEndDate);
+                    break;
+                }
+                if(isSameDay(reservationEndDate,priceCard.timeSlot.endDate)){
+                    priceCard.timeSlot.setEndDate(reservationStartDate);
+                    break;
+                }
+                // If there is an overlap, split the existing PriceCard into two PriceCards
+                PriceCard newPriceCard1 = new PriceCard();
+                newPriceCard1.setTimeSlot(new TimeSlot(null, reservationEndDate, priceCard.getTimeSlot().getEndDate(), false));
+                newPriceCard1.setPrice(priceCard.getPrice());
+                newPriceCard1.setType(priceCard.getType());
+                newPriceCard1.setDeleted(false);
+
+                priceCard.getTimeSlot().setEndDate(reservationStartDate);
+
+                // Add the new PriceCard
+                accommodation.get().getPrices().add(newPriceCard1);
+
+                break;
+            }
+        }
+        accommodationRepository.save(accommodation.get());
+    }
+    private boolean isSameDay(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 }

@@ -263,49 +263,49 @@ public class AccommodationService implements IAccommodationService{
         }
         return Optional.empty();
     }
-    @Override
-    @Transactional
-    public void editPriceCards(Long accommodationId, Date reservationStartDate, Date reservationEndDate) {
-        Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                .orElseThrow(() -> new RuntimeException("Accommodation not found with id: " + accommodationId));
-        // Iterate through the existing PriceCards and update them based on the reservation dates
-        for (PriceCard priceCard : accommodation.getPrices()) {
-            if (isWithinTimeSlot(reservationStartDate, reservationEndDate, priceCard.getTimeSlot())) {
-                if(isSameDay(reservationStartDate,priceCard.timeSlot.startDate)){
-                    priceCard.timeSlot.setStartDate(reservationEndDate);
-                    break;
-                }
-                if(isSameDay(reservationEndDate,priceCard.timeSlot.endDate)){
-                    priceCard.timeSlot.setEndDate(reservationStartDate);
-                    break;
-                }
-                // If there is an overlap, split the existing PriceCard into two PriceCards
-                PriceCard newPriceCard1 = new PriceCard();
-                newPriceCard1.setTimeSlot(new TimeSlot(null, reservationEndDate, priceCard.getTimeSlot().getEndDate(), false));
-                newPriceCard1.setPrice(priceCard.getPrice());
-                newPriceCard1.setType(priceCard.getType());
-                newPriceCard1.setDeleted(false);
-
-                priceCard.getTimeSlot().setEndDate(reservationStartDate);
-
-                // Add the new PriceCard
-                accommodation.getPrices().add(newPriceCard1);
-
-                break;
-            }
-        }
-        accommodationRepository.save(accommodation);
-    }
-    private boolean isSameDay(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(date1);
-
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(date2);
-
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
-                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
-    }
+//    @Override
+//    @Transactional
+//    public void editPriceCards(Long accommodationId, Date reservationStartDate, Date reservationEndDate) {
+//        Accommodation accommodation = accommodationRepository.findById(accommodationId)
+//                .orElseThrow(() -> new RuntimeException("Accommodation not found with id: " + accommodationId));
+//        // Iterate through the existing PriceCards and update them based on the reservation dates
+//        for (PriceCard priceCard : accommodation.getPrices()) {
+//            if (isWithinTimeSlot(reservationStartDate, reservationEndDate, priceCard.getTimeSlot())) {
+//                if(isSameDay(reservationStartDate,priceCard.timeSlot.startDate)){
+//                    priceCard.timeSlot.setStartDate(reservationEndDate);
+//                    break;
+//                }
+//                if(isSameDay(reservationEndDate,priceCard.timeSlot.endDate)){
+//                    priceCard.timeSlot.setEndDate(reservationStartDate);
+//                    break;
+//                }
+//                // If there is an overlap, split the existing PriceCard into two PriceCards
+//                PriceCard newPriceCard1 = new PriceCard();
+//                newPriceCard1.setTimeSlot(new TimeSlot(null, reservationEndDate, priceCard.getTimeSlot().getEndDate(), false));
+//                newPriceCard1.setPrice(priceCard.getPrice());
+//                newPriceCard1.setType(priceCard.getType());
+//                newPriceCard1.setDeleted(false);
+//
+//                priceCard.getTimeSlot().setEndDate(reservationStartDate);
+//
+//                // Add the new PriceCard
+//                accommodation.getPrices().add(newPriceCard1);
+//
+//                break;
+//            }
+//        }
+//        accommodationRepository.save(accommodation);
+//    }
+//    private boolean isSameDay(Date date1, Date date2) {
+//        Calendar cal1 = Calendar.getInstance();
+//        cal1.setTime(date1);
+//
+//        Calendar cal2 = Calendar.getInstance();
+//        cal2.setTime(date2);
+//
+//        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+//                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+//                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+//    }
 
 }
