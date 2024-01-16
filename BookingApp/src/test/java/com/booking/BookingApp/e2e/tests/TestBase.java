@@ -1,4 +1,4 @@
-package com.booking.BookingApp.tests;
+package com.booking.BookingApp.e2e.tests;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
