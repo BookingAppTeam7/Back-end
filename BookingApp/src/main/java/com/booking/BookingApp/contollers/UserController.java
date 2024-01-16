@@ -123,38 +123,17 @@ public class UserController {
     }
     @GetMapping("/activate/{token}")
     //@CrossOrigin(origins = "*")//* znaci da dozvoljava sa svih stranica
-    public ResponseEntity<Map<String,String>> activateAccount(@PathVariable String token) throws Exception {
-        List<UserGetDTO> allUsers=userService.findAll();
-        for(UserGetDTO u:allUsers){
-            if(u.token.equals(token)){
-                User user=userService.findUserById(u.username);
-                user.setStatus(StatusEnum.ACTIVE);
-                UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
-                        user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
-                        user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false,user.getFavouriteAccommodations());
-                userService.update(userPutDTO,user.username);
-                return new ResponseEntity<>(Collections.singletonMap("message", "Account activated successfully"), HttpStatus.OK);
-            }
+    public ResponseEntity<?> activateAccount(@PathVariable String token) {
+        try {
+            userService.activateUser(token);
+            return new ResponseEntity<>(Collections.singletonMap("message", "Account activated successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return new ResponseEntity<>(Collections.singletonMap("message", "Invalid  token!"), HttpStatus.NOT_FOUND);
-
-//        Optional<User> optionalUser = userService.findByToken(token);
-//        System.out.println(token);
-//        if (optionalUser.isPresent()) {
-//            User user=optionalUser.get();
-//            user.setStatus(StatusEnum.ACTIVE);
-//            UserPutDTO userPutDTO=new UserPutDTO(user.firstName,user.lastName,user.password,user.address,
-//                    user.phoneNumber,user.status,user.reservationRequestNotification,user.reservationCancellationNotification,user.ownerRatingNotification,
-//                    user.accommodationRatingNotification,user.ownerRepliedToRequestNotification,user.token,user.getDeleted(),false,user.getFavouriteAccommodations());
-//            userService.update(userPutDTO,user.username);
-//            return new ResponseEntity<>("Account activated successfully", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("Invalid activation token", HttpStatus.NOT_FOUND);
-//        }
     }
     public String generateActivationEmailBody(String userName, String activationLink) throws UnknownHostException {
         String hostAdress= InetAddress.getLocalHost().getHostAddress();
-        String fullActivationLink = "http://192.168.1.36:4200/activate/"+activationLink;////OVDE STAVITE SVOJU IP ADRESU
+        String fullActivationLink = "http://192.168.1.6:4200/activate/"+activationLink;////OVDE STAVITE SVOJU IP ADRESU
         return "<p>Dear <strong>" + userName + "</strong>,</p>\n" +
                 "<p>Thank you for choosing our service! We're excited to have you on board.</p>\n" +
                 "<p>Your registration is almost complete. Please click the following link to activate your account:</p>\n" +
