@@ -1,12 +1,11 @@
 package com.booking.BookingApp.controllers;
 
-import com.booking.BookingApp.models.accommodations.PriceCard;
-import com.booking.BookingApp.models.accommodations.TimeSlot;
-import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
-import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
-import com.booking.BookingApp.models.dtos.accommodations.TimeSlotPostDTO;
-import com.booking.BookingApp.models.dtos.accommodations.TimeSlotPutDTO;
+import com.booking.BookingApp.models.accommodations.*;
+import com.booking.BookingApp.models.dtos.accommodations.*;
+import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
+import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
+import com.booking.BookingApp.models.enums.TypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +22,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -204,13 +205,30 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
 
 
 
-        LocalDate startDateExistingRes = LocalDate.of(2021, 2, 8);
+        LocalDate startDateExistingRes = LocalDate.of(2024, 2, 8);
         LocalDateTime startDateTimeExistingRes = LocalDateTime.of(startDateExistingRes, LocalTime.MIN);
         java.util.Date startDateAsDateExistingRes = java.util.Date.from(startDateTimeExistingRes.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
         LocalDate endDateExistingRes = LocalDate.of(2024, 2, 18);
         LocalDateTime endDateTimeExistingRes = LocalDateTime.of(endDateExistingRes, LocalTime.MAX);
         Date endDateAsDateExistingRes = java.util.Date.from(endDateTimeExistingRes.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate startDateExistingRes1 = LocalDate.of(2024, 2, 10);
+        LocalDateTime startDateTimeExistingRes1 = LocalDateTime.of(startDateExistingRes1, LocalTime.MIN);
+        java.util.Date startDateAsDateExistingRes1 = java.util.Date.from(startDateTimeExistingRes1.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateExistingRes1 = LocalDate.of(2024, 2, 15);
+        LocalDateTime endDateTimeExistingRes1 = LocalDateTime.of(endDateExistingRes1, LocalTime.MAX);
+        Date endDateAsDateExistingRes1 = java.util.Date.from(endDateTimeExistingRes1.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        LocalDate startDateExistingRes2 = LocalDate.of(2024, 2, 10);
+        LocalDateTime startDateTimeExistingRes2 = LocalDateTime.of(startDateExistingRes2, LocalTime.MIN);
+        java.util.Date startDateAsDateExistingRes2 = java.util.Date.from(startDateTimeExistingRes2.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDateExistingRes2 = LocalDate.of(2024, 2, 18);
+        LocalDateTime endDateTimeExistingRes2 = LocalDateTime.of(endDateExistingRes2, LocalTime.MAX);
+        Date endDateAsDateExistingRes2 = java.util.Date.from(endDateTimeExistingRes2.atZone(java.time.ZoneId.systemDefault()).toInstant());
 
         return Stream.of(
 
@@ -220,7 +238,10 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
                  new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDatePast), 2000, PriceTypeEnum.PERGUEST, 2L),
                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDate), -2000, PriceTypeEnum.PERGUEST, 2L),
                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDate), 2000, null, 2L),
-                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes,endDateAsDateExistingRes), 2000, PriceTypeEnum.PERGUEST, 2L)
+                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes,endDateAsDateExistingRes), 2000, PriceTypeEnum.PERGUEST, 2L),
+                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes1,endDateAsDateExistingRes1), 2000, PriceTypeEnum.PERGUEST, 2L),
+                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes2,endDateAsDateExistingRes2), 2000, PriceTypeEnum.PERGUEST, 2L)
+
 
 
         );
@@ -247,7 +268,75 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
 
     }
 
+    @Test
+    @DisplayName("Should Create cancelation Deadline When making Post request to endpoint /accommodations")
+    public void shouldCreateCancellationDeadLine_Valid() {
+
+        LocationPostDTO loc = new LocationPostDTO("LocationAddress", "LocationCity", "LocationCountry", 1.234, 5.678);
+        List<String> assets = new ArrayList<>();
+        assets.add("klima");
+
+        AccommodationPostDTO accommodation = new AccommodationPostDTO( "ime", "opis", loc, 2, 5, TypeEnum.APARTMENT,
+                assets,  "TESTGOST1@gmail.com", 5,new ArrayList<String>());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<AccommodationPostDTO> requestEntity = new HttpEntity<>(accommodation, headers);
 
 
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/accommodations",
+                HttpMethod.POST,
+                requestEntity,
+                String.class);
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+
+    }
+
+
+
+    private static Stream<AccommodationPostDTO>invalidCancelationDeadlineProvider() {
+        // Provide different invalid reservation IDs and corresponding PriceCardPostDTO instances for testing
+        LocationPostDTO loc = new LocationPostDTO("LocationAddress", "LocationCity", "LocationCountry", 1.234, 5.678);
+        List<String> assets = new ArrayList<>();
+        assets.add("klima");
+
+        AccommodationPostDTO accommodation = new AccommodationPostDTO( "ime", "opis", loc, 2, 5, TypeEnum.APARTMENT,
+                assets,  "TESTGOST1@gmail.com", 5,new ArrayList<String>());
+
+
+        return Stream.of(
+                new AccommodationPostDTO( "ime", "opis", loc, 2, 5, TypeEnum.APARTMENT,
+                        assets,  "TESTGOST1@gmail.com", 0,new ArrayList<String>()),
+        new AccommodationPostDTO( "ime", "opis", loc, 2, 5, TypeEnum.APARTMENT,
+                assets,  "TESTGOST1@gmail.com", -10,new ArrayList<String>())
+        );
+    }
+
+
+
+
+    @ParameterizedTest
+    @MethodSource("invalidCancelationDeadlineProvider")
+    @DisplayName("Should not create cancelation Deadline  When its zero or negative making Post request to endpoint /accommodations")
+    public void shouldNotCreateCancellationDeadLine_IValid(AccommodationPostDTO accommodation) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<AccommodationPostDTO> requestEntity = new HttpEntity<>(accommodation, headers);
+
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/accommodations",
+                HttpMethod.POST,
+                requestEntity,
+                String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+    }
 
 }

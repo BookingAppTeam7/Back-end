@@ -1,10 +1,7 @@
 package com.booking.BookingApp.services;
 
 import com.booking.BookingApp.models.accommodations.*;
-import com.booking.BookingApp.models.dtos.accommodations.AccommodationPostDTO;
-import com.booking.BookingApp.models.dtos.accommodations.PriceCardPostDTO;
-import com.booking.BookingApp.models.dtos.accommodations.PriceCardPutDTO;
-import com.booking.BookingApp.models.dtos.accommodations.TimeSlotPostDTO;
+import com.booking.BookingApp.models.dtos.accommodations.*;
 import com.booking.BookingApp.models.enums.*;
 import com.booking.BookingApp.models.reservations.Reservation;
 import com.booking.BookingApp.models.users.User;
@@ -13,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -333,9 +333,72 @@ public class AccommodationPriceCardValidatorServiceTest {
         verifyNoInteractions(reservationRepository);
     }
 
-    @Test
+
+    private static Stream<Reservation> reservationExistsProvider() {
+        // Provide different invalid reservation IDs and corresponding PriceCardPostDTO instances for testing
+        LocalDate startDate1 = LocalDate.now().plusDays(5);
+        LocalDateTime startDateTime1 = LocalDateTime.of(startDate1, LocalTime.MIN);
+        Date startDateAsDate1 = java.util.Date.from(startDateTime1.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate1 = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTime1 = LocalDateTime.of(endDate1, LocalTime.MAX);
+        Date endDateAsDate1 = java.util.Date.from(endDateTime1.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        Boolean deleted = false;
+        TimeSlotPostDTO timeSlot1 = new TimeSlotPostDTO(startDateAsDate1, endDateAsDate1);
+
+
+        LocalDate startDate2 = LocalDate.now().minusDays(5);
+        LocalDateTime startDateTime2 = LocalDateTime.of(startDate2, LocalTime.MIN);
+        Date startDateAsDate2 = java.util.Date.from(startDateTime2.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate2 = LocalDate.now().plusDays(6);
+        LocalDateTime endDateTime2 = LocalDateTime.of(endDate2, LocalTime.MAX);
+        Date endDateAsDate2 = java.util.Date.from(endDateTime2.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        Boolean deleted2 = false;
+        TimeSlotPostDTO timeSlot2 = new TimeSlotPostDTO(startDateAsDate2, endDateAsDate2);
+
+        LocalDate startDate3 = LocalDate.now().plusDays(5);
+        LocalDateTime startDateTime3 = LocalDateTime.of(startDate3, LocalTime.MIN);
+        Date startDateAsDate3 = java.util.Date.from(startDateTime3.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate3 = LocalDate.now().plusDays(15);
+        LocalDateTime endDateTime3 = LocalDateTime.of(endDate3, LocalTime.MAX);
+        Date endDateAsDate3 = java.util.Date.from(endDateTime3.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        Boolean deleted3 = false;
+        TimeSlotPostDTO timeSlot3 = new TimeSlotPostDTO(startDateAsDate3, endDateAsDate3);
+
+        LocalDate startDate4 = LocalDate.now().plusDays(5);
+        LocalDateTime startDateTime4 = LocalDateTime.of(startDate4, LocalTime.MIN);
+        Date startDateAsDate4 = java.util.Date.from(startDateTime4.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate4 = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTime4 = LocalDateTime.of(endDate4, LocalTime.MAX);
+        Date endDateAsDate4 = java.util.Date.from(endDateTime4.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        Boolean deleted4 = false;
+        TimeSlotPostDTO timeSlot4 = new TimeSlotPostDTO(startDateAsDate4, endDateAsDate4);
+
+
+
+
+        return Stream.of(
+
+                new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot1.startDate,timeSlot1.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null),
+                new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot2.startDate,timeSlot2.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null),
+                new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot3.startDate,timeSlot3.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null),
+                new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot4.startDate,timeSlot4.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null)
+        );
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("reservationExistsProvider")
     @DisplayName("Should return false when confirmed reservation for that timeSlot already exists ")
-    public void shouldReturnFalseWhenConfirmedReservationsExists(){
+    public void shouldReturnFalseWhenConfirmedReservationsExists(Reservation reservation){
 
         LocalDate startDate = LocalDate.now().plusDays(5);
         LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
@@ -352,8 +415,8 @@ public class AccommodationPriceCardValidatorServiceTest {
         PriceCardPostDTO priceCardPostDTO=new PriceCardPostDTO(timeSlot,2000,PriceTypeEnum.PERGUEST,1L);
         //pravimo bar jednu rezervaciju u tom intervalu
        List<Reservation> reservations=new ArrayList<Reservation>();
-       reservations.add(new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null));
-
+     //  reservations.add(new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null));
+        reservations.add(reservation);
         Mockito.when(accommodationRepository.findById(priceCardPostDTO.accommodationId)).thenReturn(Optional.of(validAcommodation));
         Mockito.when(reservationRepository.findByAccommodationId(priceCardPostDTO.accommodationId)).thenReturn(reservations);
         boolean res = accommodationValidatorService.validatePriceCardPost(priceCardPostDTO);
@@ -634,9 +697,10 @@ public class AccommodationPriceCardValidatorServiceTest {
         verifyNoInteractions(reservationRepository);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("reservationExistsProvider")
     @DisplayName("Should return false when confirmed reservation for that timeSlot already exists ")
-    public void shouldReturnFalseWhenConfirmedReservationsExistsPUT(){
+    public void shouldReturnFalseWhenConfirmedReservationsExistsPUT(Reservation reservation){
 
         LocalDate startDate = LocalDate.now().plusDays(5);
         LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
@@ -653,8 +717,8 @@ public class AccommodationPriceCardValidatorServiceTest {
         PriceCardPutDTO priceCardPostDTO=new PriceCardPutDTO(new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),2000,PriceTypeEnum.PERGUEST,1L);
         //pravimo bar jednu rezervaciju u tom intervalu
         List<Reservation> reservations=new ArrayList<Reservation>();
-        reservations.add(new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null));
-
+        //reservations.add(new Reservation(1L,validAcommodation,new User(),new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),ReservationStatusEnum.APPROVED,5L,2000.0,null));
+        reservations.add(reservation);
         Mockito.when(accommodationRepository.findById(priceCardPostDTO.accommodationId)).thenReturn(Optional.of(validAcommodation));
         Mockito.when(reservationRepository.findByAccommodationId(priceCardPostDTO.accommodationId)).thenReturn(reservations);
         boolean res = accommodationValidatorService.validatePriceCardPut(priceCardPostDTO,2L);

@@ -176,5 +176,4 @@ public class ReservationControllerIntegrationTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
-
 }
