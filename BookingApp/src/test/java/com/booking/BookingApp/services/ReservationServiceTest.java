@@ -25,6 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -214,7 +215,6 @@ public class ReservationServiceTest {
         verifyNoInteractions(notificationService);
     }
 
-
     @Test  //no overlap with existing price cards
     public void confirmReservation_WhenInvalidPricesTimeSlots_ShouldThrowException() {  //nema preklapanja timeSlota rezervacije ni sa jednim cenovnikom
 
@@ -277,7 +277,6 @@ public class ReservationServiceTest {
         verifyNoInteractions(notificationService);
     }
 
-
     private static Stream<Arguments> provideTestDataForPartialOverlapExceptions() {
         return Stream.of(
                 Arguments.of(  //overlap with start
@@ -299,19 +298,49 @@ public class ReservationServiceTest {
 
     private static Stream<Arguments> provideValidTestData() {
         return Stream.of(
-                Arguments.of(  //overlap with start
+                Arguments.of(   //=> 2 new PriceCards
                         LocalDate.now().plusDays(-3),  // priceCard startDate
                         LocalDate.now().plusDays(6),  // priceCard endDate
                         LocalDate.now().plusDays(2),             // reservation StartDate
                         LocalDate.now().plusDays(5),  // reservationEndDate
-                        false  //without sending notification
+                        false,  //without sending notification,
+                        LocalDate.now().plusDays(-3),//new PriceCard1 startDate
+                        LocalDate.now().plusDays(2),//new PriceCard1 endDate
+                        LocalDate.now().plusDays(5),//new PriceCard2 startDate
+                        LocalDate.now().plusDays(6)//new PriceCard2 endDate
                 ),
-                Arguments.of( //overlap with end
+                Arguments.of(   //=> 2 new PriceCards
                         LocalDate.now().plusDays(-1),  // priceCard startDate
                         LocalDate.now().plusDays(10),  // priceCard endDate
                         LocalDate.now().plusDays(2),             // reservation StartDate
                         LocalDate.now().plusDays(5),  // reservationEndDate
-                        true  //sending notification
+                        true,  //sending notification
+                        LocalDate.now().plusDays(-1),//new PriceCard1 startDate
+                        LocalDate.now().plusDays(2),//new PriceCard1 endDate
+                        LocalDate.now().plusDays(5),//new PriceCard2 startDate
+                        LocalDate.now().plusDays(10)//new PriceCard2 endDate
+                ),
+                Arguments.of( //overlap with end  => one new PriceCard
+                        LocalDate.now().plusDays(2),  // priceCard startDate
+                        LocalDate.now().plusDays(10),  // priceCard endDate
+                        LocalDate.now().plusDays(2),             // reservation StartDate
+                        LocalDate.now().plusDays(5),  // reservationEndDate
+                        true,  //sending notification
+                        LocalDate.now().plusDays(5),//new PriceCard1 startDate
+                        LocalDate.now().plusDays(10),//new PriceCard1 endDate
+                        null,
+                        null
+                ),
+                Arguments.of( //overlap with start  => one new PriceCard
+                        LocalDate.now().plusDays(2),  // priceCard startDate
+                        LocalDate.now().plusDays(10),  // priceCard endDate
+                        LocalDate.now().plusDays(5),             // reservation StartDate
+                        LocalDate.now().plusDays(10),  // reservationEndDate
+                        true,  //sending notification
+                        LocalDate.now().plusDays(2),//new PriceCard1 startDate
+                        LocalDate.now().plusDays(5),//new PriceCard1 endDate
+                        null,
+                        null
                 )
         );
     }
@@ -373,7 +402,6 @@ public class ReservationServiceTest {
         verifyNoInteractions(notificationService);
     }
 
-
     @ParameterizedTest
     @MethodSource("provideValidTestData")
     public void confirmReservation_WhenHasAvailableTimeSlots(
@@ -381,7 +409,11 @@ public class ReservationServiceTest {
             LocalDate accommodationEndDate,
             LocalDate reservationStartDate,
             LocalDate reservationEndDate,
-            boolean sendNotification
+            boolean sendNotification,
+            LocalDate priceCard1StartDate,
+            LocalDate priceCard1EndDate,
+            LocalDate priceCard2StartDate,
+            LocalDate priceCard2EndDate
     ) throws Exception {
 
         LocalDateTime startDateTime = LocalDateTime.of(reservationStartDate, LocalTime.MIN);
@@ -425,10 +457,25 @@ public class ReservationServiceTest {
         assertEquals(reservation.getId(),result.getId());
         assertEquals(ReservationStatusEnum.APPROVED,result.getStatus());
 
+        //checking new availability intervals
+
+        if(priceCard2StartDate!=null && priceCard2EndDate!=null) {
+            assertEquals(accommodation.prices.size(), 2);
+            assertEquals(accommodation.prices.get(0).timeSlot.startDate, java.util.Date.from((LocalDateTime.of(priceCard1StartDate, LocalTime.MIN)).atZone(java.time.ZoneId.systemDefault()).toInstant()));
+            assertEquals(accommodation.prices.get(0).timeSlot.endDate, java.util.Date.from((LocalDateTime.of(priceCard1EndDate, LocalTime.MIN)).atZone(java.time.ZoneId.systemDefault()).toInstant()));
+            assertEquals(accommodation.prices.get(1).timeSlot.startDate, java.util.Date.from((LocalDateTime.of(priceCard2StartDate, LocalTime.MAX)).atZone(java.time.ZoneId.systemDefault()).toInstant()));
+            assertEquals(accommodation.prices.get(1).timeSlot.endDate, java.util.Date.from((LocalDateTime.of(priceCard2EndDate, LocalTime.MAX)).atZone(java.time.ZoneId.systemDefault()).toInstant()));
+        }
+        else{
+            assertEquals(accommodation.prices.size(), 1);
+            assertEquals(accommodation.prices.get(0).timeSlot.startDate.getDate(), java.util.Date.from((LocalDateTime.of(priceCard1StartDate, LocalTime.MAX)).atZone(java.time.ZoneId.systemDefault()).toInstant()).getDate());
+            assertEquals(accommodation.prices.get(0).timeSlot.endDate.getDate(), java.util.Date.from((LocalDateTime.of(priceCard1EndDate, LocalTime.MAX)).atZone(java.time.ZoneId.systemDefault()).toInstant()).getDate());
+        }
+
         verify(reservationRepository,times(1)).findById(1L);
-        verify(accommodationService,times(1)).findById(0L);
+        verify(accommodationService,times(2)).findById(0L);
         verify(userService, times(2)).findUserById("GUEST@gmail.com"); //kasnije je pozvana i za slanje notifikacije
-        verify(accommodationService).editPriceCards(0L,reservationTimeSlot.startDate,reservationTimeSlot.endDate);
+
         verify(reservationRepository).save(reservation);
         verify(notificationService).create(
                 argThat(argument ->
@@ -446,4 +493,3 @@ public class ReservationServiceTest {
         verifyNoMoreInteractions(notificationService);
     }
 }
-
