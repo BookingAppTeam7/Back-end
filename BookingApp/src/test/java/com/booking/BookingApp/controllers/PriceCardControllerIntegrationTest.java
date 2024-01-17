@@ -174,8 +174,6 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
 
 
 
-
-
     private static Stream<PriceCardPostDTO>invalidPriceCardProvider() {
         // Provide different invalid reservation IDs and corresponding PriceCardPostDTO instances for testing
         LocalDate startDate = LocalDate.now().plusDays(5);
