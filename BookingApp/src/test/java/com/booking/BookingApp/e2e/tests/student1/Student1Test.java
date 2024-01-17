@@ -210,7 +210,48 @@ public class Student1Test extends TestBase {
 
         thread.sleep(2000);
 
-        
+
+
+        //TESTIRANJE UPDATE-OVANJA DOSTUPNOSTI I CENA SMESTAJA
+        editAccommodationPage.editValidPriceCard("1/19/39","2/17/39");
+        boolean isPopUpVisible=editAccommodationPage.isPopUpEditVisible();
+        assertTrue(isPopUpVisible);
+
+
+
+        //1. slucaj kad je validno
+
+        editAccommodationPage.editPriceCard("1/19/2039","2/17/2039","8000");
+        editAccommodationPage.clickSavePriceEdit();
+        thread.sleep(2000);
+        //ovde jos provera dal se ispise i dal je u tabeli
+//        boolean isSnackBarUpdatedPriceCardVisible=editAccommodationPage.isSnackBarUpdatedPriceCardVisible();
+//        assertTrue(isSnackBarUpdatedPriceCardVisible);
+        // da li je u tabeli
+        boolean priceCardUpdatedInTable=editAccommodationPage.isPriceCardUpdatedInTable("1/19/39","2/17/39","8000");
+        assertTrue(priceCardUpdatedInTable);
+
+        isSnackBarAlreadyExistsVisible=editAccommodationPage.isSnackBarPriceIsUpdated();
+        assertTrue(isSnackBarAlreadyExistsVisible);
+
+
+        editAccommodationPage.editValidPriceCard("1/19/39","2/17/39");
+        isPopUpVisible=editAccommodationPage.isPopUpEditVisible();
+        assertTrue(isPopUpVisible);
+
+//       // 2. slucaj kad je datum start u proslosti
+//        editAccommodationPage.editPriceCard("1/19/2021","2/17/2021","8000");
+//
+//        editAccommodationPage.clickSavePrice();
+//        //ovde jos provera dal se ispise i dal je u tabeli
+//        isSnackBarDatesMustBeInFutureVisible=editAccommodationPage.isSnackBarDatesinFuture();
+//        assertTrue(isSnackBarDatesMustBeInFutureVisible);
+//        // da li je u tabeli
+//        priceCardAddedInTable=editAccommodationPage.isPriceCardUpdatedInTable("1/19/21","2/17/23","8000");
+//        assertFalse(priceCardAddedInTable);
+//
+//        thread.sleep(2000);
+
 
     }
 

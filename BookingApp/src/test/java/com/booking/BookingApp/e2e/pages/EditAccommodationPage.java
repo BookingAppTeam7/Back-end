@@ -53,6 +53,21 @@ public class EditAccommodationPage {
     @FindBy(css="form > div > div.mat-elevation-z8 > div.data-container > button > span.mdc-button__label")
     public WebElement savePriceButtonElem;
 
+    @FindBy(css="h2[_ngcontent-ng-c1370985287]")
+    public WebElement popUpEdit;
+
+    @FindBy(css="#mat-input-17")
+    public WebElement editStartDate;
+
+    @FindBy(css="#mat-input-18")
+    public WebElement editEndDate;
+
+    @FindBy(css="#mat-input-19")
+    public  WebElement editPrice;
+
+    @FindBy(css="#mat-mdc-dialog-0 > div > div > app-edit-price-card-dialog > div > form > div.dialog-actions > button.mdc-button.mat-mdc-button.mat-unthemed.mat-mdc-button-base > span.mdc-button__label")
+    public WebElement editSavePrice;
+
 
 
 
@@ -319,6 +334,122 @@ public class EditAccommodationPage {
     public boolean isSnackBarAlreadyExists() {
         boolean isVisible = (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.textToBePresentInElement(datesInFutureSnackBar, "Price for this timeslot is already defined and reservations are confirmed!"));
+        return isVisible;
+
+    }
+
+    public void editValidPriceCard(String startDate, String endDate) {
+
+        for(WebElement priceCard:priceCards){
+            WebElement startDateElem=priceCard.findElement(By.xpath("td[2]"));
+            WebElement endDateElem=priceCard.findElement(By.xpath("td[3]"));
+            String startText =startDateElem.getText().trim();
+
+            String endText=endDateElem.getText().trim();
+
+            if(startText.equals(startDate)&&(endText.equals(endDate))){
+
+                WebElement deleteButton= priceCard.findElement(By.xpath("td[6]/button[1]/span[3]"));
+                deleteButton.click();
+
+            }
+        }
+    }
+
+    public boolean isPopUpEditVisible() {
+        boolean isOpened = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.textToBePresentInElement(popUpEdit, "Edit Dates and Price"));
+
+        return isOpened;
+    }
+
+    public void editPriceCard(String startDate, String endDate, String price) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement startDateInputField = wait.until(ExpectedConditions.visibilityOf(editStartDate));
+        wait.until(ExpectedConditions.elementToBeClickable(startDateInputField));
+
+        //startDateInputField.click();
+
+
+        startDateInputField.clear();
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].value = '';", startDateInputField);
+        startDateInputField.sendKeys(startDate);
+
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement endDateInputField = wait.until(ExpectedConditions.visibilityOf(editEndDate));
+        wait.until(ExpectedConditions.elementToBeClickable(endDateInputField));
+
+        //endDateInputField.click();
+
+
+        endDateInputField.clear();
+        js.executeScript("arguments[0].value = '';", endDateInputField);
+
+        endDateInputField.sendKeys(endDate);
+
+
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement priceInputField = wait.until(ExpectedConditions.visibilityOf(editPrice));
+        wait.until(ExpectedConditions.elementToBeClickable(priceInputField));
+
+        // Click the input field
+        // priceInputField.click();
+
+        // Enter the value into the input field
+        priceInputField.clear();
+        js.executeScript("arguments[0].value = '';", priceInputField);
+        priceInputField.sendKeys(price);
+
+//        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+//        WebElement perUnitButtonElem = wait.until(ExpectedConditions.visibilityOf(perUnitButton));
+
+//        // Click the input field
+//        perUnitButtonEdit.click();
+
+    }
+
+    public void clickSavePriceEdit() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement saveChanges= wait.until(ExpectedConditions.elementToBeClickable(editSavePrice));
+
+        // Click the input field
+        saveChanges.click();
+
+    }
+
+//    public boolean isSnackBarUpdatedPriceCardVisible() {
+//    }
+
+    public boolean isPriceCardUpdatedInTable(String startDate, String endDate, String price) {
+
+//        int yOffset = -1500;
+//        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+//
+//        // Scroll into view with an offset using JavaScriptExecutor
+//        jsExecutor.executeScript("arguments[0].scrollIntoView({block: 'start', inline: 'start', behavior: 'instant'}); window.scrollBy(0, arguments[1]);",startDateElem, yOffset);
+////        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+////
+
+        for(WebElement priceCard:priceCards){
+            WebElement startDateElem=priceCard.findElement(By.xpath("td[2]"));
+            WebElement endDateElem=priceCard.findElement(By.xpath("td[3]"));
+            WebElement priceElem=priceCard.findElement(By.xpath("td[4]"));
+            String startText =startDateElem.getText().trim();
+            String endText=endDateElem.getText().trim();
+            String priceText=priceElem.getText().trim();
+            if(startText.equals(startDate)&&(endText.equals(endDate))&& priceText.equals(price)){
+                return true;
+            }
+        }
+        return  false;
+
+
+    }
+
+    public boolean isSnackBarPriceIsUpdated() {
+        boolean isVisible = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.textToBePresentInElement(datesInFutureSnackBar, "Price card is updated..."));
         return isVisible;
 
     }
