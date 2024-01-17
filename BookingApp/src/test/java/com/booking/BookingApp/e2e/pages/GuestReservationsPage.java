@@ -5,6 +5,7 @@ import com.booking.BookingApp.models.reservations.Reservation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,8 +44,15 @@ public class GuestReservationsPage {
             String rowEndDate = row.findElement(By.cssSelector("app-guests-reservations > div:nth-child(2) > table  tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-End-Date.mat-column-End-Date.ng-star-inserted")).getText();
 
             if (rowStartDate.equals(startDate) && rowEndDate.equals(endDate)) {
-                WebElement cancelButton = row.findElement(By.cssSelector(".mat-column-actions button[ng-reflect-color='warn']"));
-                cancelButton.click();
+
+                WebElement cancelButton = row.findElement(By.cssSelector("#cancelReservationButton [class='mat-mdc-button-persistent-ripple mdc-button__ripple'"));
+
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                WebElement myReservations = wait.until(ExpectedConditions.visibilityOf(cancelButton));
+
+                Actions actions = new Actions(driver);
+                actions.moveToElement(myReservations).click().perform();
+
                 break;
             }
         }
@@ -52,13 +60,12 @@ public class GuestReservationsPage {
 
     public List<ReservationTable> getCancelledReservations(){
         List<ReservationTable> result=new ArrayList<>();
-        List<WebElement> cancelledReservations=driver.findElements(By.cssSelector("app-guests-reservations > div:nth-child(3) > table"));
+        List<WebElement> cancelledReservations=driver.findElements(By.cssSelector("#cancelledReservationsTable"));
         for(WebElement element:cancelledReservations){
             WebElement startDateElement = new WebDriverWait(driver, Duration.ofSeconds(10))
                     .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-guests-reservations > div:nth-child(2) > table tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-Start-Date.mat-column-Start-Date.ng-star-inserted")));
             String rowStartDate=startDateElement.getText();
-            //String rowStartDate = element.findElement(By.cssSelector("app-guests-reservations > div:nth-child(2) > table tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-Start-Date.mat-column-Start-Date.ng-star-inserted")).getText();
-            //String rowEndDate = element.findElement(By.cssSelector("app-guests-reservations > div:nth-child(2) > table  tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-End-Date.mat-column-End-Date.ng-star-inserted")).getText();
+
             WebElement endDateElement = new WebDriverWait(driver, Duration.ofSeconds(10))
                     .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-guests-reservations > div:nth-child(2) > table  tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-End-Date.mat-column-End-Date.ng-star-inserted")));
             String rowEndDate=endDateElement.getText();

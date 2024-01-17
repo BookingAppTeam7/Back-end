@@ -41,12 +41,14 @@ public class Student2Test extends TestBase {
 
         guestReservations.cancelReservation("5/24/24","5/26/24");
 
-        Thread.sleep(5000);
+        Thread.sleep(10000);
         List<ReservationTable> cancelledReservations=guestReservations.getCancelledReservations();
 
 
         for(ReservationTable res:cancelledReservations){
-            System.out.println(res);
+            System.out.println(res.startDate);
+            System.out.println(res.endDate);
+            System.out.println(res.status);
         }
 
         boolean reservationFound = cancelledReservations.stream()
