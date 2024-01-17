@@ -22,6 +22,14 @@ public class GuestReservationsPage {
     @FindBy(css="app-guests-reservations  h2")
     public WebElement reservationsHeader;
 
+    @FindBy(css="#mat-snack-bar-container-live-0 simple-snack-bar > div.mat-mdc-snack-bar-label.mdc-snackbar__label")
+    public  WebElement snackBar;
+
+    @FindBy(css="#mat-snack-bar-container-live-0 simple-snack-bar > div.mat-mdc-snack-bar-actions.mdc-snackbar__actions.ng-star-inserted > button > span.mat-mdc-button-persistent-ripple.mdc-button__ripple")
+    public WebElement snackBarCloseButton;
+
+    @FindBy(css="#cdk-overlay-0 > mat-snack-bar-container > div")
+    public WebElement snackBarSuccess;
 
     public GuestReservationsPage(WebDriver driver) {
         this.driver = driver;
@@ -35,16 +43,18 @@ public class GuestReservationsPage {
         return isOpened;
     }
 
-    public void cancelReservation(String startDate, String endDate) {
+    public void cancelReservation(String startDate, String endDate,String reservationId) {
 
-        List<WebElement> rows = driver.findElements(By.cssSelector("app-guests-reservations > div:nth-child(2) > table"));
+        List<WebElement> rows = driver.findElements(By.cssSelector("#approvedReservationsTable tbody tr"));
 
         for (WebElement row : rows) {
-            String rowStartDate = row.findElement(By.cssSelector("app-guests-reservations > div:nth-child(2) > table tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-Start-Date.mat-column-Start-Date.ng-star-inserted")).getText();
-            String rowEndDate = row.findElement(By.cssSelector("app-guests-reservations > div:nth-child(2) > table  tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-End-Date.mat-column-End-Date.ng-star-inserted")).getText();
 
-            if (rowStartDate.equals(startDate) && rowEndDate.equals(endDate)) {
+            String rowStartDate = row.findElement(By.cssSelector("td.mat-column-Start-Date")).getText();
+            String rowEndDate = row.findElement(By.cssSelector("td.mat-column-End-Date")).getText();
+            String rowId = row.findElement(By.cssSelector("td.mat-column-Id")).getText();
 
+
+            if (rowStartDate.equals(startDate) && rowEndDate.equals(endDate) && rowId.equals(reservationId)) {
                 WebElement cancelButton = row.findElement(By.cssSelector("#cancelReservationButton [class='mat-mdc-button-persistent-ripple mdc-button__ripple'"));
 
                 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -58,25 +68,80 @@ public class GuestReservationsPage {
         }
     }
 
-    public List<ReservationTable> getCancelledReservations(){
-        List<ReservationTable> result=new ArrayList<>();
-        List<WebElement> cancelledReservations=driver.findElements(By.cssSelector("#cancelledReservationsTable"));
-        for(WebElement element:cancelledReservations){
-            WebElement startDateElement = new WebDriverWait(driver, Duration.ofSeconds(10))
-                    .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-guests-reservations > div:nth-child(2) > table tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-Start-Date.mat-column-Start-Date.ng-star-inserted")));
-            String rowStartDate=startDateElement.getText();
+    public List<ReservationTable> getCancelledReservations() {
+        List<ReservationTable> result = new ArrayList<>();
 
-            WebElement endDateElement = new WebDriverWait(driver, Duration.ofSeconds(10))
-                    .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("app-guests-reservations > div:nth-child(2) > table  tr:nth-child(1) > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-End-Date.mat-column-End-Date.ng-star-inserted")));
-            String rowEndDate=endDateElement.getText();
+        List<WebElement> cancelledRows = driver.findElements(By.cssSelector("#cancelledReservationsTable tbody tr"));
 
-            String rowStatus=element.findElement(By.cssSelector("app-guests-reservations > div:nth-child(3) > table > tbody > tr > td.mat-mdc-cell.mdc-data-table__cell.cdk-cell.cdk-column-Status.mat-column-Status.ng-star-inserted")).getText();
+        for (WebElement row : cancelledRows) {
+            String rowStartDate = row.findElement(By.cssSelector("td.mat-column-Start-Date")).getText();
+            String rowEndDate = row.findElement(By.cssSelector("td.mat-column-End-Date")).getText();
+            String rowStatus = row.findElement(By.cssSelector("td.mat-column-Status")).getText();
+            String rowId = row.findElement(By.cssSelector("td.mat-column-Id")).getText();
 
-            ReservationTable r=new ReservationTable(rowStartDate,rowEndDate,rowStatus);
-
+            ReservationTable r = new ReservationTable(rowId, rowStartDate, rowEndDate, rowStatus);
             result.add(r);
         }
 
         return result;
     }
+
+    public List<ReservationTable> getApprovedReservations() {
+        List<ReservationTable> result = new ArrayList<>();
+        List<WebElement> approvedReservations = driver.findElements(By.cssSelector("#approvedReservationsTable tbody tr"));
+
+        for (WebElement element : approvedReservations) {
+            String rowStartDate = element.findElement(By.cssSelector("td.mat-column-Start-Date")).getText();
+            String rowEndDate = element.findElement(By.cssSelector("td.mat-column-End-Date")).getText();
+            String rowStatus = element.findElement(By.cssSelector("td.mat-column-Status")).getText();
+            String rowId = element.findElement(By.cssSelector("td.mat-column-Id")).getText();
+
+            ReservationTable r = new ReservationTable(rowId, rowStartDate, rowEndDate, rowStatus);
+            result.add(r);
+        }
+
+        return result;
+    }
+
+
+    public boolean snackBarAction(String text){
+        boolean shown = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.textToBePresentInElement(snackBar, text));
+
+        return shown;
+    }
+
+    public void closeSnackBarAction(){
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement close = wait.until(ExpectedConditions.visibilityOf(snackBarCloseButton));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(close).click().perform();
+
+    }
+
+    public boolean snackBarActionSuccess(String text) {
+        By snackBarSelector = By.cssSelector("simple-snack-bar.mat-mdc-simple-snack-bar .mat-mdc-snack-bar-label");
+
+        boolean shown = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.textToBePresentInElementLocated(snackBarSelector, text));
+
+        return shown;
+    }
+
+
+    public void closeSuccessSnackBar() {
+
+        By snackBarSelector = By.cssSelector("simple-snack-bar.mat-mdc-simple-snack-bar");
+
+        WebElement snackBar = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(snackBarSelector));
+
+        WebElement okButton = snackBar.findElement(By.cssSelector("button.mat-mdc-snack-bar-action"));
+        okButton.click();
+    }
+
+
+
 }

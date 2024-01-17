@@ -318,10 +318,10 @@ public class ReservationService implements IReservationService{
 
         User user=userService.findUserById(reservation.accommodation.ownerId);
         if(user.reservationCancellationNotification) {
-            this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + reservation.user.username, not);
+            this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + user.username, not);
         }
 
-        this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
+        //this.simpMessagingTemplate.convertAndSend( "/socket-publisher/"+reservation.user.username,not);
 
         notificationService.create(not);
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.CANCELLED);
