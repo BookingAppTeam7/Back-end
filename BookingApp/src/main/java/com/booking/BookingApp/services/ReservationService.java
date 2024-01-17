@@ -148,7 +148,7 @@ public class ReservationService implements IReservationService{
         if(newReservation.getNumberOfGuests()>accommodation.maxGuests || newReservation.getNumberOfGuests()<accommodation.minGuests)
             throw new ValidationException("Accommodation not available for that many guests!");
         //ako postoji potvrdjena rezervacija na isti smestaj ciji se timeslot preklapa sa ovim novim, baci Exception
-        List<Reservation> allReservations=reservationRepository.findAll();
+        List<Reservation> allReservations=findAll();
         for(Reservation r:allReservations){
             if(r.status.equals(ReservationStatusEnum.APPROVED) && r.accommodation.id.equals(accommodation.id) && timeSlotsOverlap(r.timeSlot,newReservation.timeSlot))
                 throw new ValidationException("There already exists confirmed reservation for that accommodation in selected time slot");
@@ -191,7 +191,6 @@ public class ReservationService implements IReservationService{
         // Save and flush the updated reservation
         return reservationRepository.saveAndFlush(existingReservation);
     }
-
     @Override
     public void delete(Long id) {
         reservationRepository.deleteById(id);
