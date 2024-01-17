@@ -38,5 +38,6 @@ public class Student2Test extends TestBase {
         assertTrue(isPageOpened);
 
 
+
     }
 }

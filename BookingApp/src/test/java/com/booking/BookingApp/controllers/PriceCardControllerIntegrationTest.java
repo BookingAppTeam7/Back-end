@@ -238,11 +238,9 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
                  new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDatePast), 2000, PriceTypeEnum.PERGUEST, 2L),
                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDate), -2000, PriceTypeEnum.PERGUEST, 2L),
                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDate), 2000, null, 2L),
-                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes,endDateAsDateExistingRes), 2000, PriceTypeEnum.PERGUEST, 2L),
+                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes,endDateAsDateExistingRes), 2000, PriceTypeEnum.PERGUEST, 2L),
                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes1,endDateAsDateExistingRes1), 2000, PriceTypeEnum.PERGUEST, 2L),
                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes2,endDateAsDateExistingRes2), 2000, PriceTypeEnum.PERGUEST, 2L)
-
-
 
         );
     }

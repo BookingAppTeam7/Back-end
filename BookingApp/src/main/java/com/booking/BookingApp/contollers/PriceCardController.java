@@ -108,7 +108,7 @@ public class PriceCardController {
 //    }
     @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    //@PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> delete(@PathVariable Long id){
         priceCardService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
