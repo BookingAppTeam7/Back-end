@@ -40,5 +40,5 @@ VALUES
     (6, 2, 'TESTGOST1@gmail.com', 4, 'APPROVED', 2, 100.0, 'PERGUEST'),
     (7, 2, 'TESTGOST1@gmail.com', 5, 'PENDING', 2, 100.0, 'PERGUEST'),
     (8, 2, 'TESTGOST1@gmail.com', 6, 'PENDING', 2, 100.0, 'PERGUEST'),
-    (9, 1, 'TESTGOST1@gmail.com', 7, 'PENDING', 2, 100.0, 'PERGUEST');
+    (9, 1, 'TESTGOST1@gmail.com', 7, 'APPROVED', 2, 100.0, 'PERGUEST');
 
