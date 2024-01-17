@@ -48,11 +48,11 @@ public class AccommodationService implements IAccommodationService{
     }
     @Override
     public Optional<Accommodation> findById(Long id) {
-        Optional<Accommodation> res=accommodationRepository.findById(id);
-        if(res.isPresent()){
-            return res;
-        }
-        return null;
+        return accommodationRepository.findById(id);
+//        if(res.isPresent()){
+//            return res;
+//        }
+//        return null;
     }
 
     @Override

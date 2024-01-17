@@ -61,7 +61,7 @@ public class ReservationController {
     }
     @PostMapping
     @CrossOrigin(origins = "http://localhost:4200")
-    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+    //@PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<?> create(@RequestBody ReservationPostDTO newReservation) throws Exception {
         try {
             Optional<Reservation> createdReservation = reservationService.create(newReservation);
