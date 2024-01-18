@@ -184,5 +184,6 @@ public class Student2Test extends TestBase {
 
         assertEquals(approvedCount,(int) guestReservations.getApprovedReservations().stream().count());
 
+
     }
 }

@@ -56,6 +56,9 @@ public class ReviewService implements IReviewService{
 
     @Override
     public Optional<Review> create(ReviewPostDTO newReview) throws Exception {
+        if(newReview.grade!=1 && newReview.grade!=2 && newReview.grade!=3 && newReview.grade!=4 && newReview.grade!=5 ) {
+            return null;
+        }
         if(newReview.type.equals(ReviewEnum.ACCOMMODATION)){
             System.out.println("RES IDDDDD     "+ newReview.reservationId);
             Optional<Reservation> res=reservationRepository.findById(newReview.reservationId);

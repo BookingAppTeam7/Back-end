@@ -3,10 +3,16 @@ package com.booking.BookingApp.models.accommodations;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 
 @Entity
+@SQLDelete(sql = "UPDATE price_card SET deleted = true WHERE id = ?")
+//@SQLDelete(sql = "UPDATE location SET deleted = true WHERE accommodation_id = ?")
+
+@Where(clause="deleted=false")
 public class PriceCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

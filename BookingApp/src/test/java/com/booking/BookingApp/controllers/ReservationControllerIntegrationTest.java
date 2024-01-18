@@ -1,16 +1,16 @@
 package com.booking.BookingApp.controllers;
 
+import com.booking.BookingApp.models.dtos.users.JwtAuthenticationRequest;
+import com.booking.BookingApp.models.users.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.stream.Stream;
@@ -25,15 +25,89 @@ public class ReservationControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    private String token;
+    private String guestToken;
+    private String adminToken;
+
+
+    @BeforeEach
+    public  void login(){
+        HttpHeaders headers = new HttpHeaders();
+        JwtAuthenticationRequest user=new JwtAuthenticationRequest("novivlasnik@gmail.com","novivlasnik");
+        HttpEntity<JwtAuthenticationRequest> requestEntity = new HttpEntity<>(user, headers);
+        ResponseEntity<User> responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.token=responseEntity.getBody().getJwt();
+        user=new JwtAuthenticationRequest("novigost@gmail.com","novigost");
+        requestEntity = new HttpEntity<>(user, headers);
+        responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.guestToken=responseEntity.getBody().getJwt();
+
+        user=new JwtAuthenticationRequest("ADMIN@gmail.com","admin");
+        requestEntity = new HttpEntity<>(user, headers);
+        responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.adminToken=responseEntity.getBody().getJwt();
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestData")
+    @DisplayName("Confirm Reservation - /reservations/confirm/{id}")
+    public void InvalidAuthorization(Long reservationId,String expectedMessageError,HttpStatus status) {
+        HttpHeaders headers = new HttpHeaders();
+        //GUEST
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+guestToken);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/reservations/confirm/{id}",
+                HttpMethod.PUT,
+                requestEntity,
+                String.class,
+                reservationId);
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+
+        //ADMIN
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+adminToken);
+        requestEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> responseEntity1= restTemplate.exchange(
+                "/reservations/confirm/{id}",
+                HttpMethod.PUT,
+                requestEntity,
+                String.class,
+                reservationId);
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity1.getStatusCode());
+
+    }
+
+
+
     @ParameterizedTest
     @MethodSource("provideTestData")
     @DisplayName("Confirm Reservation - /reservations/confirm/{id}")
     public void shouldConfirmReservation(Long reservationId,String expectedMessageError,HttpStatus status) {
-
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+token);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 "/reservations/confirm/{id}",
                 HttpMethod.PUT,
-                null,
+                requestEntity,
                 String.class,
                 reservationId);
 

@@ -48,6 +48,7 @@ public class ReservationController {
 
     @PutMapping(value="/confirm/{id}")
     @CrossOrigin(origins="http://localhost:4200")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<?> confirmReservation(@PathVariable Long id) {
         try{
             System.out.println("PRE CONFIRM RESERVATION");

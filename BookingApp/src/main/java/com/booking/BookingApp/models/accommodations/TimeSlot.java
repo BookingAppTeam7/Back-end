@@ -8,6 +8,7 @@ import org.hibernate.annotations.Where;
 
 import java.util.Date;
 @Entity
+@SQLDelete(sql = "UPDATE time_slot SET deleted = true WHERE id = ?")
 public class TimeSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

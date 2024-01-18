@@ -2,10 +2,12 @@ package com.booking.BookingApp.controllers;
 
 import com.booking.BookingApp.models.accommodations.*;
 import com.booking.BookingApp.models.dtos.accommodations.*;
-import com.booking.BookingApp.models.enums.AccommodationStatusEnum;
-import com.booking.BookingApp.models.enums.PriceTypeEnum;
-import com.booking.BookingApp.models.enums.ReservationConfirmationEnum;
-import com.booking.BookingApp.models.enums.TypeEnum;
+import com.booking.BookingApp.models.dtos.users.JwtAuthenticationRequest;
+import com.booking.BookingApp.models.enums.*;
+import com.booking.BookingApp.models.users.User;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.testng.annotations.BeforeMethod;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -37,6 +40,152 @@ public class PriceCardControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    private String token;
+    private String guestToken;
+    private String adminToken;
+
+
+    @BeforeEach
+    public  void login(){
+        HttpHeaders headers = new HttpHeaders();
+        JwtAuthenticationRequest user=new JwtAuthenticationRequest("novivlasnik@gmail.com","novivlasnik");
+        HttpEntity<JwtAuthenticationRequest> requestEntity = new HttpEntity<>(user, headers);
+        ResponseEntity<User> responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.token=responseEntity.getBody().getJwt();
+         user=new JwtAuthenticationRequest("novigost@gmail.com","novigost");
+    requestEntity = new HttpEntity<>(user, headers);
+       responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.guestToken=responseEntity.getBody().getJwt();
+
+        user=new JwtAuthenticationRequest("ADMIN@gmail.com","admin");
+        requestEntity = new HttpEntity<>(user, headers);
+        responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.adminToken=responseEntity.getBody().getJwt();
+
+    }
+//
+//    @JsonCreator
+//    public static StatusEnum fromValue(int value) {
+//        for (StatusEnum statusEnum : StatusEnum.values()) {
+//            if (statusEnum.ordinal() == value) {
+//                return statusEnum;
+//            }
+//        }
+//        throw new IllegalArgumentException("Invalid StatusEnum value: " + value);
+//    }
+//
+//    @JsonCreator
+//    public static RoleEnum fromValue1(int value) {
+//        for (RoleEnum statusEnum :RoleEnum.values()) {
+//            if (statusEnum.ordinal() == value) {
+//                return statusEnum;
+//            }
+//        }
+//        throw new IllegalArgumentException("Invalid StatusEnum value: " + value);
+//    }
+
+    @Test
+    @DisplayName("Should not update and create because user has no authority")
+    public void InvalidAuthorizationGuest() {
+
+        Long priceCardId = 1L;
+        // For example, assuming you have a PriceCard object to update
+        Timestamp startDate = Timestamp.from(Instant.parse("2024-03-19T10:57:00Z"));
+        Timestamp endDate = Timestamp.from(Instant.parse("2024-03-28T10:57:00Z"));
+        Boolean deleted = false;
+        TimeSlotPutDTO timeSlot = new TimeSlotPutDTO(startDate, endDate);
+
+        PriceCardPutDTO priceCardPutDTO=new PriceCardPutDTO(new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),2000, PriceTypeEnum.PERGUEST,1L);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+guestToken);
+        HttpEntity<PriceCardPutDTO> requestEntity = new HttpEntity<>(priceCardPutDTO, headers);
+
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/priceCards/{id}",
+                HttpMethod.PUT,
+                requestEntity,
+                String.class,
+                priceCardId);
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+
+
+
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+guestToken);
+        PriceCardPostDTO p=new PriceCardPostDTO();
+        HttpEntity<PriceCardPostDTO> requestEntity1 = new HttpEntity<PriceCardPostDTO>(p, headers);
+
+
+            responseEntity = restTemplate.exchange(
+                "/priceCards",
+                HttpMethod.POST,
+                requestEntity1,
+                String.class);
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+
+
+    @Test
+    @DisplayName("Should not update and create because user has no authority")
+    public void InvalidAuthorizationAdmin() {
+
+        Long priceCardId = 1L;
+        // For example, assuming you have a PriceCard object to update
+        Timestamp startDate = Timestamp.from(Instant.parse("2024-03-19T10:57:00Z"));
+        Timestamp endDate = Timestamp.from(Instant.parse("2024-03-28T10:57:00Z"));
+        Boolean deleted = false;
+        TimeSlotPutDTO timeSlot = new TimeSlotPutDTO(startDate, endDate);
+
+        PriceCardPutDTO priceCardPutDTO=new PriceCardPutDTO(new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),2000, PriceTypeEnum.PERGUEST,1L);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+adminToken);
+        HttpEntity<PriceCardPutDTO> requestEntity = new HttpEntity<>(priceCardPutDTO, headers);
+
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "/priceCards/{id}",
+                HttpMethod.PUT,
+                requestEntity,
+                String.class,
+                priceCardId);
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+
+
+
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+adminToken);
+        PriceCardPostDTO p=new PriceCardPostDTO();
+        HttpEntity<PriceCardPostDTO> requestEntity1 = new HttpEntity<PriceCardPostDTO>(p, headers);
+
+
+        responseEntity = restTemplate.exchange(
+                "/priceCards",
+                HttpMethod.POST,
+                requestEntity1,
+                String.class);
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
 
     @Test
     @DisplayName("Should Update priceCard When making PUT request to endpoint - /priceCards/{id}")
@@ -52,7 +201,7 @@ public class PriceCardControllerIntegrationTest {
         PriceCardPutDTO priceCardPutDTO=new PriceCardPutDTO(new TimeSlot(timeSlot.startDate,timeSlot.endDate,false),2000, PriceTypeEnum.PERGUEST,1L);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        headers.set("Authorization","Bearer "+token);
         HttpEntity<PriceCardPutDTO> requestEntity = new HttpEntity<>(priceCardPutDTO, headers);
 
 
@@ -129,7 +278,7 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
         HttpHeaders headers = new HttpHeaders();
 
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        headers.set("Authorization","Bearer "+token);
         HttpEntity<PriceCardPutDTO> requestEntity = new HttpEntity<>(priceCardPutDTO, headers);
 
 
@@ -157,6 +306,7 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
 
         PriceCardPostDTO priceCardPutDTO=new PriceCardPostDTO(new TimeSlotPostDTO(timeSlot.startDate,timeSlot.endDate),2000, PriceTypeEnum.PERGUEST,1L);
         HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization","Bearer "+token);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<PriceCardPostDTO> requestEntity = new HttpEntity<>(priceCardPutDTO, headers);
@@ -171,8 +321,6 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
     }
-
-
 
 
 
@@ -238,11 +386,9 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
                  new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDatePast), 2000, PriceTypeEnum.PERGUEST, 2L),
                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDate), -2000, PriceTypeEnum.PERGUEST, 2L),
                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDate,endDateAsDate), 2000, null, 2L),
-                 new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes,endDateAsDateExistingRes), 2000, PriceTypeEnum.PERGUEST, 2L),
-                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes1,endDateAsDateExistingRes1), 2000, PriceTypeEnum.PERGUEST, 2L),
-                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes2,endDateAsDateExistingRes2), 2000, PriceTypeEnum.PERGUEST, 2L)
-
-
+                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes,endDateAsDateExistingRes), 2000, PriceTypeEnum.PERGUEST, 1L),
+                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes1,endDateAsDateExistingRes1), 2000, PriceTypeEnum.PERGUEST, 1L),
+                new PriceCardPostDTO(new TimeSlotPostDTO(startDateAsDateExistingRes2,endDateAsDateExistingRes2), 2000, PriceTypeEnum.PERGUEST, 1L)
 
         );
     }
@@ -255,7 +401,7 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        headers.set("Authorization","Bearer "+token);
         HttpEntity<PriceCardPostDTO> requestEntity = new HttpEntity<>(priceCardPostDTO, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
@@ -281,7 +427,7 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        headers.set("Authorization","Bearer "+token);
         HttpEntity<AccommodationPostDTO> requestEntity = new HttpEntity<>(accommodation, headers);
 
 
@@ -327,7 +473,7 @@ private static Stream<Arguments> invalidReservationIdsAndPriceCardProvider() {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<AccommodationPostDTO> requestEntity = new HttpEntity<>(accommodation, headers);
-
+        headers.set("Authorization","Bearer "+token);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 "/accommodations",
