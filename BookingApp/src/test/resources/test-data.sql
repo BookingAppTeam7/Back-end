@@ -3,8 +3,13 @@ INSERT INTO users (`first_name`, `last_name`, `username`, `password`, `role`, `a
                    `accommodation_rating_notification`, `owner_replied_to_request_notification`, `token`, `deleted`, `reported`, `favourite_accommodations`)
 VALUES
     ('GuestFirstName', 'GuestLastName', 'TESTGOST1@gmail.com', 'guest', 2, 'Test adresa gost', '123456789', 0,
-     false, false, false, false, true, ' ', false, false, ' ');
-
+     false, false, false, false, true, ' ', false, false, ' '),
+    ('ADMINFirstName', 'ADMINLastName', 'ADMIN@gmail.com', '$2a$10$o3OdXouxWgXvKVCLRzTOau8rRNKZKp9E.MuIsGjERivCMvNagaHkK', 2, 'Test adresa ADMIN', '123456789', 0,
+    false, false, false, false, true, ' ', false, false, ' '),
+    ('GOSTFirstName', 'GOSTLastName', 'GOST@gmail.com', '$2a$10$9CSCJqvrXWp698qyz1OWSOdfcg.D94cm.kL9yJwWZB30Md8HF4vG.', 1, 'Test adresa GOST', '123456789', 0,
+    false, false, false, false, true, ' ', false, false, ' '),
+    ('OWNERFirstName', 'OWNERLastName', 'OWNER@gmail.com', '$2a$10$6reNUQ0cl3UgNVG1Po8ABuOIgw048kyoxAktD.EbIw47xlCtjEnHi', 0, 'Test adresa OWNER', '123456789', 0,
+    false, false, false, false, true, ' ', false, false, ' ');
 
 INSERT INTO accommodations (`id`, `name`, `description`, `location_id`, `min_guests`, `max_guests`, `type`, `owner_id`, `status`, `cancellation_deadline`, `reservation_confirmation`, `deleted`) VALUES
     (1,'ime1', 'opis1',  NULL, 2, 5, 'ROOM', 'OWNER@gmail.com', 'APPROVED', 5, 'MANUAL',false),

@@ -26,7 +26,7 @@ public class ReservationControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String token;
+    private String token;  //owner token
     private String guestToken;
     private String adminToken;
 
@@ -34,7 +34,7 @@ public class ReservationControllerIntegrationTest {
     @BeforeEach
     public  void login(){
         HttpHeaders headers = new HttpHeaders();
-        JwtAuthenticationRequest user=new JwtAuthenticationRequest("novivlasnik@gmail.com","novivlasnik");
+        JwtAuthenticationRequest user=new JwtAuthenticationRequest("OWNER@gmail.com","owner");
         HttpEntity<JwtAuthenticationRequest> requestEntity = new HttpEntity<>(user, headers);
         ResponseEntity<User> responseEntity = restTemplate.exchange(
                 "/login",
@@ -42,7 +42,7 @@ public class ReservationControllerIntegrationTest {
                 requestEntity,
                 User.class);
         this.token=responseEntity.getBody().getJwt();
-        user=new JwtAuthenticationRequest("novigost@gmail.com","novigost");
+        user=new JwtAuthenticationRequest("GOST@gmail.com","gost");
         requestEntity = new HttpEntity<>(user, headers);
         responseEntity = restTemplate.exchange(
                 "/login",
