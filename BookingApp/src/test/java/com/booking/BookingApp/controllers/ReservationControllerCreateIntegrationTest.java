@@ -2,7 +2,13 @@ package com.booking.BookingApp.controllers;
 
 import com.booking.BookingApp.models.accommodations.TimeSlot;
 import com.booking.BookingApp.models.dtos.reservations.ReservationPostDTO;
+import com.booking.BookingApp.models.dtos.users.JwtAuthenticationRequest;
 import com.booking.BookingApp.models.enums.PriceTypeEnum;
+import com.booking.BookingApp.models.enums.RoleEnum;
+import com.booking.BookingApp.models.enums.StatusEnum;
+import com.booking.BookingApp.models.users.User;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,12 +33,46 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ReservationControllerCreateIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
+    private String token;
+    private RoleEnum role;
+    @BeforeEach
+    public void login(){
+        HttpHeaders headers=new HttpHeaders();
+        JwtAuthenticationRequest user=new JwtAuthenticationRequest("TESTGOST1@gmail.com","guest");
+        HttpEntity<JwtAuthenticationRequest> requestEntity = new HttpEntity<>(user,headers);
+        ResponseEntity<User> responseEntity = restTemplate.exchange(
+                "/login",
+                HttpMethod.POST,
+                requestEntity,
+                User.class);
+        this.token=responseEntity.getBody().getJwt();
+        role=responseEntity.getBody().role;
+    }
+    @JsonCreator
+    public static StatusEnum fromValue(int value) {
+        for (StatusEnum statusEnum : StatusEnum.values()) {
+            if (statusEnum.ordinal() == value) {
+                return statusEnum;
+            }
+        }
+        throw new IllegalArgumentException("Invalid StatusEnum value: " + value);
+    }
 
+    @JsonCreator
+    public static RoleEnum fromValue1(int value) {
+        for (RoleEnum statusEnum :RoleEnum.values()) {
+            if (statusEnum.ordinal() == value) {
+                return statusEnum;
+            }
+        }
+        throw new IllegalArgumentException("Invalid StatusEnum value: " + value);
+    }
     @Test
     @DisplayName("Should create reservation for valid PostDTO- /reservations")
     public void shouldCreateReservation() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+token);
 
         Timestamp startDate = Timestamp.from(Instant.parse("2024-02-10T10:57:00Z"));
         Timestamp endDate = Timestamp.from(Instant.parse("2024-02-13T10:57:00Z"));
@@ -54,6 +94,7 @@ public class ReservationControllerCreateIntegrationTest {
     public void shouldNotCreateReservation(ReservationPostDTO reservationPostDTO){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization","Bearer "+token);
 
         HttpEntity<ReservationPostDTO> requestEntity=new HttpEntity<>(reservationPostDTO,headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(
@@ -62,7 +103,7 @@ public class ReservationControllerCreateIntegrationTest {
                 requestEntity,
                 String.class);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,responseEntity.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
     }
 
     private static Stream<ReservationPostDTO> invalidTestData(){

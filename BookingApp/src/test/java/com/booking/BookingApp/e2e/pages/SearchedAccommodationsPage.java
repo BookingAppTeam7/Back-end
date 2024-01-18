@@ -20,8 +20,20 @@ public class SearchedAccommodationsPage {
     public WebElement container;
     @FindBy(css="#roomBtn")
     public WebElement radioBtnRoom;
+    @FindBy(css="#apartmentBtn")
+    public WebElement radioBtnApartment;
+    @FindBy(css="#vipRoomBtn")
+    public WebElement radioBtnVipRoom;
     @FindBy(css="#freeWiFi")
     public WebElement freeWiFiBtn;
+    @FindBy(css="#kitchen")
+    public WebElement kitchenBtn;
+    @FindBy(css="#freeParking")
+    public WebElement freeParkingBtn;
+    @FindBy(css="#airConditioner")
+    public WebElement airConditionerBtn;
+    @FindBy(css="#minPriceInput")
+    public WebElement minPriceInput;
     @FindBy(css="#maxPriceInput")
     public WebElement maxPriceInput;
     @FindBy(css="#filterBtn")
@@ -39,15 +51,40 @@ public class SearchedAccommodationsPage {
         List<WebElement> accommodations=driver.findElements(By.className("mat-mdc-card-content"));
         return accommodations.size();
     }
-    public void performFilter(String maxPrice){
+    public void performFilter(String type,boolean wifi,boolean parking,boolean airConditioner,boolean kitchen, String minPrice, String maxPrice){
         WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(5));
         WebElement radioBtnRoom1=wait.until(ExpectedConditions.visibilityOf(radioBtnRoom));
+        WebElement radioBtnApartment1=wait.until(ExpectedConditions.visibilityOf(radioBtnApartment));
+        WebElement radioBtnVipRoom1=wait.until(ExpectedConditions.visibilityOf(radioBtnVipRoom));
         WebElement freeWiFiBtn1=wait.until(ExpectedConditions.visibilityOf(freeWiFiBtn));
+        WebElement freeParkingBtn1=wait.until(ExpectedConditions.visibilityOf(freeParkingBtn));
+        WebElement airConditionerBtn1=wait.until(ExpectedConditions.visibilityOf(airConditionerBtn));
+        WebElement kitchenBtn1=wait.until(ExpectedConditions.visibilityOf(kitchenBtn));
+        WebElement minPriceInputField=wait.until(ExpectedConditions.visibilityOf(minPriceInput));
         WebElement maxPriceInputField=wait.until(ExpectedConditions.visibilityOf(maxPriceInput));
         WebElement filterBtn1=wait.until(ExpectedConditions.visibilityOf(filterBtn));
 
-        radioBtnRoom1.click();
-        freeWiFiBtn1.click();
+        if(type.equals("ROOM")){
+            radioBtnRoom1.click();
+        }else if(type.equals("APARTMENT")){
+            radioBtnApartment1.click();
+        }else if(type.equals("VIP_ROOM")){
+            radioBtnVipRoom1.click();
+        }
+        if(wifi){
+            freeWiFiBtn1.click();
+        }
+        if(parking){
+            freeParkingBtn1.click();
+        }
+        if(airConditioner){
+            airConditionerBtn1.click();
+        }
+        if(kitchen){
+            kitchenBtn1.click();
+        }
+        minPriceInputField.clear();
+        minPriceInputField.sendKeys(minPrice);
         maxPriceInputField.clear();
         maxPriceInputField.sendKeys(maxPrice);
         filterBtn1.click();

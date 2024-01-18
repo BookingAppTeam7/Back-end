@@ -21,11 +21,11 @@ public class Student3Test extends TestBase {
         assertEquals(page.numberOfAccommodations(),2);
 
         page.scrollToBottom();
-        page.performFilter("4000");
+        page.performFilter("ROOM",true,false,false,false,"0","4000");
 
         assertEquals(page.numberOfAccommodations(),1);
 
-        page.performFilter("100");
+        page.performFilter("ROOM",true,false,false,false,"0","100");
         assertEquals(page.numberOfAccommodations(),0);
     }
 }
