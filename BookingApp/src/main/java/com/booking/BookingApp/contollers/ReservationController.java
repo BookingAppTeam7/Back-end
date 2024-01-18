@@ -68,7 +68,7 @@ public class ReservationController {
             Optional<Reservation> createdReservation = reservationService.create(newReservation);
             return ResponseEntity.ok(createdReservation.orElse(null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", e.getMessage()));
         }
 
