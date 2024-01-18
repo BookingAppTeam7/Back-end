@@ -16,6 +16,9 @@ public class PriceCardPostDTO {
         this.type = type;
         this.accommodationId=accommodationId;
     }
+    public PriceCardPostDTO(){
+
+    }
 
     public TimeSlotPostDTO getTimeSlot() {
         return timeSlot;
