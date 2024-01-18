@@ -47,14 +47,14 @@ public class ReservationControllerIntegrationTest {
     private static Stream<Arguments> provideTestData() {
         return Stream.of(
                 arguments(1L,"Reservation updated! Check database of accommodation and reservation",HttpStatus.OK),
-                arguments(0L,"Reservation not found with id: " + 0L,HttpStatus.INTERNAL_SERVER_ERROR ),  //reservation not found
-                arguments(3L, "Cannot read field \\\"id\\\" because \\\"reservation.accommodation\\\" is null",HttpStatus.INTERNAL_SERVER_ERROR ), //not found accommodation
-                arguments(4L, "Cannot read field \\\"username\\\"",HttpStatus.INTERNAL_SERVER_ERROR ),  //not found user
-                arguments(6L, "Reservation already approved!",HttpStatus.INTERNAL_SERVER_ERROR ),
-                arguments(7L, "Accommodation not available in the selected time slot",HttpStatus.INTERNAL_SERVER_ERROR ),  //partial overlap start date
-                arguments(8L, "Accommodation not available in the selected time slot",HttpStatus.INTERNAL_SERVER_ERROR ), //partial overlap end date
-                arguments(5L, "Accommodation not available in the selected time slot",HttpStatus.INTERNAL_SERVER_ERROR ),  //undefined prices
-                arguments(9L, "Accommodation not available in the selected time slot",HttpStatus.INTERNAL_SERVER_ERROR )  //no overlaps with existing price cards time slots
+                arguments(0L,"Reservation not found with id: " + 0L,HttpStatus.BAD_REQUEST ),  //reservation not found
+                arguments(3L, "Cannot read field \\\"id\\\" because \\\"reservation.accommodation\\\" is null",HttpStatus.BAD_REQUEST ), //not found accommodation
+                arguments(4L, "Cannot read field \\\"username\\\"",HttpStatus.BAD_REQUEST ),  //not found user
+                arguments(6L, "Reservation already approved!",HttpStatus.BAD_REQUEST ),
+                arguments(7L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ),  //partial overlap start date
+                arguments(8L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ), //partial overlap end date
+                arguments(5L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ),  //undefined prices
+                arguments(9L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST )  //no overlaps with existing price cards time slots
         );
     }
 
