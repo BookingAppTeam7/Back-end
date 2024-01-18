@@ -15,10 +15,10 @@ public class LogInPage {
     @FindBy(css=".login-header")
     public WebElement loginHeader;
 
-    @FindBy(css="#mat-input-0")
+    @FindBy(css="#loginUsername")
     public WebElement usernameInput;
 
-    @FindBy(css="#mat-input-1")
+    @FindBy(css="#loginPassword")
     public WebElement passwordInput;
 
     @FindBy(css="div.example-button-row > button")

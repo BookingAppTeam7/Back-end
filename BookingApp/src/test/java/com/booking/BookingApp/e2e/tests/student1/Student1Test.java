@@ -44,6 +44,7 @@ public class Student1Test extends TestBase {
 
        //test kada je korisnik uneo negativni rok za otkaz rezervacije
        editAccommodationPage.editCancellationDeadLine("-10");
+       thread.sleep(2000);
        editAccommodationPage.clickSaveChanges();
         boolean isSnackBarNegativeVisible=editAccommodationPage.isSnackBarNegativeVisible();
        assertTrue(isSnackBarNegativeVisible);

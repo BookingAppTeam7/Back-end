@@ -19,7 +19,7 @@ public class EditAccommodationPage {
 
     @FindBy(css="h2[class='register-header']")
     public WebElement editAccommodationHeader;
-    @FindBy(css="#mat-input-12")
+    @FindBy(css="#cancellationDeadline")
    // @FindBy(xpath = "//*[@id=\"mat-input-6\"]")
     public WebElement editCancellationDeadLineInput;
     @FindBy(xpath="//form/div/div[8]/button[1]/span[2]")
@@ -39,9 +39,9 @@ public class EditAccommodationPage {
 
     @FindBy(css="#mat-input-14")
     public WebElement startDateElem;
-    @FindBy(css="#mat-input-15")
+    @FindBy(css="#endDate")
     public WebElement endDateElem;
-    @FindBy(css="#mat-input-16")
+    @FindBy(css="#price")
     public WebElement priceElem;
 
     @FindBy(css="table tbody tr")
@@ -53,16 +53,16 @@ public class EditAccommodationPage {
     @FindBy(css="form > div > div.mat-elevation-z8 > div.data-container > button > span.mdc-button__label")
     public WebElement savePriceButtonElem;
 
-    @FindBy(css="h2[_ngcontent-ng-c1370985287]")
+    @FindBy(css="#h2Edit")
     public WebElement popUpEdit;
 
-    @FindBy(css="#mat-input-17")
+    @FindBy(css="#startDateEdit")
     public WebElement editStartDate;
 
-    @FindBy(css="#mat-input-18")
+    @FindBy(css="#endDateEdit")
     public WebElement editEndDate;
 
-    @FindBy(css="#mat-input-19")
+    @FindBy(css="#priceEdit")
     public  WebElement editPrice;
 
     @FindBy(css="#mat-mdc-dialog-0 > div > div > app-edit-price-card-dialog > div > form > div.dialog-actions > button.mdc-button.mat-mdc-button.mat-unthemed.mat-mdc-button-base > span.mdc-button__label")
@@ -168,7 +168,7 @@ public class EditAccommodationPage {
 
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        WebElement startDateInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#mat-input-14")));
+        WebElement startDateInputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#startDate")));
         wait.until(ExpectedConditions.elementToBeClickable(startDateInputField));
 
         //startDateInputField.click();
