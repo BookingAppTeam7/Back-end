@@ -42,7 +42,7 @@ public class PriceCardController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-   // @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> create(@RequestBody PriceCardPostDTO newPriceCard) throws Exception {
         Optional<PriceCard> result=priceCardService.create(newPriceCard);
         if(!result.isPresent()){return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
@@ -69,7 +69,7 @@ public class PriceCardController {
 
     @PutMapping(value="/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
-  //  @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceCard> update(@RequestBody PriceCardPutDTO accommodation, @PathVariable Long id) throws Exception{
         Optional<PriceCard> result = priceCardService.update(accommodation, id);
         if (result!=null) {
