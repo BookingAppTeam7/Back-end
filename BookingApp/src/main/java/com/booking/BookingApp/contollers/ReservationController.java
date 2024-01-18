@@ -55,7 +55,7 @@ public class ReservationController {
             reservationService.confirmReservation(id);
             return ResponseEntity.ok("Reservation updated! Check database of accommodation and reservation");
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error",e.getMessage()));
         }
 
