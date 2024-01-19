@@ -44,7 +44,7 @@ public class Student1Test extends TestBase {
 
        //test kada je korisnik uneo negativni rok za otkaz rezervacije
        editAccommodationPage.editCancellationDeadLine("-10");
-       thread.sleep(2000);
+
        editAccommodationPage.clickSaveChanges();
         boolean isSnackBarNegativeVisible=editAccommodationPage.isSnackBarNegativeVisible();
        assertTrue(isSnackBarNegativeVisible);
@@ -74,7 +74,7 @@ public class Student1Test extends TestBase {
         boolean priceCardAddedInTable=editAccommodationPage.isPriceCardAddedInTable("2/11/56","2/12/56");
         assertTrue(priceCardAddedInTable);
         editAccommodationPage.deleteValidPriceCard("2/11/56","2/12/56");
-        thread.sleep(5000);
+
 
 
         //2. slucaj kad je datum start u proslosti
@@ -87,7 +87,7 @@ public class Student1Test extends TestBase {
        priceCardAddedInTable=editAccommodationPage.isPriceCardAddedInTable("2/11/21","2/12/23");
         assertFalse(priceCardAddedInTable);
 
-        thread.sleep(2000);
+
 
         //3. slucaj kad je datum end u proslosti
         editAccommodationPage.addPriceCard("2/11/2019","2/12/2019","2000");
@@ -99,7 +99,6 @@ public class Student1Test extends TestBase {
         priceCardAddedInTable=editAccommodationPage.isPriceCardAddedInTable("2/11/19","2/12/19");
         assertFalse(priceCardAddedInTable);
 
-        thread.sleep(2000);
 
 
         //4. slucaj kad je end date pre start date
@@ -112,7 +111,6 @@ public class Student1Test extends TestBase {
         priceCardAddedInTable=editAccommodationPage.isPriceCardAddedInTable("2/12/28","2/11/28");
         assertFalse(priceCardAddedInTable);
 
-        thread.sleep(2000);
 
         //5. slucaj kad je price negativno
         editAccommodationPage.addPriceCard("2/11/2030","2/12/2030","-2000");
@@ -123,7 +121,7 @@ public class Student1Test extends TestBase {
         priceCardAddedInTable=editAccommodationPage.isPriceCardAddedInTable("2/11/30","2/12/30");
         assertFalse(priceCardAddedInTable);
 
-        thread.sleep(2000);
+
 
         //6. slucaj kad je price 0
         editAccommodationPage.addPriceCard("2/11/2030","2/12/2030","0");
@@ -134,7 +132,7 @@ public class Student1Test extends TestBase {
         priceCardAddedInTable=editAccommodationPage.isPriceCardAddedInTable("2/11/30","2/12/30");
         assertFalse(priceCardAddedInTable);
 
-        thread.sleep(2000);
+
 
         //7. slucaj kad je vec definisana cena za taj timeSLot
         editAccommodationPage.addPriceCard("4/17/2024","5/17/2024","2000");
@@ -146,7 +144,7 @@ public class Student1Test extends TestBase {
         boolean priceCardAddedInTableAgain=editAccommodationPage.isPriceCardAddedInTableAgain("4/17/24","5/17/24");
         assertFalse(priceCardAddedInTableAgain);
 
-        thread.sleep(2000);
+
 
         //8. slucaj kad rezervacija vec postoji u celom tom intervalu
         editAccommodationPage.addPriceCard("5/6/2029","8/24/2029","2000");
@@ -158,7 +156,6 @@ public class Student1Test extends TestBase {
         priceCardAddedInTableAgain=editAccommodationPage.isPriceCardAddedInTableAgain("5/6/2029","8/24/2029");
         assertFalse(priceCardAddedInTableAgain);
 
-        thread.sleep(2000);
 
 
         //9. slucaj kad rezervacija vec postoji u okviru datuma
@@ -171,7 +168,7 @@ public class Student1Test extends TestBase {
         priceCardAddedInTableAgain=editAccommodationPage.isPriceCardAddedInTableAgain("3/6/2029","8/24/2029");
         assertFalse(priceCardAddedInTableAgain);
 
-        thread.sleep(2000);
+
 
 
         //9. slucaj kad rezervacija vec postoji u okviru datuma
@@ -184,7 +181,7 @@ public class Student1Test extends TestBase {
         priceCardAddedInTableAgain=editAccommodationPage.isPriceCardAddedInTableAgain("5/10/2029","8/20/2029");
         assertFalse(priceCardAddedInTableAgain);
 
-        thread.sleep(2000);
+
 
 
         //10. slucaj kad rezervacija vec postoji u okviru datuma
@@ -197,7 +194,7 @@ public class Student1Test extends TestBase {
         priceCardAddedInTableAgain=editAccommodationPage.isPriceCardAddedInTableAgain("6/6/2029","8/28/2029");
         assertFalse(priceCardAddedInTableAgain);
 
-        thread.sleep(2000);
+
 
         //10. slucaj kad rezervacija vec postoji u okviru datuma
         editAccommodationPage.addPriceCard("5/6/2029","8/28/2029","2000");
@@ -209,7 +206,7 @@ public class Student1Test extends TestBase {
         priceCardAddedInTableAgain=editAccommodationPage.isPriceCardAddedInTableAgain("5/6/2029","8/28/2029");
         assertFalse(priceCardAddedInTableAgain);
 
-        thread.sleep(2000);
+
 
 
 
@@ -224,11 +221,14 @@ public class Student1Test extends TestBase {
 
         editAccommodationPage.editPriceCard("1/19/2039","2/17/2039","8000");
         editAccommodationPage.clickSavePriceEdit();
-        thread.sleep(2000);
+
         //ovde jos provera dal se ispise i dal je u tabeli
+        thread.sleep(2000);
 //        boolean isSnackBarUpdatedPriceCardVisible=editAccommodationPage.isSnackBarUpdatedPriceCardVisible();
 //        assertTrue(isSnackBarUpdatedPriceCardVisible);
         // da li je u tabeli
+
+
         boolean priceCardUpdatedInTable=editAccommodationPage.isPriceCardUpdatedInTable("1/19/39","2/17/39","8000");
         assertTrue(priceCardUpdatedInTable);
 
@@ -239,20 +239,6 @@ public class Student1Test extends TestBase {
         editAccommodationPage.editValidPriceCard("1/19/39","2/17/39");
         isPopUpVisible=editAccommodationPage.isPopUpEditVisible();
         assertTrue(isPopUpVisible);
-
-//       // 2. slucaj kad je datum start u proslosti
-//        editAccommodationPage.editPriceCard("1/19/2021","2/17/2021","8000");
-//
-//        editAccommodationPage.clickSavePrice();
-//        //ovde jos provera dal se ispise i dal je u tabeli
-//        isSnackBarDatesMustBeInFutureVisible=editAccommodationPage.isSnackBarDatesinFuture();
-//        assertTrue(isSnackBarDatesMustBeInFutureVisible);
-//        // da li je u tabeli
-//        priceCardAddedInTable=editAccommodationPage.isPriceCardUpdatedInTable("1/19/21","2/17/23","8000");
-//        assertFalse(priceCardAddedInTable);
-//
-//        thread.sleep(2000);
-
 
     }
 

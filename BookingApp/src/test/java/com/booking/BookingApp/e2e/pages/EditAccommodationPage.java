@@ -423,18 +423,11 @@ public class EditAccommodationPage {
 
     public boolean isPriceCardUpdatedInTable(String startDate, String endDate, String price) {
 
-//        int yOffset = -1500;
-//        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-//
-//        // Scroll into view with an offset using JavaScriptExecutor
-//        jsExecutor.executeScript("arguments[0].scrollIntoView({block: 'start', inline: 'start', behavior: 'instant'}); window.scrollBy(0, arguments[1]);",startDateElem, yOffset);
-////        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-////
 
         for(WebElement priceCard:priceCards){
-            WebElement startDateElem=priceCard.findElement(By.xpath("td[2]"));
-            WebElement endDateElem=priceCard.findElement(By.xpath("td[3]"));
-            WebElement priceElem=priceCard.findElement(By.xpath("td[4]"));
+            WebElement startDateElem = waitForElementVisibility(priceCard, By.xpath("td[2]"));
+            WebElement endDateElem = waitForElementVisibility(priceCard, By.xpath("td[3]"));
+            WebElement priceElem = waitForElementVisibility(priceCard, By.xpath("td[4]"));
             String startText =startDateElem.getText().trim();
             String endText=endDateElem.getText().trim();
             String priceText=priceElem.getText().trim();
@@ -443,9 +436,12 @@ public class EditAccommodationPage {
             }
         }
         return  false;
-
-
     }
+    private WebElement waitForElementVisibility(WebElement parentElement, By locator) {
+        WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(10));
+        return wait.until(ExpectedConditions.visibilityOf(parentElement.findElement(locator)));
+    }
+
 
     public boolean isSnackBarPriceIsUpdated() {
         boolean isVisible = (new WebDriverWait(driver, Duration.ofSeconds(10)))
