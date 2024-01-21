@@ -180,6 +180,10 @@ public class ReviewService implements IReviewService{
 
     @Override
     public int updateStatus(Long reviewId, ReviewStatusEnum status) {
+        Optional<Review> review=reviewRepository.findById(reviewId);
+        if(!review.isPresent()){
+            return -1;
+        }
         return reviewRepository.updateStatus(reviewId,status);
     }
 
