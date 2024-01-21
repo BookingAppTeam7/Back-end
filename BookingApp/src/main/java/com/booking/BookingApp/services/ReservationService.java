@@ -81,6 +81,7 @@ public class ReservationService implements IReservationService{
     public Reservation confirmReservation(Long reservationId) throws Exception {
 
         Reservation result=new Reservation();
+
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new Exception("Reservation not found with id: " + reservationId));
         Accommodation accommodation=accommodationService.findById(reservation.accommodation.id)
@@ -92,6 +93,11 @@ public class ReservationService implements IReservationService{
         if(reservation.status.equals(ReservationStatusEnum.APPROVED))
             throw new Exception("Reservation already approved!");
 
+        List<Reservation> allReservations=reservationRepository.findByAccommodationId(accommodation.id);
+        for(Reservation r:allReservations){
+            if(r.status.equals(ReservationStatusEnum.APPROVED) && timeSlotsOverlap(r.timeSlot,reservation.timeSlot))
+                throw new ValidationException("There already exists confirmed reservation for this accommodation in selected time slot");
+        }
 
         if (hasAvailableTimeSlot(accommodation,reservation.timeSlot.startDate,reservation.timeSlot.endDate)) {
             reservation.setStatus(ReservationStatusEnum.APPROVED);
@@ -100,6 +106,7 @@ public class ReservationService implements IReservationService{
         } else {
             throw new Exception("Accommodation not available in the selected time slot");
         }
+
 
         NotificationPostDTO not=new NotificationPostDTO();
         not.setUserId(reservation.user.username);
@@ -117,6 +124,7 @@ public class ReservationService implements IReservationService{
     }
 
     public boolean hasAvailableTimeSlot(Accommodation accommodation, Date arrival, Date checkout) {
+        List<Reservation> reservations=reservationRepository.findByAccommodationId(accommodation.id);
         for (PriceCard priceCard : accommodation.prices) {
             if (isWithinTimeSlot(arrival, checkout, priceCard.timeSlot)) {
                 return true;
@@ -175,9 +183,6 @@ public class ReservationService implements IReservationService{
     }
     public boolean timeSlotsOverlap(TimeSlot t1,TimeSlot t2){
         return !(t1.endDate.before(t2.startDate) || t1.startDate.after(t2.endDate));
-        //if(t1.endDate.before(t2.startDate) || t1.startDate.after(t2.endDate))
-        //    return false;
-        //return true;
     }
     @Override
     public Reservation update(ReservationPutDTO updatedReservation, Long id) throws Exception {
@@ -227,7 +232,6 @@ public class ReservationService implements IReservationService{
 
         reservationRepository.updateStatus(reservationId,ReservationStatusEnum.REJECTED);
 
-
         NotificationPostDTO not=new NotificationPostDTO();
         not.setUserId(reservation.user.username);
         not.setType("RESERVATION_REJECTED");
@@ -248,7 +252,7 @@ public class ReservationService implements IReservationService{
         if(reservation.status.equals(ReservationStatusEnum.CANCELLED))
             throw new Exception("Reservation already cancelled!");
         if(reservation.status.equals(ReservationStatusEnum.REJECTED))
-            throw new Exception("Reservation already approved!");
+            throw new Exception("Reservation already rejected!");
         if(reservation.status.equals(ReservationStatusEnum.PENDING))
             throw new Exception("Reservation is not already approved/rejected!");
 
@@ -261,7 +265,6 @@ public class ReservationService implements IReservationService{
             calendar.setTime(startDate);
             calendar.add(Calendar.DAY_OF_YEAR, -reservation.getAccommodation().getCancellationDeadline());
             Date cancellationAllowedDate = calendar.getTime();
-
 
             if (currentDate.after(cancellationAllowedDate)) {
                 return;

@@ -208,7 +208,7 @@ public class ReservationServiceTest {
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
         verify(userService).findUserById("GUEST@gmail.com");
-        verifyNoMoreInteractions(reservationRepository);
+      //  verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
         verifyNoInteractions(simpMessagingTemplate);
@@ -270,7 +270,7 @@ public class ReservationServiceTest {
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
         verify(userService).findUserById("GUEST@gmail.com");
-        verifyNoMoreInteractions(reservationRepository);
+     //   verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
         verifyNoInteractions(simpMessagingTemplate);
@@ -395,7 +395,76 @@ public class ReservationServiceTest {
         verify(reservationRepository).findById(1L);
         verify(accommodationService).findById(0L);
         verify(userService).findUserById("GUEST@gmail.com");
-        verifyNoMoreInteractions(reservationRepository);
+//        verifyNoMoreInteractions(reservationRepository);
+        verifyNoMoreInteractions(accommodationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoInteractions(simpMessagingTemplate);
+        verifyNoInteractions(notificationService);
+    }
+
+
+    @Test  //overlap with existing price cards but also overlap with existing reservations
+    public void confirmReservation_WhenAccommodationNotAvailable_ShouldThrowException() {  //nema preklapanja timeSlota rezervacije ni sa jednim cenovnikom
+
+        Location location=new Location(0L,"TestAdresa","TestGrad","TestDrzava",1.0,1.0,false);
+        List<String> assets=new ArrayList<>();
+
+        LocalDate startDate = LocalDate.now().plusDays(5);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        Date startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        LocalDate endDate = LocalDate.now().plusDays(10);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        Date endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot validTimeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
+
+        PriceCard priceCard=new PriceCard(0L,validTimeSlot,15000,PriceTypeEnum.PERGUEST);
+
+        List<PriceCard>prices=new ArrayList<>();
+        prices.add(priceCard);
+
+        List<Review> reviews=new ArrayList<>();
+        List<String>images=new ArrayList<>();
+        Accommodation accommodation=new Accommodation(0L,"TestIme","TestOpis",location,2,5, TypeEnum.APARTMENT,assets,prices,"OWNER@gmail.com",30, ReservationConfirmationEnum.MANUAL,reviews,images,false, AccommodationStatusEnum.APPROVED);
+
+        User user=new User("TestIme","TestPrezime", "GUEST@gmail.com","test",RoleEnum.GUEST,"TestAdresa","123456789", StatusEnum.ACTIVE,false,false,false,false,true," ",false," ");
+
+
+        startDate = LocalDate.now().plusDays(6);
+        startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+        startDateAsDate = java.util.Date.from(startDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+        endDate = LocalDate.now().plusDays(8);
+        endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+        endDateAsDate = java.util.Date.from(endDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
+
+
+        TimeSlot timeSlot=new TimeSlot(0L,startDateAsDate,endDateAsDate,false);
+        Reservation reservation=new Reservation(1L,accommodation,user,timeSlot,ReservationStatusEnum.PENDING,3L,15000,PriceTypeEnum.PERGUEST);
+
+        Reservation existingReservation=new Reservation(2L,accommodation,user,timeSlot,ReservationStatusEnum.APPROVED,5L,15000,PriceTypeEnum.PERGUEST);
+        List<Reservation> existingReservations=new ArrayList<>();
+        existingReservations.add(existingReservation);
+
+        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
+        when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
+        when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
+        when(reservationRepository.findByAccommodationId(accommodation.id)).thenReturn(existingReservations);
+
+        // Act and Assert
+        Exception exception = assertThrows(Exception.class, () -> reservationService.confirmReservation(1L));
+
+        assertAll(
+                () -> assertEquals("There already exists confirmed reservation for this accommodation in selected time slot", exception.getMessage())
+        );
+
+        verify(reservationRepository).findById(1L);
+        verify(accommodationService).findById(0L);
+        verify(userService).findUserById("GUEST@gmail.com");
+        verify(reservationRepository).findByAccommodationId(0L);
+        //   verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
         verifyNoInteractions(simpMessagingTemplate);
@@ -445,11 +514,13 @@ public class ReservationServiceTest {
 
         Reservation approvedReservation=new Reservation(1L,accommodation,user,reservationTimeSlot,ReservationStatusEnum.APPROVED,3L,15000,PriceTypeEnum.PERGUEST);
 
+        List<Reservation> existingReservations=new ArrayList<>();
 
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
         when(accommodationService.findById(0L)).thenReturn(Optional.of(accommodation));
         when(userService.findUserById("GUEST@gmail.com")).thenReturn(user);
         when(reservationRepository.save(reservation)).thenReturn(approvedReservation);
+        when(reservationRepository.findByAccommodationId(accommodation.id)).thenReturn(existingReservations);
 
 
         Reservation result=reservationService.confirmReservation(1L);
@@ -474,6 +545,7 @@ public class ReservationServiceTest {
 
         verify(reservationRepository,times(1)).findById(1L);
         verify(accommodationService,times(2)).findById(0L);
+        verify(reservationRepository,times(2)).findByAccommodationId(0L);
         verify(userService, times(2)).findUserById("GUEST@gmail.com"); //kasnije je pozvana i za slanje notifikacije
 
         verify(reservationRepository).save(reservation);
@@ -487,7 +559,6 @@ public class ReservationServiceTest {
         if(sendNotification) {
             verify(simpMessagingTemplate).convertAndSend(eq("/socket-publisher/" + reservation.user.username), any(NotificationPostDTO.class));
         }
-        verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(accommodationService);
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(notificationService);

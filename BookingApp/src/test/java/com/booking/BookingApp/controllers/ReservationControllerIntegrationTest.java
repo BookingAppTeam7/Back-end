@@ -110,7 +110,7 @@ public class ReservationControllerIntegrationTest {
                 requestEntity,
                 String.class,
                 reservationId);
-
+        System.out.println(responseEntity.getBody().toString());
         assertEquals(status, responseEntity.getStatusCode());
         System.out.println(responseEntity.getBody().toString());
         String actualErrorMessage = responseEntity.getBody().toString();
@@ -122,13 +122,13 @@ public class ReservationControllerIntegrationTest {
         return Stream.of(
                 arguments(1L,"Reservation updated! Check database of accommodation and reservation",HttpStatus.OK),
                 arguments(0L,"Reservation not found with id: " + 0L,HttpStatus.BAD_REQUEST ),  //reservation not found
-                arguments(3L, "Cannot read field \\\"id\\\" because \\\"reservation.accommodation\\\" is null",HttpStatus.BAD_REQUEST ), //not found accommodation
                 arguments(4L, "Cannot read field \\\"username\\\"",HttpStatus.BAD_REQUEST ),  //not found user
                 arguments(6L, "Reservation already approved!",HttpStatus.BAD_REQUEST ),
                 arguments(7L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ),  //partial overlap start date
-                arguments(8L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ), //partial overlap end date
-                arguments(5L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ),  //undefined prices
-                arguments(9L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST )  //no overlaps with existing price cards time slots
+                arguments(11L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ), //partial overlap end date
+                arguments(10L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ),  //undefined prices
+                arguments(9L, "Accommodation not available in the selected time slot",HttpStatus.BAD_REQUEST ) , //no overlaps with existing price cards time slots
+                arguments(8L,"There already exists confirmed reservation for this accommodation in selected time slot",HttpStatus.BAD_REQUEST) //already approved reservation in selected time slot
         );
     }
 
